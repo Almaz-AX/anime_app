@@ -1,5 +1,5 @@
 import 'package:anime_app/ui/navigation/branches/search_page_branch.dart';
-import 'package:anime_app/ui/screens/main_screen.dart';
+import 'package:anime_app/features/home/presentation/pages/main_page.dart';
 import 'package:go_router/go_router.dart';
 
 import 'branches/main_screen_branch.dart';
@@ -24,7 +24,7 @@ final goRouter = GoRouter(
     // https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
-        return MainScreen(navigationShell: navigationShell);
+        return MainPage(navigationShell: navigationShell);
       },
       branches: [
         MainScreenBranch.create(),

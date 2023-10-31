@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import '../../../features/detail/presentation/detail_screen/detail_screen.dart';
+import '../../../features/detail/presentation/pages/detail_page.dart';
 import '../../../features/search/presentation/pages/search_page.dart';
 
 final _shellNavigatorSearchKey =

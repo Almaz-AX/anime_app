@@ -2,10 +2,9 @@ import 'package:anime_app/constants/constants.dart';
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:anime_app/domain/entity/isar_data/watched_title.dart';
 import 'package:anime_app/core/host.dart';
-import 'package:anime_app/ui/screens/video_player_screen/video_player_screen.dart';
+import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 class EpisodesSliver extends StatelessWidget {
   const EpisodesSliver({super.key});
@@ -44,7 +43,8 @@ class EpisodeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = context.read<AnimeTitle>();;
+    final title = context.read<AnimeTitle>();
+    ;
     final player = title.player;
 
     if (player == null) {
@@ -134,7 +134,7 @@ class EpisodeCard extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                VideoPlayerScreen.createVideoPlayer(
+                VideoPlayerPage.createVideoPlayer(
                     context, player.host, episodes, index);
               },
             ),

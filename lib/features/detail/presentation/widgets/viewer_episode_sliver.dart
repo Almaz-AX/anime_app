@@ -2,7 +2,7 @@ import 'package:anime_app/constants/constants.dart';
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:anime_app/domain/entity/isar_data/watched_title.dart';
 import 'package:anime_app/core/host.dart';
-import 'package:anime_app/ui/screens/video_player_screen/video_player_screen.dart';
+import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,8 +24,7 @@ class ViewerEpisodeSliver extends StatelessWidget {
     if (currentEpisode == null) {
       return const SliverToBoxAdapter();
     }
-    final String preview =
-        currentEpisode.preview ?? title.posters.original.url;
+    final String preview = currentEpisode.preview ?? title.posters.original.url;
 
     return SliverToBoxAdapter(
       child: SizedBox(
@@ -55,7 +54,7 @@ class ViewerEpisodeSliver extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  VideoPlayerScreen.createVideoPlayer(
+                  VideoPlayerPage.createVideoPlayer(
                       context, player.host, player.list, currentepisodeId);
                 },
               ),

@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import '../../../../injection_container.dart';
 import '../bloc/detail_bloc.dart';
-import 'widgets/about_title_sliver.dart';
-import 'widgets/description_sliver.dart';
-import 'widgets/episodes_sliver.dart';
-import 'widgets/viewer_episode_sliver.dart';
+import '../widgets/about_title_sliver.dart';
+import '../widgets/description_sliver.dart';
+import '../widgets/episodes_sliver.dart';
+import '../widgets/viewer_episode_sliver.dart';
 
 class DetailPage extends StatelessWidget {
   final int id;

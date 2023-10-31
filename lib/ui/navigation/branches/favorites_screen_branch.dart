@@ -1,4 +1,5 @@
-import 'package:anime_app/ui/screens/favorites_screen/favorites_screen.dart';
+
+import 'package:anime_app/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,7 +15,7 @@ abstract class FavoritesScreenBranch {
       routes: [
         GoRoute(
           path: FavoritesScreenPath.favorites,
-          builder: (context, state) => const FavoritesScreen(),
+          builder: (context, state) => const FavoritesPage(),
         ),
       ],
     );

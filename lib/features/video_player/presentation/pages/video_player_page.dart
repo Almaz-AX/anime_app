@@ -5,13 +5,13 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:anime_app/ui/screens/video_player_screen/cubit/video_player_cubit.dart';
-import 'package:anime_app/ui/screens/video_player_screen/custom_controls.dart';
+import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 import 'package:go_router/go_router.dart';
 
+import '../cubit/video_player_cubit.dart';
 
-class VideoPlayerScreen extends StatelessWidget {
-  const VideoPlayerScreen({super.key});
+class VideoPlayerPage extends StatelessWidget {
+  const VideoPlayerPage({super.key});
 
   static createVideoPlayer(BuildContext context, String host,
       List<Episode> episodes, int currentEpisodeId) {
@@ -27,7 +27,7 @@ class VideoPlayerScreen extends StatelessWidget {
                     host: host,
                     episodes: episodes);
               },
-              child: const VideoPlayerScreen());
+              child: const VideoPlayerPage());
         },
       ),
     );

@@ -1,4 +1,4 @@
-class Constants {
+abstract class Constants {
   static const hello = 'Hello, ';
   static const continueWatching = 'Continue watching';
   static const main = 'Главная';

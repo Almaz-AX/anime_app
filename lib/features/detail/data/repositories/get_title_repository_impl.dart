@@ -8,19 +8,21 @@ import 'package:anime_app/features/detail/data/datasources/get_title_remote_data
 import '../../../../core/error/expetions.dart';
 import '../../../../core/platform/network_info.dart';
 import '../../domain/repositories/get_title_repository.dart';
+import '../datasources/get_title_local_data_source.dart';
 
 class GetTitleRepositoryImpl implements GetTitleRepository {
   final GetTitleRemoteDataSource remoteDataSource;
+  final GetTitleLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
   GetTitleRepositoryImpl({
     required this.remoteDataSource,
+    required this.localDataSource,
     required this.networkInfo,
   });
   @override
   Future<Either<Failure, AnimeTitle>> getTitle(int id) async {
-     try {
-      final remoteAnimeTitles =
-          await remoteDataSource.getTitle(id);
+    try {
+      final remoteAnimeTitles = await remoteDataSource.getTitle(id);
       return Right(remoteAnimeTitles);
     } on ServerExeption {
       return Left(ServerFailure());

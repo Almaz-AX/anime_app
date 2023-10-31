@@ -2,14 +2,12 @@ import 'package:anime_app/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../constants/constants.dart';
-
-
+import '../../../../constants/constants.dart';
 
 // Stateful navigation based on:
 // https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
-class MainScreen extends StatelessWidget {
-  const MainScreen({
+class MainPage extends StatelessWidget {
+  const MainPage({
     Key? key,
     required this.navigationShell,
   }) : super(
@@ -61,8 +59,8 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: body,
-      bottomNavigationBar: BottomNavigationBar(
+        body: body,
+        bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
               icon: ImageIcon(AssetImage(IconAseet.home)),

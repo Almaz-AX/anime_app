@@ -3,9 +3,10 @@ import 'package:anime_app/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:anime_app/ui/screens/video_player_screen/cubit/video_player_cubit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
+
+import '../cubit/video_player_cubit.dart';
 
 class CustomControls extends StatelessWidget {
   const CustomControls({

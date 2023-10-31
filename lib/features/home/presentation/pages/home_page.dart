@@ -1,11 +1,11 @@
 import 'package:anime_app/features/search/data/repositories/rest_api_repository.dart';
 import 'package:flutter/material.dart';
 
-import '../../../constants/constants.dart';
-import '../../../assets/assets.dart';
+import '../../../../constants/constants.dart';
+import '../../../../assets/assets.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
