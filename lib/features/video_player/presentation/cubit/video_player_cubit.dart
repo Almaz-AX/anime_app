@@ -1,5 +1,7 @@
 import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/servi%D1%81es/isar_service/isar_service.dart';
+import 'package:anime_app/injection_container.dart';
+import '../../../../core/data/local/DAO/watched_episode_dao.dart';
+import '../../../../core/data/local/entity/watched_episode.dart';
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:equatable/equatable.dart';
@@ -9,7 +11,8 @@ import 'package:video_player/video_player.dart';
 part 'video_player_state.dart';
 
 class VideoPlayerCubit extends Cubit<VideoPlayerState> {
-  final IsarService isarService = IsarService();
+  final WatchedEpisodesDAO animeDb = sl();
+
   VideoPlayerCubit(
       {required int titleId,
       required int currentEpisode,
@@ -34,6 +37,10 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
   void nextEpisode() async {
     disposeControllers();
+    animeDb.changeWatchedEpisode(WatchedEpisode(
+        episodeNumber: state.currentEpisode,
+        animeTitleId: state.titleId,
+        continueTimestamp: 200));
     emit(state.copyWith(chewieController: null));
     final currentEpisode = state.currentEpisode + 1;
     final newVideoPlayerController = VideoPlayerController.networkUrl(
@@ -49,7 +56,12 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     ));
   }
 
-  void prevEpisode() {}
+  void prevEpisode() {
+    animeDb.deleteWatchedEpisode(WatchedEpisode(
+      episodeNumber: state.currentEpisode,
+      animeTitleId: state.titleId,
+    ));
+  }
 
   void pause() {
     final chewieController = state.chewieController;
@@ -65,7 +77,6 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   Future<void> _createChwieController() async {
-    
     await state.videoPlayerController.initialize();
     final chewieController = ChewieController(
       showControls: false,
@@ -85,10 +96,8 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     emit(state.copyWith(chewieController: chewieController));
   }
 
-  void disposeControllers(){
-    isarService.saveTitleEpisode(state.titleId, state.currentEpisode);
+  void disposeControllers() {
     state.videoPlayerController.dispose();
     state.chewieController?.dispose();
-    
   }
 }

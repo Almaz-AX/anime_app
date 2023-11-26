@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../entity/anime_title_db.dart';
-import '../../entity/watched_episode.dart';
+import '../entity/anime_title_db.dart';
+import '../entity/watched_episode.dart';
 
-abstract class BaseDao {
+abstract class BaseDAO {
   static const databaseVersion = 1;
   static const _databaseName = 'com.example.anime_app.db';
 
@@ -28,27 +30,25 @@ abstract class BaseDao {
   }
 
   void _createAnimeTitlesTableV1(Batch batch) {
-
     batch.execute('''
-      CREATE TABLE IF NOT EXIST ${AnimeTitleDb.tableName}(
-        ${AnimeTitleDb.fieldId} INTEGER PRIMIRY KEY,
-        ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL,
+      CREATE TABLE ${AnimeTitleDb.tableName}(
+        ${AnimeTitleDb.fieldId} INTEGER PRIMARY KEY,
+        ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL
       )
       ''');
 
     batch.execute('''
-    CREATE TABLE IF NOT EXIST ${WatchedEpisode.tableName}(
+    CREATE TABLE ${WatchedEpisode.tableName}(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ${WatchedEpisode.fieldEpisodeNumber} INTEGER,
-      ${WatchedEpisode.fieldWatchCompleted} BOOL NOT NULL,
+      ${WatchedEpisode.fieldWatchCompleted} BOOL NOT NULL CHECK (boolColumn IN (0, 1)),
       ${WatchedEpisode.fieldContinueTimestamp} INTEGER DEFAULT 0,
       ${WatchedEpisode.fieldAnimeTitleId} INTEGER NOT NULL,
-      FOREIGN KEY ${WatchedEpisode.fieldAnimeTitleId} 
-      REFERENCES ${AnimeTitleDb.tableName} (${AnimeTitleDb.fieldId}) 
-      ON DELETE CASCADE,
-
+      FOREIGN KEY (${WatchedEpisode.fieldAnimeTitleId}) REFERENCES ${AnimeTitleDb.tableName}(${AnimeTitleDb.fieldId}) ON DELETE CASCADE
     )
     ''');
-
   }
+    Future<void> closeDb()async{
+      await _database?.close();
+    }
 }

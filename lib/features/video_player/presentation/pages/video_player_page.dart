@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anime_app/core/data/models/anime_title.dart';
-
+import 'package:anime_app/features/detail/presentation/bloc/detail_bloc.dart';
+import 'package:anime_app/injection_container.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,7 @@ class VideoPlayerPage extends StatelessWidget {
     return WillPopScope(
       onWillPop: () {
         context.pop();
+        
         return Future.value(true);
       },
       child: const Scaffold(

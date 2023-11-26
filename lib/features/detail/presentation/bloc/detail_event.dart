@@ -17,3 +17,12 @@ class DetailGetTitleEvent extends DetailEvent {
   @override
   List<Object> get props => [id];
 }
+
+class DetailGetWatchedEpisodesEvent extends DetailEvent {
+  final AnimeTitle title;
+  final List<WatchedEpisode> watchedEpisodes;
+  const DetailGetWatchedEpisodesEvent({
+    required this.title,
+    required this.watchedEpisodes,
+  });
+}

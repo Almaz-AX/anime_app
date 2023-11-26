@@ -16,3 +16,9 @@ class CasheFailure extends Failure{
   // TODO: implement props
   List<Object?> get props => [];
 }
+
+class DatabaseFailure extends Failure{
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

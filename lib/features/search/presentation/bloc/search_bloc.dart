@@ -24,12 +24,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     required this.getSearchedTitles,
     required this.getRandomTitle,
   }) : super(SearchInitialState()) {
+    on<RandomTitleEvent>(_onGetRandomTitle);
     on<SearchTitlesEvent>(_onGetSearchedTitles, transformer: (events, mapper) {
       return events
           .debounceTime(const Duration(milliseconds: 300))
           .asyncExpand(mapper);
     });
-    on<RandomTitleEvent>(_onGetRandomTitle);
     on<SearchTitlesNextPageEvent>(_onSearchTitlesNextPage,
         transformer: droppable());
   }

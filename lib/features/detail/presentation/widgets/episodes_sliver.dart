@@ -1,13 +1,17 @@
-import 'package:anime_app/constants/constants.dart';
-import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/domain/entity/isar_data/watched_title.dart';
-import 'package:anime_app/core/host.dart';
-import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../constants/constants.dart';
+import '../../../../core/data/local/entity/watched_episode.dart';
+import '../../../../core/data/models/anime_title.dart';
+import '../../../../core/host.dart';
+import '../../../video_player/presentation/pages/video_player_page.dart';
+
 class EpisodesSliver extends StatelessWidget {
-  const EpisodesSliver({super.key});
+  const EpisodesSliver({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,6 @@ class EpisodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = context.read<AnimeTitle>();
-    ;
     final player = title.player;
 
     if (player == null) {
@@ -58,10 +61,13 @@ class EpisodeCard extends StatelessWidget {
     if (previewRelativeUrl != null) {
       preview = '${Host.host}${episodes[index].preview}';
     }
-    final watchedEpisodes = context.watch<WatchedTitle?>();
+
+    final watchedEpisodeList = context.read<List<WatchedEpisode>>();
     var watchedEpisodesList = [];
-    if (watchedEpisodes != null) {
-      watchedEpisodesList = watchedEpisodes.watchedEpisodes;
+    if (watchedEpisodeList.isNotEmpty) {
+      watchedEpisodesList =
+          watchedEpisodeList.map((e) => e.episodeNumber).toList();
+      print(watchedEpisodeList);
     }
     final icon = watchedEpisodesList.contains(index)
         ? Icons.check

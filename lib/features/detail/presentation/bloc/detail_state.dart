@@ -14,16 +14,20 @@ class DetailLoadingState extends DetailState {}
 
 class DetailLoadedState extends DetailState {
   final AnimeTitle title;
+  final List<WatchedEpisode> watchedEpisodes;
   const DetailLoadedState({
     required this.title,
+    this.watchedEpisodes = const <WatchedEpisode>[],
   });
+   @override
+  List<Object> get props => [title, watchedEpisodes];
 }
 
 class DetailErrorState extends DetailState {
   final String message;
   const DetailErrorState({
     required this.message,
-  }) ;
+  });
   @override
   List<Object> get props => [message];
 }

@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'anime_title_db.dart';
+
 part 'watched_episode.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class WatchedEpisode {
+class WatchedEpisode extends BaseEntity {
   static const tableName = 'WatchedEpisode';
   static const fieldEpisodeNumber = 'episode_number';
   static const fieldWatchCompleted = 'watch_completed';
@@ -13,7 +15,7 @@ class WatchedEpisode {
   @JsonKey(name: fieldEpisodeNumber)
   final int episodeNumber;
 
-  @JsonKey(name: fieldWatchCompleted)
+  @JsonKey(name: fieldWatchCompleted, fromJson: _parseToBool)
   final bool watchCompleted;
 
   @JsonKey(name: fieldContinueTimestamp)
@@ -29,8 +31,13 @@ class WatchedEpisode {
     required this.animeTitleId,
   });
 
+ static bool _parseToBool(dynamic value)=> value == 1;
+
   Map<String, dynamic> toJson() => _$WatchedEpisodeToJson(this);
 
   factory WatchedEpisode.fromJson(Map<String, dynamic> json) =>
       _$WatchedEpisodeFromJson(json);
+      
+  @override
+  List<Object?> get props => [episodeNumber, animeTitleId, watchCompleted, continueTimestamp];
 }

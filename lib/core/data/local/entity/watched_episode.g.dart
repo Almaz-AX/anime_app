@@ -9,7 +9,9 @@ part of 'watched_episode.dart';
 WatchedEpisode _$WatchedEpisodeFromJson(Map<String, dynamic> json) =>
     WatchedEpisode(
       episodeNumber: json['episode_number'] as int,
-      watchCompleted: json['watch_completed'] as bool? ?? false,
+      watchCompleted: json['watch_completed'] == null
+          ? false
+          : WatchedEpisode._parseToBool(json['watch_completed']),
       continueTimestamp: json['continue_timestamp'] as int? ?? 0,
       animeTitleId: json['title_id'] as int,
     );
