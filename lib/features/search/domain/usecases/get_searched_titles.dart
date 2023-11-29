@@ -8,7 +8,7 @@ import 'package:anime_app/features/search/domain/repositories/search_titles.repo
 import '../../../../core/domain/usecases/usecase.dart';
 import '../../../../core/error/failure.dart';
 
-class GetSearchedTitles extends UseCase<SearchTitles, Params> {
+class GetSearchedTitles extends UseCaseEither<SearchTitles, Params> {
   final SearhTitlesRepository repository;
   GetSearchedTitles({
     required this.repository,

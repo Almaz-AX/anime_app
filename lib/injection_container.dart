@@ -20,7 +20,7 @@ import 'features/detail/data/repositories/get_title_repository_impl.dart';
 import 'features/detail/domain/repositories/get_title_repository.dart';
 import 'features/detail/domain/repositories/get_watched_episodes_repository.dart';
 import 'features/detail/domain/usecases/get_title.dart';
-import 'features/detail/presentation/bloc/detail_bloc.dart';
+import 'features/detail/presentation/blocs/detail_bloc.dart';
 import 'features/search/domain/repositories/search_titles.repository.dart';
 
 final sl = GetIt.instance;

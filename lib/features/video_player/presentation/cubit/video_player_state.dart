@@ -1,7 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'video_player_cubit.dart';
+abstract class VideoPlayerState extends Equatable{}
 
-class VideoPlayerState extends Equatable {
+class VideoPlayerChengedEpisodeState extends VideoPlayerState {
   final int titleId;
   final String host;
   final int currentEpisode;
@@ -9,7 +10,7 @@ class VideoPlayerState extends Equatable {
   final VideoPlayerController videoPlayerController;
   final ChewieController? chewieController;
 
-  const VideoPlayerState(
+  VideoPlayerChengedEpisodeState(
       {required this.titleId,
       required this.host,
       required this.currentEpisode,
@@ -17,7 +18,7 @@ class VideoPlayerState extends Equatable {
       required this.videoPlayerController,
       this.chewieController});
 
-  VideoPlayerState copyWith({
+  VideoPlayerChengedEpisodeState copyWith({
     int? titleId,
     String? host,
     int? currentEpisode,
@@ -25,7 +26,7 @@ class VideoPlayerState extends Equatable {
     VideoPlayerController? videoPlayerController,
     ChewieController? chewieController,
   }) {
-    return VideoPlayerState(
+    return VideoPlayerChengedEpisodeState(
       titleId: titleId ?? this.titleId,
       host: host ?? this.host,
       currentEpisode: currentEpisode ?? this.currentEpisode,

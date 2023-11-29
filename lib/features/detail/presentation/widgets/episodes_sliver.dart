@@ -21,6 +21,7 @@ class EpisodesSliver extends StatelessWidget {
       return const SliverToBoxAdapter();
     }
     final episodes = player.list;
+
     return SliverList.builder(
       itemBuilder: (context, index) {
         return EpisodeCard(
@@ -38,6 +39,15 @@ class EpisodeCard extends StatelessWidget {
     required this.index,
   });
   final int index;
+
+  WatchedEpisode? getEpisode(List<WatchedEpisode> watchedEpisodes) {
+    for (WatchedEpisode watchedEpisode in watchedEpisodes) {
+      if (watchedEpisode.episodeNumber == index) {
+        return watchedEpisode;
+      }
+    }
+    return null;
+  }
 
   String readTimeStamp(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
@@ -61,17 +71,10 @@ class EpisodeCard extends StatelessWidget {
     if (previewRelativeUrl != null) {
       preview = '${Host.host}${episodes[index].preview}';
     }
-
-    final watchedEpisodeList = context.read<List<WatchedEpisode>>();
-    var watchedEpisodesList = [];
-    if (watchedEpisodeList.isNotEmpty) {
-      watchedEpisodesList =
-          watchedEpisodeList.map((e) => e.episodeNumber).toList();
-      print(watchedEpisodeList);
-    }
-    final icon = watchedEpisodesList.contains(index)
-        ? Icons.check
-        : Icons.play_arrow_rounded;
+    final watchedEpisodes = context.watch<List<WatchedEpisode>>();
+    final watchedEpisode = getEpisode(watchedEpisodes);
+    final icon =
+        watchedEpisode != null ? Icons.check : Icons.play_arrow_rounded;
 
     return Container(
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
@@ -141,7 +144,11 @@ class EpisodeCard extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 VideoPlayerPage.createVideoPlayer(
-                    context, player.host, episodes, index);
+                  context,
+                  player.host,
+                  episodes,
+                  index,
+                );
               },
             ),
           )

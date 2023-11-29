@@ -10,37 +10,54 @@ import 'package:video_player/video_player.dart';
 
 part 'video_player_state.dart';
 
-class VideoPlayerCubit extends Cubit<VideoPlayerState> {
+class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
   final WatchedEpisodesDAO animeDb = sl();
 
   VideoPlayerCubit(
       {required int titleId,
       required int currentEpisode,
       required String host,
-      required List<Episode> episodes})
-      : super(VideoPlayerState(
+      required List<Episode> episodes,
+      continuetimestamp = 0})
+      : super(VideoPlayerChengedEpisodeState(
             titleId: titleId,
             currentEpisode: currentEpisode,
             host: host,
             episodes: episodes,
             videoPlayerController: VideoPlayerController.networkUrl(
                 _getUrl(episode: episodes[currentEpisode], host: host)))) {
-    _createChwieController();
+    _createChwieController(continueTimestamp: continuetimestamp);
+  }
+
+  void createVideoPlayer(
+      {required int titleId,
+      required int currentEpisode,
+      required String host,
+      required List<Episode> episodes,
+      continuetimestamp = 0}) {
+    _createChwieController(continueTimestamp: continuetimestamp);
+    emit(VideoPlayerChengedEpisodeState(
+        titleId: titleId,
+        currentEpisode: currentEpisode,
+        host: host,
+        episodes: episodes,
+        videoPlayerController: VideoPlayerController.networkUrl(
+            _getUrl(episode: episodes[currentEpisode], host: host))));
   }
 
   static Uri _getUrl({required Episode episode, required String host}) {
     final hls = episode.hls;
     final videoUrl = hls.fhd ?? hls.hd ?? hls.sd;
-    final url = Uri.parse('https://${host}$videoUrl');
+    final url = Uri.parse('https://$host$videoUrl');
     return url;
   }
 
-  void nextEpisode() async {
-    disposeControllers();
+  Future<void> nextEpisode() async {
     animeDb.changeWatchedEpisode(WatchedEpisode(
         episodeNumber: state.currentEpisode,
         animeTitleId: state.titleId,
-        continueTimestamp: 200));
+        continueTimestamp: (await pause()) ?? 0));
+    disposeControllers();
     emit(state.copyWith(chewieController: null));
     final currentEpisode = state.currentEpisode + 1;
     final newVideoPlayerController = VideoPlayerController.networkUrl(
@@ -63,22 +80,26 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     ));
   }
 
-  void pause() {
+  Future<int?> pause() async {
     final chewieController = state.chewieController;
     if (chewieController == null) {
-      return;
+      return Future(() => null);
     }
     if (chewieController.isPlaying) {
       chewieController.pause();
-      return;
+      return Future.value(
+          (await chewieController.videoPlayerController.position)?.inSeconds);
     }
 
     chewieController.play();
+    return Future.value(
+        (await chewieController.videoPlayerController.position)?.inSeconds);
   }
 
-  Future<void> _createChwieController() async {
+  Future<void> _createChwieController({int continueTimestamp = 0}) async {
     await state.videoPlayerController.initialize();
     final chewieController = ChewieController(
+      startAt: Duration(seconds: continueTimestamp),
       showControls: false,
       showControlsOnInitialize: false,
       // aspectRatio: 25/ 8,

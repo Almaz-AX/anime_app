@@ -7,9 +7,9 @@ import '../../data/repositories/anime_title_repository.dart';
 import '../../error/failure.dart';
 import 'usecase.dart';
 
-class GetRandomTitle implements UseCase<AnimeTitle, NoParams> {
+class GetRandomTitle implements UseCaseEither<AnimeTitle, NoParams> {
   final AnimeTitleRepository repository;
- GetRandomTitle({
+  GetRandomTitle({
     required this.repository,
   });
 
@@ -24,5 +24,4 @@ class NoParams extends Equatable {
   @override
   // TODO: implement props
   List<Object?> get props => [];
- 
 }

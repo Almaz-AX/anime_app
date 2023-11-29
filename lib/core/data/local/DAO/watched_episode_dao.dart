@@ -4,7 +4,7 @@ import '../entity/watched_episode.dart';
 import 'base_dao.dart';
 
 class WatchedEpisodesDAO extends BaseDAO {
-  Future<List<WatchedEpisode>> getWatchedEpisodes(int titleId) async {
+  Future<List<WatchedEpisode>> getWatchedEpisodes(int? titleId) async {
     final db = await getDB();
     final List<Map<String, dynamic>> maps = await db.query(
       WatchedEpisode.tableName,
@@ -55,12 +55,8 @@ class WatchedEpisodesDAO extends BaseDAO {
   }
 
   late final StreamController<List<WatchedEpisode>> controller;
-  List<WatchedEpisode> episode = [];
 
-  Stream<List<WatchedEpisode>> getEpisodesAsStream(int titleId) async* {
-    controller.add(await getWatchedEpisodes(titleId));
-    yield* controller.stream;
-  }
+  Stream<List<WatchedEpisode>> getEpisodesAsStream(int id) => controller.stream;
 
   Future<void> closeWatchedEpisodes() async {
     await controller.close();

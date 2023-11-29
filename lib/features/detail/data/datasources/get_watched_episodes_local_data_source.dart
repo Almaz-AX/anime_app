@@ -3,7 +3,7 @@ import 'package:anime_app/core/data/local/DAO/watched_episode_dao.dart';
 import '../../../../core/data/local/entity/watched_episode.dart';
 
 abstract class GetWatchedEpisodesLocalDataSource {
-  Future<Stream<List<WatchedEpisode>>> getWatchedEpisodes(int id);
+  Stream<List<WatchedEpisode>> getWatchedEpisodes(int id);
 }
 
 class GetWatchedEpisodesLocalDataSourceImpl
@@ -12,8 +12,10 @@ class GetWatchedEpisodesLocalDataSourceImpl
 
   GetWatchedEpisodesLocalDataSourceImpl({required this.watchedEpisodesDAO});
   @override
-  Future<Stream<List<WatchedEpisode>>> getWatchedEpisodes(int id) async {
-    final watchedEpisodes = watchedEpisodesDAO.getEpisodesAsStream(id);
-    return watchedEpisodes;
+  Stream<List<WatchedEpisode>> getWatchedEpisodes(int id) {
+    watchedEpisodesDAO
+        .getWatchedEpisodes(id)
+        .then((value) => watchedEpisodesDAO.controller.sink.add(value));
+    return watchedEpisodesDAO.getEpisodesAsStream(id);
   }
 }

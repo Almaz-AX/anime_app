@@ -1,13 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/features/detail/presentation/bloc/detail_bloc.dart';
-import 'package:anime_app/injection_container.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 import 'package:go_router/go_router.dart';
+import 'package:video_player/video_player.dart';
 
 import '../cubit/video_player_cubit.dart';
 
@@ -15,7 +14,8 @@ class VideoPlayerPage extends StatelessWidget {
   const VideoPlayerPage({super.key});
 
   static createVideoPlayer(BuildContext context, String host,
-      List<Episode> episodes, int currentEpisodeId) {
+      List<Episode> episodes, int currentEpisodeId,
+      [int? continuetimestamp]) {
     final title = context.read<AnimeTitle>();
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
@@ -23,10 +23,11 @@ class VideoPlayerPage extends StatelessWidget {
           return BlocProvider(
               create: (context) {
                 return VideoPlayerCubit(
-                    titleId: title.id,
-                    currentEpisode: currentEpisodeId,
-                    host: host,
-                    episodes: episodes);
+                  titleId: title.id,
+                  currentEpisode: currentEpisodeId,
+                  host: host,
+                  episodes: episodes,
+                );
               },
               child: const VideoPlayerPage());
         },
@@ -39,7 +40,7 @@ class VideoPlayerPage extends StatelessWidget {
     return WillPopScope(
       onWillPop: () {
         context.pop();
-        
+
         return Future.value(true);
       },
       child: const Scaffold(
@@ -62,6 +63,9 @@ class VideoPlayerWidget extends StatefulWidget {
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   bool visibilityControls = true;
   late final VideoPlayerCubit cubit;
+  late final VideoPlayerController videoPlayerController;
+  ChewieController? chewieController;
+
   @override
   void initState() {
     super.initState();
@@ -97,7 +101,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
+    return BlocBuilder<VideoPlayerCubit, VideoPlayerChengedEpisodeState>(
         builder: (context, state) {
       final chewieController = state.chewieController;
       if (chewieController != null) {
