@@ -6,7 +6,7 @@ import '../../../../core/domain/usecases/usecase.dart';
 import '../../../../core/error/failure.dart';
 import '../repositories/get_title_repository.dart';
 
-class GetTitle extends UseCaseEither<AnimeTitle, Params> {
+class GetTitle extends UseCaseFuture<AnimeTitle, Params> {
   final GetTitleRepository repository;
   GetTitle({
     required this.repository,

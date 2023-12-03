@@ -41,7 +41,7 @@ abstract class BaseDAO {
     CREATE TABLE ${WatchedEpisode.tableName}(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ${WatchedEpisode.fieldEpisodeNumber} INTEGER,
-      ${WatchedEpisode.fieldWatchCompleted} BOOL NOT NULL CHECK (boolColumn IN (0, 1)),
+      ${WatchedEpisode.fieldWatchCompleted} INTEGER NOT NULL,
       ${WatchedEpisode.fieldContinueTimestamp} INTEGER DEFAULT 0,
       ${WatchedEpisode.fieldAnimeTitleId} INTEGER NOT NULL,
       FOREIGN KEY (${WatchedEpisode.fieldAnimeTitleId}) REFERENCES ${AnimeTitleDb.tableName}(${AnimeTitleDb.fieldId}) ON DELETE CASCADE

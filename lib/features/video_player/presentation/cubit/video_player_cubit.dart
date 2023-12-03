@@ -1,6 +1,5 @@
 import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/injection_container.dart';
-import '../../../../core/data/local/DAO/watched_episode_dao.dart';
+import 'package:anime_app/features/video_player/domain/usecases/save_watched_episode.dart';
 import '../../../../core/data/local/entity/watched_episode.dart';
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
@@ -11,14 +10,15 @@ import 'package:video_player/video_player.dart';
 part 'video_player_state.dart';
 
 class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
-  final WatchedEpisodesDAO animeDb = sl();
+  final SaveWatchedEpisode saveWatchedEpisode;
 
   VideoPlayerCubit(
-      {required int titleId,
+      {required this.saveWatchedEpisode,
+      required int titleId,
       required int currentEpisode,
       required String host,
       required List<Episode> episodes,
-      continuetimestamp = 0})
+      int continuetimestamp = 0})
       : super(VideoPlayerChengedEpisodeState(
             titleId: titleId,
             currentEpisode: currentEpisode,
@@ -53,31 +53,17 @@ class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
   }
 
   Future<void> nextEpisode() async {
-    animeDb.changeWatchedEpisode(WatchedEpisode(
-        episodeNumber: state.currentEpisode,
-        animeTitleId: state.titleId,
-        continueTimestamp: (await pause()) ?? 0));
-    disposeControllers();
-    emit(state.copyWith(chewieController: null));
-    final currentEpisode = state.currentEpisode + 1;
-    final newVideoPlayerController = VideoPlayerController.networkUrl(
-      _getUrl(episode: state.episodes[currentEpisode], host: state.host),
-    );
-    await newVideoPlayerController.initialize();
-    final chewieController = state.chewieController
-        ?.copyWith(videoPlayerController: newVideoPlayerController);
-    emit(state.copyWith(
-      currentEpisode: state.currentEpisode + 1,
-      videoPlayerController: newVideoPlayerController,
-      chewieController: chewieController,
-    ));
+    final nextEpisodeNumber = state.currentEpisode + 1;
+    if (nextEpisodeNumber < state.episodes.length) {
+      await _changeEpisode(nextEpisodeNumber);
+    }
   }
 
-  void prevEpisode() {
-    animeDb.deleteWatchedEpisode(WatchedEpisode(
-      episodeNumber: state.currentEpisode,
-      animeTitleId: state.titleId,
-    ));
+  Future<void> prevEpisode() async {
+    final prevEpisodeNumber = state.currentEpisode - 1;
+    if (prevEpisodeNumber >= 0) {
+      await _changeEpisode(prevEpisodeNumber);
+    }
   }
 
   Future<int?> pause() async {
@@ -94,6 +80,15 @@ class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
     chewieController.play();
     return Future.value(
         (await chewieController.videoPlayerController.position)?.inSeconds);
+  }
+
+  Future<void> disposeControllers() async {
+    saveWatchedEpisode(Params(WatchedEpisode(
+        episodeNumber: state.currentEpisode,
+        animeTitleId: state.titleId,
+        continueTimestamp: (await pause()) ?? 0)));
+    state.videoPlayerController.dispose();
+    state.chewieController?.dispose();
   }
 
   Future<void> _createChwieController({int continueTimestamp = 0}) async {
@@ -117,8 +112,19 @@ class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
     emit(state.copyWith(chewieController: chewieController));
   }
 
-  void disposeControllers() {
-    state.videoPlayerController.dispose();
-    state.chewieController?.dispose();
+  Future<void> _changeEpisode(int episodeNumber) async {
+    disposeControllers();
+    emit(state.copyWith(chewieController: null));
+    final newVideoPlayerController = VideoPlayerController.networkUrl(
+      _getUrl(episode: state.episodes[episodeNumber], host: state.host),
+    );
+    await newVideoPlayerController.initialize();
+    final chewieController = state.chewieController
+        ?.copyWith(videoPlayerController: newVideoPlayerController);
+    emit(state.copyWith(
+      currentEpisode: state.currentEpisode + 1,
+      videoPlayerController: newVideoPlayerController,
+      chewieController: chewieController,
+    ));
   }
 }

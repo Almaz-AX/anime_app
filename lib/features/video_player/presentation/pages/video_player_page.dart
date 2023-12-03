@@ -8,6 +8,7 @@ import 'package:anime_app/features/video_player/presentation/widgets/custom_cont
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../injection_container.dart';
 import '../cubit/video_player_cubit.dart';
 
 class VideoPlayerPage extends StatelessWidget {
@@ -23,6 +24,7 @@ class VideoPlayerPage extends StatelessWidget {
           return BlocProvider(
               create: (context) {
                 return VideoPlayerCubit(
+                  saveWatchedEpisode: sl(),
                   titleId: title.id,
                   currentEpisode: currentEpisodeId,
                   host: host,

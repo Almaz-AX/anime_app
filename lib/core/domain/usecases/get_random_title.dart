@@ -7,7 +7,7 @@ import '../../data/repositories/anime_title_repository.dart';
 import '../../error/failure.dart';
 import 'usecase.dart';
 
-class GetRandomTitle implements UseCaseEither<AnimeTitle, NoParams> {
+class GetRandomTitle implements UseCaseFuture<AnimeTitle, NoParams> {
   final AnimeTitleRepository repository;
   GetRandomTitle({
     required this.repository,

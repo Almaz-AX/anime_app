@@ -4,6 +4,5 @@ import '../../../../core/data/models/anime_title.dart';
 import '../../../../core/error/failure.dart';
 
 abstract class GetTitleRepository {
-   Future<Either<Failure, AnimeTitle>> getTitle(
-      int id);
+   Future<Either<Failure, AnimeTitle>> getTitle(int id);
 }

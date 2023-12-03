@@ -49,6 +49,13 @@ class EpisodeCard extends StatelessWidget {
     return null;
   }
 
+  bool getWatchedEpisodeStatus(WatchedEpisode? watchedEpisode) {
+    if (watchedEpisode == null) {
+      return false;
+    }
+    return watchedEpisode.watchCompleted;
+  }
+
   String readTimeStamp(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
 

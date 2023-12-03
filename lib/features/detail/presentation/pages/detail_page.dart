@@ -41,7 +41,7 @@ class Body extends StatelessWidget {
                 create: (context) => state.title,
               ),
               ProxyProvider0(
-                update: (_,__) => state.watchedEpisodes,
+                update: (_, __) => state.watchedEpisodes,
               ),
             ],
             child: const CustomScrollView(

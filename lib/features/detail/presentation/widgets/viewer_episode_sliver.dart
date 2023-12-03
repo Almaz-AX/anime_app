@@ -1,10 +1,11 @@
 import 'package:anime_app/constants/constants.dart';
 import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/domain/entity/isar_data/watched_title.dart';
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/data/local/entity/watched_episode.dart';
 
 class ViewerEpisodeSliver extends StatelessWidget {
   const ViewerEpisodeSliver({
@@ -14,16 +15,18 @@ class ViewerEpisodeSliver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = context.read<AnimeTitle>();
-    final watchedtitle = context.watch<WatchedTitle?>();
-    final currentepisodeId = watchedtitle?.watchedEpisodes.last ?? 0;
-    final currentEpisode = title.player?.list[currentepisodeId];
     final player = title.player;
+    final watchedEpisodes = context.watch<List<WatchedEpisode>>();
     if (player == null) {
       return const SliverToBoxAdapter();
     }
-    if (currentEpisode == null) {
-      return const SliverToBoxAdapter();
+    int currentEpisodeId = 0;
+    for (WatchedEpisode watchedEpisode in watchedEpisodes) {
+      if (watchedEpisode.episodeNumber > currentEpisodeId && watchedEpisode.watchCompleted == false) {
+        currentEpisodeId = watchedEpisode.episodeNumber;
+      }
     }
+    late final Episode currentEpisode = player.list[currentEpisodeId];
     final String preview = currentEpisode.preview ?? title.posters.original.url;
 
     return SliverToBoxAdapter(
@@ -55,7 +58,7 @@ class ViewerEpisodeSliver extends StatelessWidget {
                 ),
                 onPressed: () {
                   VideoPlayerPage.createVideoPlayer(
-                      context, player.host, player.list, currentepisodeId);
+                      context, player.host, player.list, currentEpisodeId);
                 },
               ),
             ),
