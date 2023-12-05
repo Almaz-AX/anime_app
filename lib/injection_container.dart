@@ -8,9 +8,9 @@ import 'package:anime_app/features/search/data/repositories/search_titles_reposi
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
 
 import 'package:anime_app/features/search/presentation/bloc/search_bloc.dart';
-import 'package:anime_app/features/video_player/data/datasources/save_episode_local_data_source.dart';
-import 'package:anime_app/features/video_player/data/repositories/save_watched_episode_repository.dart';
-import 'package:anime_app/features/video_player/domain/repositories/save_watched_episode_repository_impl.dart';
+import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
+import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
+import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -76,10 +76,10 @@ Future<void> init() async {
   sl.registerLazySingleton<SaveWatchedEpisode>(
       () => SaveWatchedEpisode(repository: sl()));
   //Repository
-  sl.registerLazySingleton<SaveWatchedEpisodeRepository>(
+  sl.registerLazySingleton<WatchedEpisodeRepository>(
       () => SaveWatchedEpisodeRepositoryImpl(localDataSource: sl()));
   //LocalDataSource
-  sl.registerLazySingleton<SaveEpisodeLocalDataSource>(
+  sl.registerLazySingleton<WatchedEpisodeLocalDataSource>(
       () => SaveEpisodeLocalDataSourceImpl(watchedEpisodesDAO: sl()));
 
 //! Core
