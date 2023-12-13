@@ -37,6 +37,13 @@ class WatchedEpisodesDAO extends BaseDAO {
     controller.add((await getWatchedEpisodes(watchedEpisode.animeTitleId)));
   }
 
+  Future<void> deleteWatchedEpisodes() async {
+    final db = await getDB();
+    db.delete(
+      WatchedEpisode.tableName,
+    );
+  }
+
   Future<void> _addWatchedEpisode(WatchedEpisode watchedEpisode) async {
     final db = await getDB();
     db.insert(

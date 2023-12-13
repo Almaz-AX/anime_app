@@ -53,7 +53,18 @@ class CustomControls extends StatelessWidget {
                   splashRadius: 50),
             ]),
           ),
-          const VideoSliderWidget()
+          IconButton(
+              onPressed: () async {
+                Future.microtask(() => context.pop());
+              },
+              icon: const ImageIcon(AssetImage(IconAseet.cancel)),
+              splashRadius: 20),
+          PopScope(
+              canPop: true,
+              onPopInvoked: (didPop) async {
+                if (didPop) await cubit.disposeControllers();
+              },
+              child: const VideoSliderWidget())
         ],
       ),
     );
@@ -73,6 +84,7 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   late final VideoPlayerController videoPlayerController;
   late int positionInSeconds;
   late final int durationInSeconds;
+  bool _mounted = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -82,11 +94,12 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
     videoPlayerController.addListener(currentPosotion);
     positionInSeconds = videoPlayerController.value.position.inSeconds;
     durationInSeconds = videoPlayerController.value.duration.inSeconds;
+    _mounted = true;
   }
 
   void currentPosotion() {
     positionInSeconds = videoPlayerController.value.position.inSeconds;
-    setState(() {});
+    if (_mounted) setState(() {});
   }
 
   String _timeFormat(int value) {
@@ -107,7 +120,7 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _mounted = false;
     videoPlayerController.removeListener(currentPosotion);
     super.dispose();
   }
@@ -115,13 +128,6 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      IconButton(
-          onPressed: () {
-            
-            context.pop();
-          },
-          icon: const ImageIcon(AssetImage(IconAseet.cancel)),
-          splashRadius: 20),
       const Expanded(child: SizedBox()),
       Row(children: [
         Expanded(

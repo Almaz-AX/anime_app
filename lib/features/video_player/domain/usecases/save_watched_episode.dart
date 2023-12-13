@@ -7,19 +7,19 @@ import 'package:anime_app/features/video_player/data/repositories/watched_episod
 
 import '../../../../core/data/local/entity/watched_episode.dart';
 
-class SaveWatchedEpisode extends UseCaseFuture<void, Params> {
+class SaveWatchedEpisode extends UseCaseFuture<void, EpisodeParams> {
   final WatchedEpisodeRepository repository;
   SaveWatchedEpisode({
     required this.repository,
   });
   @override
-  Future<Either<Failure, void>> call(Params params) {
+  Future<Either<Failure, void>> call(EpisodeParams params) {
     // TODO: implement call
     return repository.saveEpisode(params.watchedEpisode);
   }
 }
 
-class Params {
+class EpisodeParams {
   final WatchedEpisode watchedEpisode;
-  Params(this.watchedEpisode);
+  EpisodeParams(this.watchedEpisode);
 }

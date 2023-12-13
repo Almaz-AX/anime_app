@@ -1,5 +1,6 @@
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:anime_app/features/video_player/domain/usecases/save_watched_episode.dart';
+import '../../../../core/data/local/DAO/watched_episode_dao.dart';
 import '../../../../core/data/local/entity/watched_episode.dart';
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
@@ -7,42 +8,50 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../injection_container.dart';
+import '../../domain/usecases/get_watched_episodes.dart';
+
 part 'video_player_state.dart';
 
-class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
+class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   final SaveWatchedEpisode saveWatchedEpisode;
+  final GetWatchedEpisodes getWatchedEpisodes;
 
-  VideoPlayerCubit(
-      {required this.saveWatchedEpisode,
-      required int titleId,
-      required int currentEpisode,
-      required String host,
-      required List<Episode> episodes,
-      int continuetimestamp = 0})
-      : super(VideoPlayerChengedEpisodeState(
+  VideoPlayerCubit({
+    required this.saveWatchedEpisode,
+    required this.getWatchedEpisodes,
+    required int titleId,
+    required int currentEpisode,
+    required String host,
+    required List<Episode> episodes,
+  }) : super(VideoPlayerState(
+            status: VideoPlayerStatus.loading,
             titleId: titleId,
             currentEpisode: currentEpisode,
             host: host,
             episodes: episodes,
             videoPlayerController: VideoPlayerController.networkUrl(
                 _getUrl(episode: episodes[currentEpisode], host: host)))) {
-    _createChwieController(continueTimestamp: continuetimestamp);
+    getWatchedEpisode(currentEpisode).then((episode) => _createChwieController(
+            state.videoPlayerController, episode?.continueTimestamp)
+        .then((value) => emit(state.copyWith(
+            status: VideoPlayerStatus.loaded, chewieController: value))));
   }
 
-  void createVideoPlayer(
-      {required int titleId,
-      required int currentEpisode,
-      required String host,
-      required List<Episode> episodes,
-      continuetimestamp = 0}) {
-    _createChwieController(continueTimestamp: continuetimestamp);
-    emit(VideoPlayerChengedEpisodeState(
-        titleId: titleId,
-        currentEpisode: currentEpisode,
-        host: host,
-        episodes: episodes,
-        videoPlayerController: VideoPlayerController.networkUrl(
-            _getUrl(episode: episodes[currentEpisode], host: host))));
+  Future<WatchedEpisode?> getWatchedEpisode(int episodeNumber) async {
+    final episodesOrFailure = await getWatchedEpisodes(Params(state.titleId));
+    WatchedEpisode? watchedEpisode;
+    episodesOrFailure.fold((l) => null, (watchedEpisodes) {
+      print(watchedEpisodes);
+      for (WatchedEpisode episode in watchedEpisodes) {
+        if (episode.episodeNumber == episodeNumber) {
+          print(
+              '${episode.animeTitleId} остановился ${episode.continueTimestamp}');
+          watchedEpisode = episode;
+        }
+      }
+    });
+    return watchedEpisode;
   }
 
   static Uri _getUrl({required Episode episode, required String host}) {
@@ -61,45 +70,49 @@ class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
 
   Future<void> prevEpisode() async {
     final prevEpisodeNumber = state.currentEpisode - 1;
-    if (prevEpisodeNumber >= 0) {
-      await _changeEpisode(prevEpisodeNumber);
+    if (prevEpisodeNumber < 0) {
+      await _changeEpisode(0);
+      return;
     }
+    await _changeEpisode(prevEpisodeNumber);
   }
 
-  Future<int?> pause() async {
+  void pause() {
+    final dao = sl<WatchedEpisodesDAO>();
+    dao.deleteWatchedEpisodes();
     final chewieController = state.chewieController;
     if (chewieController == null) {
-      return Future(() => null);
+      return;
     }
     if (chewieController.isPlaying) {
       chewieController.pause();
-      return Future.value(
-          (await chewieController.videoPlayerController.position)?.inSeconds);
+      return;
     }
-
     chewieController.play();
-    return Future.value(
-        (await chewieController.videoPlayerController.position)?.inSeconds);
   }
 
   Future<void> disposeControllers() async {
-    saveWatchedEpisode(Params(WatchedEpisode(
+    await saveWatchedEpisode(EpisodeParams(WatchedEpisode(
         episodeNumber: state.currentEpisode,
         animeTitleId: state.titleId,
-        continueTimestamp: (await pause()) ?? 0)));
+        continueTimestamp:
+            (state.videoPlayerController.value.position.inSeconds))));
     state.videoPlayerController.dispose();
     state.chewieController?.dispose();
   }
 
-  Future<void> _createChwieController({int continueTimestamp = 0}) async {
-    await state.videoPlayerController.initialize();
+  Future<ChewieController> _createChwieController(
+      VideoPlayerController videoPlayerController,
+      int? continueTimestamp) async {
+    await videoPlayerController.initialize();
+    print(continueTimestamp);
     final chewieController = ChewieController(
-      startAt: Duration(seconds: continueTimestamp),
+      startAt: Duration(seconds: continueTimestamp ?? 0),
       showControls: false,
       showControlsOnInitialize: false,
       // aspectRatio: 25/ 8,
       autoInitialize: true,
-      videoPlayerController: state.videoPlayerController,
+      videoPlayerController: videoPlayerController,
       useRootNavigator: true,
       autoPlay: true,
       placeholder: Container(
@@ -109,20 +122,23 @@ class VideoPlayerCubit extends Cubit<VideoPlayerChengedEpisodeState> {
           ChewieProgressColors(playedColor: const Color(0xFF2EAEBE)),
       progressIndicatorDelay: const Duration(microseconds: 500),
     );
-    emit(state.copyWith(chewieController: chewieController));
+    return chewieController;
   }
 
   Future<void> _changeEpisode(int episodeNumber) async {
+    emit(state.copyWith(status: VideoPlayerStatus.loading));
     disposeControllers();
-    emit(state.copyWith(chewieController: null));
+
     final newVideoPlayerController = VideoPlayerController.networkUrl(
       _getUrl(episode: state.episodes[episodeNumber], host: state.host),
     );
-    await newVideoPlayerController.initialize();
-    final chewieController = state.chewieController
-        ?.copyWith(videoPlayerController: newVideoPlayerController);
+    final watchedEpisode = await getWatchedEpisode(episodeNumber);
+    final chewieController = await _createChwieController(
+        newVideoPlayerController, watchedEpisode?.continueTimestamp);
+
     emit(state.copyWith(
-      currentEpisode: state.currentEpisode + 1,
+      status: VideoPlayerStatus.loaded,
+      currentEpisode: episodeNumber,
       videoPlayerController: newVideoPlayerController,
       chewieController: chewieController,
     ));

@@ -24,6 +24,7 @@ class VideoPlayerPage extends StatelessWidget {
           return BlocProvider(
               create: (context) {
                 return VideoPlayerCubit(
+                  getWatchedEpisodes: sl(),
                   saveWatchedEpisode: sl(),
                   titleId: title.id,
                   currentEpisode: currentEpisodeId,
@@ -39,16 +40,9 @@ class VideoPlayerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        context.pop();
-
-        return Future.value(true);
-      },
-      child: const Scaffold(
-        backgroundColor: Colors.black,
-        body: VideoPlayerWidget(),
-      ),
+    return const Scaffold(
+      backgroundColor: Colors.black,
+      body: VideoPlayerWidget(),
     );
   }
 }
@@ -86,7 +80,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
-    cubit.disposeControllers();
+    // cubit.disposeControllers();
 
     super.dispose();
   }
@@ -103,10 +97,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VideoPlayerCubit, VideoPlayerChengedEpisodeState>(
+    return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
         builder: (context, state) {
       final chewieController = state.chewieController;
-      if (chewieController != null) {
+      if (state.status == VideoPlayerStatus.loaded &&
+          chewieController != null) {
         return GestureDetector(
           onTap: () {
             changeVisibilityControls();

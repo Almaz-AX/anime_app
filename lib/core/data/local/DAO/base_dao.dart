@@ -48,7 +48,8 @@ abstract class BaseDAO {
     )
     ''');
   }
-    Future<void> closeDb()async{
-      await _database?.close();
-    }
+
+  Future<void> closeDb() async {
+    await _database?.close();
+  }
 }

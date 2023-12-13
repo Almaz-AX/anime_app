@@ -5,7 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../injection_container.dart';
-import '../../domain/usecases/get_watched_episodes.dart';
+import '../../domain/usecases/get_stream_watched_episodes.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
 import '../../../../core/data/models/anime_title.dart';
@@ -17,7 +17,7 @@ part 'detail_state.dart';
 
 class DetailBloc extends Bloc<DetailEvent, DetailState> {
   final GetTitle getTitle;
-  final GetWatchedEpisodes getWatchedEpisodes;
+  final GetStreamWatchedEpisodes getWatchedEpisodes;
   StreamSubscription<List<WatchedEpisode>>? subcription;
   final WatchedEpisodesDAO dao = sl();
 

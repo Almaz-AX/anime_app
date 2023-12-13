@@ -11,7 +11,7 @@ class WatchedEpisode extends BaseEntity {
   static const fieldWatchCompleted = 'watch_completed';
   static const fieldContinueTimestamp = 'continue_timestamp';
   static const fieldAnimeTitleId = 'title_id';
-  
+
   @JsonKey(name: fieldEpisodeNumber)
   final int episodeNumber;
 
@@ -31,13 +31,13 @@ class WatchedEpisode extends BaseEntity {
     required this.animeTitleId,
   });
 
- static bool _parseToBool(dynamic value)=> value == 1;
+  static bool _parseToBool(dynamic value) => value == 1;
 
   Map<String, dynamic> toJson() => _$WatchedEpisodeToJson(this);
 
   factory WatchedEpisode.fromJson(Map<String, dynamic> json) =>
       _$WatchedEpisodeFromJson(json);
-      
+
   @override
-  List<Object?> get props => [episodeNumber, animeTitleId, watchCompleted, continueTimestamp];
+  List<Object?> get props => [episodeNumber, animeTitleId];
 }

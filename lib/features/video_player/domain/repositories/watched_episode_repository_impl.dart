@@ -6,9 +6,9 @@ import 'package:anime_app/core/error/failure.dart';
 import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 
-class SaveWatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
+class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
   WatchedEpisodeLocalDataSource localDataSource;
-  SaveWatchedEpisodeRepositoryImpl({
+  WatchedEpisodeRepositoryImpl({
     required this.localDataSource,
   });
   @override

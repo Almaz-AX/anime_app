@@ -9,9 +9,9 @@ abstract class WatchedEpisodeLocalDataSource {
   Future<List<WatchedEpisode>> getEpisodes(int titleId);
 }
 
-class SaveEpisodeLocalDataSourceImpl extends WatchedEpisodeLocalDataSource {
+class WatchedEpisodeLocalDataSourceImpl extends WatchedEpisodeLocalDataSource {
   final WatchedEpisodesDAO watchedEpisodesDAO;
-  SaveEpisodeLocalDataSourceImpl({
+  WatchedEpisodeLocalDataSourceImpl({
     required this.watchedEpisodesDAO,
   });
   @override

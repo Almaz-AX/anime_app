@@ -2,7 +2,7 @@ import 'package:anime_app/core/data/repositories/anime_title_repository.dart';
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
-import 'package:anime_app/features/detail/domain/usecases/get_watched_episodes.dart';
+import 'package:anime_app/features/detail/domain/usecases/get_stream_watched_episodes.dart';
 import 'package:anime_app/features/search/data/datasources/search_remote_data_source.dart';
 import 'package:anime_app/features/search/data/repositories/search_titles_repository_impl.dart';
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
@@ -25,6 +25,7 @@ import 'features/detail/domain/repositories/get_watched_episodes_repository.dart
 import 'features/detail/domain/usecases/get_title.dart';
 import 'features/detail/presentation/blocs/detail_bloc.dart';
 import 'features/search/domain/repositories/search_titles.repository.dart';
+import 'features/video_player/domain/usecases/get_watched_episodes.dart';
 import 'features/video_player/domain/usecases/save_watched_episode.dart';
 
 final sl = GetIt.instance;
@@ -56,8 +57,8 @@ Future<void> init() async {
 
   // Use cases
   sl.registerLazySingleton<GetTitle>(() => GetTitle(repository: sl()));
-  sl.registerLazySingleton<GetWatchedEpisodes>(
-      () => GetWatchedEpisodes(repository: sl()));
+  sl.registerLazySingleton<GetStreamWatchedEpisodes>(
+      () => GetStreamWatchedEpisodes(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<GetTitleRepository>(
@@ -75,12 +76,14 @@ Future<void> init() async {
   //Usecase
   sl.registerLazySingleton<SaveWatchedEpisode>(
       () => SaveWatchedEpisode(repository: sl()));
+  sl.registerLazySingleton<GetWatchedEpisodes>(
+      () => GetWatchedEpisodes(repository: sl()));
   //Repository
   sl.registerLazySingleton<WatchedEpisodeRepository>(
-      () => SaveWatchedEpisodeRepositoryImpl(localDataSource: sl()));
+      () => WatchedEpisodeRepositoryImpl(localDataSource: sl()));
   //LocalDataSource
   sl.registerLazySingleton<WatchedEpisodeLocalDataSource>(
-      () => SaveEpisodeLocalDataSourceImpl(watchedEpisodesDAO: sl()));
+      () => WatchedEpisodeLocalDataSourceImpl(watchedEpisodesDAO: sl()));
 
 //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
