@@ -55,7 +55,8 @@ class CustomControls extends StatelessWidget {
           ),
           IconButton(
               onPressed: () async {
-                Future.microtask(() => context.pop());
+                context.pop();
+                // await Future.microtask(() => context.pop());
               },
               icon: const ImageIcon(AssetImage(IconAseet.cancel)),
               splashRadius: 20),
@@ -87,7 +88,6 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   bool _mounted = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     videoPlayerController =
         context.read<VideoPlayerCubit>().state.videoPlayerController;
@@ -98,8 +98,11 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   }
 
   void currentPosotion() {
-    positionInSeconds = videoPlayerController.value.position.inSeconds;
-    if (_mounted) setState(() {});
+    if (_mounted) {
+      setState(() {
+        positionInSeconds = videoPlayerController.value.position.inSeconds;
+      });
+    }
   }
 
   String _timeFormat(int value) {

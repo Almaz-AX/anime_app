@@ -1,30 +1,48 @@
 import 'dart:async';
-
 import '../entity/watched_episode.dart';
 import 'base_dao.dart';
 
 class WatchedEpisodesDAO extends BaseDAO {
-  Future<List<WatchedEpisode>> getWatchedEpisodes(int? titleId) async {
+  Future<List<WatchedEpisode>> getWatchedEpisodesByTitle(int titleId) async {
     final db = await getDB();
-    final List<Map<String, dynamic>> maps = await db.query(
+    List<Map<String, dynamic>> maps;
+    maps = await db.query(
       WatchedEpisode.tableName,
       where: '${WatchedEpisode.fieldAnimeTitleId} = $titleId',
     );
+
     final watchedEpisodes =
         maps.map((e) => WatchedEpisode.fromJson(e)).toList();
-    print(watchedEpisodes);
+    return watchedEpisodes;
+  }
+
+  Future<List<WatchedEpisode>> getAllUnderseenEpisodes() async {
+    final db = await getDB();
+    List<Map<String, dynamic>> maps;
+    maps = await db.query(
+      WatchedEpisode.tableName,
+      where: '${WatchedEpisode.fieldWatchCompleted} = ${false}',
+    );
+
+    final watchedEpisodes =
+        maps.map((e) => WatchedEpisode.fromJson(e)).toList();
     return watchedEpisodes;
   }
 
   Future<void> changeWatchedEpisode(WatchedEpisode watchedEpisode) async {
     final watchedEpisodes =
-        await getWatchedEpisodes(watchedEpisode.animeTitleId);
+        await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId);
     if (watchedEpisodes.contains(watchedEpisode)) {
       await _updateWatchedEpisode(watchedEpisode);
     } else {
       await _addWatchedEpisode(watchedEpisode);
     }
-    controller.add((await getWatchedEpisodes(watchedEpisode.animeTitleId)));
+    watchedEpisodeController
+        .add((await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId)));
+    if (watchedEpisode.watchCompleted == false) {
+      final episodes = await getAllUnderseenEpisodes();
+      watchedEpisodeHistoryController.add(episodes);
+    }
   }
 
   Future<void> deleteWatchedEpisode(WatchedEpisode watchedEpisode) async {
@@ -34,7 +52,8 @@ class WatchedEpisodesDAO extends BaseDAO {
       where:
           '${WatchedEpisode.fieldAnimeTitleId} = ${watchedEpisode.animeTitleId}',
     );
-    controller.add((await getWatchedEpisodes(watchedEpisode.animeTitleId)));
+    watchedEpisodeController
+        .add((await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId)));
   }
 
   Future<void> deleteWatchedEpisodes() async {
@@ -58,14 +77,17 @@ class WatchedEpisodesDAO extends BaseDAO {
   }
 
   WatchedEpisodesDAO() {
-    controller = StreamController<List<WatchedEpisode>>.broadcast();
+    watchedEpisodeController =
+        StreamController<List<WatchedEpisode>>.broadcast();
+    watchedEpisodeHistoryController =
+        StreamController<List<WatchedEpisode>>.broadcast();
   }
 
-  late final StreamController<List<WatchedEpisode>> controller;
-
-  Stream<List<WatchedEpisode>> getEpisodesAsStream(int id) => controller.stream;
+  late final StreamController<List<WatchedEpisode>>
+      watchedEpisodeHistoryController;
+  late final StreamController<List<WatchedEpisode>> watchedEpisodeController;
 
   Future<void> closeWatchedEpisodes() async {
-    await controller.close();
+    await watchedEpisodeController.close();
   }
 }

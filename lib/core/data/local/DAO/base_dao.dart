@@ -25,6 +25,7 @@ abstract class BaseDAO {
         onCreate: (db, version) async {
       final batch = db.batch();
       _createAnimeTitlesTableV1(batch);
+      _createWatchedEpisodeTableV1(batch);
       await batch.commit();
     });
   }
@@ -36,7 +37,9 @@ abstract class BaseDAO {
         ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL
       )
       ''');
+  }
 
+  void _createWatchedEpisodeTableV1(Batch batch) {
     batch.execute('''
     CREATE TABLE ${WatchedEpisode.tableName}(
       id INTEGER PRIMARY KEY AUTOINCREMENT,

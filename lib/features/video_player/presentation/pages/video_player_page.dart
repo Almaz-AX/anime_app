@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
-import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../injection_container.dart';
@@ -80,8 +79,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
-    // cubit.disposeControllers();
-
     super.dispose();
   }
 

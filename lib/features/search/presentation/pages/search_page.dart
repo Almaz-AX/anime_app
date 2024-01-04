@@ -110,7 +110,7 @@ class SearchTitleBody extends StatelessWidget {
                 .add(SearchTitlesNextPageEvent(index, state.searchTitles));
             return TitleCardWidget(
               title: title,
-              height: 530,
+              height: 570,
             );
           }, childCount: state.titles.length),
         );
@@ -131,7 +131,7 @@ class TitleCardWidget extends StatelessWidget {
   const TitleCardWidget({
     super.key,
     required this.title,
-    this.height = 530,
+    this.height = 570,
     this.width,
   });
 
@@ -150,14 +150,14 @@ class TitleCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: height - 0.155 * height,
+                  height: height - 0.165 * height,
                   width: width,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
                           image: NetworkImage(
                               '${Host.host}${title.posters.medium.url}'),
-                          fit: BoxFit.fill)),
+                          fit: BoxFit.fitWidth)),
                 ),
                 const SizedBox(
                   height: 5,

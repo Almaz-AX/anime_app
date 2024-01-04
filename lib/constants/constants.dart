@@ -1,6 +1,7 @@
 abstract class Constants {
   static const hello = 'Hello, ';
-  static const continueWatching = 'Continue watching';
+  static const continueWatching = 'Продолжить промотр';
+  static const watch = 'Смотреть';
   static const main = 'Главная';
   static const search = 'Поиск';
   static const favorites = 'Избранное';

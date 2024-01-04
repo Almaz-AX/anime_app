@@ -22,7 +22,8 @@ class ViewerEpisodeSliver extends StatelessWidget {
     }
     int currentEpisodeId = 0;
     for (WatchedEpisode watchedEpisode in watchedEpisodes) {
-      if (watchedEpisode.episodeNumber > currentEpisodeId && watchedEpisode.watchCompleted == false) {
+      if (watchedEpisode.episodeNumber > currentEpisodeId &&
+          watchedEpisode.watchCompleted == false) {
         currentEpisodeId = watchedEpisode.episodeNumber;
       }
     }

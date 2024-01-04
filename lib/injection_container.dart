@@ -8,7 +8,7 @@ import 'package:anime_app/features/search/data/repositories/search_titles_reposi
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
 
 import 'package:anime_app/features/search/presentation/bloc/search_bloc.dart';
-import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
+import 'package:anime_app/core/data/datasourses/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
 import 'package:dio/dio.dart';
