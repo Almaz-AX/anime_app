@@ -11,9 +11,13 @@ class WatchedEpisode extends BaseEntity {
   static const fieldWatchCompleted = 'watch_completed';
   static const fieldContinueTimestamp = 'continue_timestamp';
   static const fieldAnimeTitleId = 'title_id';
+  static const fieldUpdatedTime = 'updated_time';
 
   @JsonKey(name: fieldEpisodeNumber)
   final int episodeNumber;
+
+  @JsonKey(name: fieldUpdatedTime)
+  final int updatedTime;
 
   @JsonKey(name: fieldWatchCompleted, fromJson: _parseToBool)
   final bool watchCompleted;
@@ -29,6 +33,7 @@ class WatchedEpisode extends BaseEntity {
     this.watchCompleted = false,
     this.continueTimestamp = 0,
     required this.animeTitleId,
+    required this.updatedTime,
   });
 
   static bool _parseToBool(dynamic value) => value == 1;
@@ -39,5 +44,8 @@ class WatchedEpisode extends BaseEntity {
       _$WatchedEpisodeFromJson(json);
 
   @override
-  List<Object?> get props => [episodeNumber, animeTitleId];
+  List<Object?> get props => [
+        episodeNumber,
+        animeTitleId,
+      ];
 }

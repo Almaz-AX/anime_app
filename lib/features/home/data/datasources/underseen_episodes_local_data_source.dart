@@ -4,7 +4,7 @@ import '../../../../core/data/local/DAO/watched_episode_dao.dart';
 import '../../../../core/data/local/entity/watched_episode.dart';
 
 abstract class UnderseenEpisodesLocalDataSource {
-  listenUnderseenEpisodesHistory();
+  Stream<List<WatchedEpisode>> listenUnderseenEpisodesHistory();
 }
 
 class UnderseenEpisodesLocalDataSourceImpl
@@ -17,7 +17,7 @@ class UnderseenEpisodesLocalDataSourceImpl
 
   @override
   Stream<List<WatchedEpisode>> listenUnderseenEpisodesHistory() {
-    local.getAllUnderseenEpisodes().then((value) => controller.add(value));
+    local.getUnderseenEpisodes().then((value) => controller.add(value));
     return controller.stream;
   }
 }

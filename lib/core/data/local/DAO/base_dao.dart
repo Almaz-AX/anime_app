@@ -47,6 +47,7 @@ abstract class BaseDAO {
       ${WatchedEpisode.fieldWatchCompleted} INTEGER NOT NULL,
       ${WatchedEpisode.fieldContinueTimestamp} INTEGER DEFAULT 0,
       ${WatchedEpisode.fieldAnimeTitleId} INTEGER NOT NULL,
+      ${WatchedEpisode.fieldUpdatedTime} INT NOT NULL,
       FOREIGN KEY (${WatchedEpisode.fieldAnimeTitleId}) REFERENCES ${AnimeTitleDb.tableName}(${AnimeTitleDb.fieldId}) ON DELETE CASCADE
     )
     ''');

@@ -4,13 +4,14 @@ import 'package:dio/dio.dart';
 import '../../error/expetions.dart';
 import '../models/anime_title.dart';
 
-abstract class AnimeTitleRemoteDataSource {
+abstract class GetRandomTitleRemoteDataSource {
   Future<AnimeTitle> getRandomTitle();
 }
 
-class AnimeTitleRemoteDataSourceImpl implements AnimeTitleRemoteDataSource {
+class GetRandomTitleRemoteDataSourceImpl
+    implements GetRandomTitleRemoteDataSource {
   final Dio dio;
-  AnimeTitleRemoteDataSourceImpl({
+  GetRandomTitleRemoteDataSourceImpl({
     required this.dio,
   });
   @override
@@ -24,5 +25,4 @@ class AnimeTitleRemoteDataSourceImpl implements AnimeTitleRemoteDataSource {
       throw ServerExeption();
     }
   }
-  
 }

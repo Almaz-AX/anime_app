@@ -16,14 +16,15 @@ class WatchedEpisodesDAO extends BaseDAO {
     return watchedEpisodes;
   }
 
-  Future<List<WatchedEpisode>> getAllUnderseenEpisodes() async {
+  Future<List<WatchedEpisode>> getUnderseenEpisodes() async {
     final db = await getDB();
     List<Map<String, dynamic>> maps;
     maps = await db.query(
       WatchedEpisode.tableName,
       where: '${WatchedEpisode.fieldWatchCompleted} = ${false}',
+      orderBy: '${WatchedEpisode.fieldUpdatedTime} DESC',
+      limit: 10,
     );
-
     final watchedEpisodes =
         maps.map((e) => WatchedEpisode.fromJson(e)).toList();
     return watchedEpisodes;
@@ -40,7 +41,7 @@ class WatchedEpisodesDAO extends BaseDAO {
     watchedEpisodeController
         .add((await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId)));
     if (watchedEpisode.watchCompleted == false) {
-      final episodes = await getAllUnderseenEpisodes();
+      final episodes = await getUnderseenEpisodes();
       watchedEpisodeHistoryController.add(episodes);
     }
   }

@@ -1,10 +1,7 @@
 import 'dart:async';
-
-import 'package:anime_app/core/data/local/DAO/watched_episode_dao.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../injection_container.dart';
 import '../../domain/usecases/get_stream_watched_episodes.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
@@ -19,7 +16,6 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
   final GetTitle getTitle;
   final GetStreamWatchedEpisodes getWatchedEpisodes;
   StreamSubscription<List<WatchedEpisode>>? subcription;
-  final WatchedEpisodesDAO dao = sl();
 
   DetailBloc({
     required this.getTitle,
@@ -67,9 +63,7 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
 
   @override
   Future<void> close() async {
-    print(subcription);
     await subcription?.cancel();
-    print(subcription);
     return super.close();
   }
 }

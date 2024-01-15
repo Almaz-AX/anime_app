@@ -1,10 +1,11 @@
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/data/models/anime_title.dart';
-import '../../../../core/error/expetions.dart';
+import '../../../../core/error/failure.dart';
 
 abstract class HomeReomoteDataSource {
-  getEpisodes(List<int> titleIdList);
+  Future<Either<Failure, List<AnimeTitle>>> getTitles(List<int> titleIdList);
 }
 
 class HomeRemoteDataSourceImpl implements HomeReomoteDataSource {
@@ -13,17 +14,18 @@ class HomeRemoteDataSourceImpl implements HomeReomoteDataSource {
   HomeRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<AnimeTitle>> getEpisodes(List<int> titleIdList) async {
+  Future<Either<Failure, List<AnimeTitle>>> getTitles(
+      List<int> titleIdList) async {
     final path =
-        '/title/list?id_list=${titleIdList.join(',')}&filter=names,posters,type,status,player';
+        '/title/list?id_list=${titleIdList.join(',')}&filter=id,names,posters,genres,type,status,player';
     final response = await dio.get(path);
     if (response.statusCode == 200) {
       final titleList = (response.data as List<dynamic>)
           .map((title) => AnimeTitle.fromJson(title))
           .toList();
-      return titleList;
+      return Right(titleList);
     } else {
-      throw ServerExeption();
+      return Left(ServerFailure());
     }
   }
 }

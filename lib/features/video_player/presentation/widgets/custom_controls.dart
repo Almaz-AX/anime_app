@@ -55,8 +55,7 @@ class CustomControls extends StatelessWidget {
           ),
           IconButton(
               onPressed: () async {
-                context.pop();
-                // await Future.microtask(() => context.pop());
+                await Future.microtask(() => context.pop());
               },
               icon: const ImageIcon(AssetImage(IconAseet.cancel)),
               splashRadius: 20),

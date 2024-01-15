@@ -1,8 +1,13 @@
-import 'package:anime_app/features/search/data/repositories/rest_api_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../constants/constants.dart';
 import '../../../../assets/assets.dart';
+import '../../../../core/data/local/DAO/watched_episode_dao.dart';
+import '../../../../injection_container.dart';
+import '../bloc/home_bloc.dart';
+import '../widgets/underseen_episodes_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -30,7 +35,7 @@ class HomePage extends StatelessWidget {
             splashRadius: 15,
             padding: EdgeInsets.zero,
             onPressed: () {
-              RestAPIService().getTitle(9000);
+              sl<WatchedEpisodesDAO>().deleteWatchedEpisodes();
             },
             icon: Image.asset(
               IconAseet.alarmBell,
@@ -39,7 +44,11 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: const _Body(),
+      body: BlocProvider(
+        create: (context) =>
+            sl<HomeBloc>()..add(HomeGetUnderSeenEpisodesEvent()),
+        child: const _Body(),
+      ),
     );
   }
 }
@@ -50,108 +59,30 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: const [
-        _Unwatched(),
-        _TopInThisMonth(),
-        _RandomTitlesList(),
+      children: [
+        BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            if (state.status == HomeStatus.loading) {
+              return const CircularProgressIndicator();
+            }
+            if (state.status == HomeStatus.success) {
+              return MultiBlocProvider(
+                providers: [
+                  ProxyProvider0(
+                    update: (_, __) => state.underseenEpisodes,
+                  ),
+                  ProxyProvider0(update: (_, __) => state.underseenTitles),
+                ],
+                child: const UnderseenEpisodes(),
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
+        const _TopInThisMonth(),
+        const _RandomTitlesList(),
       ],
-    );
-  }
-}
-
-class _Unwatched extends StatelessWidget {
-  const _Unwatched();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Continue watching',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 232,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (context, index) => Container(
-                height: 210,
-                width: 260,
-                padding: const EdgeInsets.only(right: 20),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 160,
-                          width: 260,
-                          padding: const EdgeInsets.only(right: 20),
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Text(
-                          'Episode_Name',
-                          maxLines: 2,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        Text(
-                          '4 Season 1, Epizode 1',
-                          maxLines: 1,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 160,
-                      child: InkWell(
-                        customBorder: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        onTap: () {},
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Row(
-                        children: [
-                          Text('24 min',
-                              style: Theme.of(context).textTheme.bodyMedium),
-                          const Expanded(
-                            child: SizedBox(
-                              height: 10,
-                            ),
-                          ),
-                          MaterialButton(
-                            shape: const CircleBorder(),
-                            minWidth: 0,
-                            onPressed: () {},
-                            child: const ImageIcon(
-                              AssetImage(IconAseet.cancel),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

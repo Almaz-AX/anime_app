@@ -1,14 +1,13 @@
-import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/features/video_player/domain/usecases/save_watched_episode.dart';
-import '../../../../core/data/local/DAO/watched_episode_dao.dart';
-import '../../../../core/data/local/entity/watched_episode.dart';
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../../injection_container.dart';
+import '../../../../core/data/models/anime_title.dart';
+import '../../domain/usecases/save_watched_episode.dart';
+
+import '../../../../core/data/local/entity/watched_episode.dart';
 import '../../domain/usecases/get_watched_episodes.dart';
 
 part 'video_player_state.dart';
@@ -42,11 +41,8 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     final episodesOrFailure = await getWatchedEpisodes(Params(state.titleId));
     WatchedEpisode? watchedEpisode;
     episodesOrFailure.fold((l) => null, (watchedEpisodes) {
-      print(watchedEpisodes);
       for (WatchedEpisode episode in watchedEpisodes) {
         if (episode.episodeNumber == episodeNumber) {
-          print(
-              '${episode.animeTitleId} остановился ${episode.continueTimestamp}');
           watchedEpisode = episode;
         }
       }
@@ -78,8 +74,6 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   void pause() {
-    final dao = sl<WatchedEpisodesDAO>();
-    dao.deleteWatchedEpisodes();
     final chewieController = state.chewieController;
     if (chewieController == null) {
       return;
@@ -92,11 +86,20 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   Future<void> disposeControllers() async {
+    bool watchedCompleted = false;
+    final currentPositionInSeconds =
+        state.videoPlayerController.value.position.inSeconds;
+    final durationInSeconds =
+        state.videoPlayerController.value.duration.inSeconds;
+    if (currentPositionInSeconds / durationInSeconds > 0.9) {
+      watchedCompleted = true;
+    }
     await saveWatchedEpisode(EpisodeParams(WatchedEpisode(
+        updatedTime: DateTime.timestamp().millisecondsSinceEpoch,
         episodeNumber: state.currentEpisode,
         animeTitleId: state.titleId,
-        continueTimestamp:
-            (state.videoPlayerController.value.position.inSeconds))));
+        continueTimestamp: currentPositionInSeconds,
+        watchCompleted: watchedCompleted)));
     state.videoPlayerController.dispose();
     state.chewieController?.dispose();
   }
@@ -105,7 +108,6 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
       VideoPlayerController videoPlayerController,
       int? continueTimestamp) async {
     await videoPlayerController.initialize();
-    print(continueTimestamp);
     final chewieController = ChewieController(
       startAt: Duration(seconds: continueTimestamp ?? 0),
       showControls: false,

@@ -31,6 +31,6 @@ class WatchedEpisodeLocalDataSourceImpl extends WatchedEpisodeLocalDataSource {
   @override
   Future<List<WatchedEpisode>> getAllUnderseenEpisodes() {
     // TODO: implement getAllUnderseenEpisodes
-    return watchedEpisodesDAO.getAllUnderseenEpisodes();
+    return watchedEpisodesDAO.getUnderseenEpisodes();
   }
 }

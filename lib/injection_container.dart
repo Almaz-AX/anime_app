@@ -1,8 +1,12 @@
-import 'package:anime_app/core/data/repositories/anime_title_repository.dart';
+import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
 import 'package:anime_app/features/detail/domain/usecases/get_stream_watched_episodes.dart';
+import 'package:anime_app/features/home/domain/repositories/home_repository.dart';
+import 'package:anime_app/features/home/domain/usecases/get_underseen_episodes.dart';
+import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dart';
+import 'package:anime_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:anime_app/features/search/data/datasources/search_remote_data_source.dart';
 import 'package:anime_app/features/search/data/repositories/search_titles_repository_impl.dart';
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
@@ -14,7 +18,7 @@ import 'package:anime_app/features/video_player/domain/repositories/watched_epis
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
-import 'core/data/datasourses/anime_title_remote_data_source.dart';
+import 'core/data/datasourses/get_random_title_remote_data_source.dart';
 import 'core/data/local/DAO/watched_episode_dao.dart';
 import 'core/domain/usecases/get_random_title.dart';
 import 'core/platform/network_info.dart';
@@ -24,6 +28,8 @@ import 'features/detail/domain/repositories/get_title_repository.dart';
 import 'features/detail/domain/repositories/get_watched_episodes_repository.dart';
 import 'features/detail/domain/usecases/get_title.dart';
 import 'features/detail/presentation/blocs/detail_bloc.dart';
+import 'features/home/data/datasources/home_remote_data_source.dart';
+import 'features/home/data/datasources/underseen_episodes_local_data_source.dart';
 import 'features/search/domain/repositories/search_titles.repository.dart';
 import 'features/video_player/domain/usecases/get_watched_episodes.dart';
 import 'features/video_player/domain/usecases/save_watched_episode.dart';
@@ -32,6 +38,25 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
 //! Features
+  //HOME
+  //Bloc
+  sl.registerFactory(
+      () => HomeBloc(getUnderseenEpisodes: sl(), getUnderseenTitles: sl()));
+
+  //Use cases
+  sl.registerLazySingleton<GetUnderseenEpisodes>(
+      () => GetUnderseenEpisodes(repository: sl()));
+  sl.registerLazySingleton<GetUnderseenTitles>(
+      () => GetUnderseenTitles(repository: sl()));
+
+  //Repsitory
+  sl.registerLazySingleton<HomeRepository>(
+      () => HomeRepositoryImpl(localDatasource: sl(), remoteDataSource: sl()));
+  //DataSource
+  sl.registerLazySingleton<UnderseenEpisodesLocalDataSource>(
+      () => UnderseenEpisodesLocalDataSourceImpl(local: sl()));
+  sl.registerLazySingleton<HomeReomoteDataSource>(
+      () => HomeRemoteDataSourceImpl(dio: sl()));
 
   // SEARCH
   // Bloc
@@ -93,12 +118,12 @@ Future<void> init() async {
       () => GetRandomTitle(repository: sl()));
 
   // Repository
-  sl.registerLazySingleton<AnimeTitleRepository>(() =>
-      AnimeTitleRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<GetRandomTitleRepository>(() =>
+      GetRandomTitleRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
 
   // DataSource
-  sl.registerLazySingleton<AnimeTitleRemoteDataSource>(
-      () => AnimeTitleRemoteDataSourceImpl(dio: sl()));
+  sl.registerLazySingleton<GetRandomTitleRemoteDataSource>(
+      () => GetRandomTitleRemoteDataSourceImpl(dio: sl()));
 
   // local
   //DAO
