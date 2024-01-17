@@ -1,7 +1,9 @@
+import 'package:anime_app/core/host.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../assets/assets.dart';
+import '../../../../constants/constants.dart';
 import '../../../../core/data/local/entity/watched_episode.dart';
 import '../../../../core/data/models/anime_title.dart';
 
@@ -14,11 +16,12 @@ class UnderseenEpisodes extends StatelessWidget {
     final underseenTitles = context.read<List<AnimeTitle>>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, bottom: 16),
           child: Text(
-            'Continue watching',
+            Constants.continueWatching,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
@@ -29,78 +32,96 @@ class UnderseenEpisodes extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: underseenEpisodes.length,
             itemBuilder: (context, index) {
-              final episode = underseenTitles[index]
-                  .player
-                  ?.list[underseenEpisodes[index].episodeNumber];
+              AnimeTitle? underseenTitle;
+              for (AnimeTitle title in underseenTitles) {
+                if (title.id == underseenEpisodes[index].animeTitleId) {
+                  underseenTitle = title;
+                  break;
+                }
+              }
+              final episode = underseenTitle
+                  ?.player?.list[underseenEpisodes[index].episodeNumber];
+
+              if (underseenTitle == null) {
+                return Container();
+              }
               if (episode == null) {
                 return Container();
               }
-              return Container(
-                height: 210,
+              return SizedBox(
                 width: 260,
-                padding: const EdgeInsets.only(right: 20),
-                child: Stack(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 160,
-                          width: 260,
-                          padding: const EdgeInsets.only(right: 20),
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
+                    Container(
+                      height: 160,
+                      width: 260,
+                      padding: const EdgeInsets.only(right: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.network(
+                                  '${Host.host}${episode.preview ?? underseenTitle.posters.small.url}',
+                                  fit: BoxFit.cover,
+                                  cacheHeight: 165,
+                                  cacheWidth: 260,
+                                ),
+                              ],
                             ),
-                          ),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.5),
+                                onTap: () {},
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Row(
+                                children: [
+                                  Text('24 min',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
+                                  const Expanded(
+                                    child: SizedBox(
+                                      height: 10,
+                                    ),
+                                  ),
+                                  MaterialButton(
+                                    shape: const CircleBorder(),
+                                    minWidth: 0,
+                                    onPressed: () {},
+                                    child: const ImageIcon(
+                                      AssetImage(IconAseet.cancel),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Text(
-                          underseenTitles[index].names.ru,
-                          maxLines: 2,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        Text(
-                          underseenEpisodes[index].episodeNumber.toString(),
-                          maxLines: 1,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
+                      ),
                     ),
                     SizedBox(
-                      height: 160,
-                      child: InkWell(
-                        customBorder: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        onTap: () {},
+                      child: Text(
+                        underseenTitle.names.ru,
+                        maxLines: 2,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Row(
-                        children: [
-                          Text('24 min',
-                              style: Theme.of(context).textTheme.bodyMedium),
-                          const Expanded(
-                            child: SizedBox(
-                              height: 10,
-                            ),
-                          ),
-                          MaterialButton(
-                            shape: const CircleBorder(),
-                            minWidth: 0,
-                            onPressed: () {},
-                            child: const ImageIcon(
-                              AssetImage(IconAseet.cancel),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                    Text(
+                      'Серия ${(underseenEpisodes[index].episodeNumber + (underseenTitle.player?.episodes.first ?? 1)).toString()}',
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                   ],
                 ),
               );

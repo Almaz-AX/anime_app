@@ -13,9 +13,9 @@ class SaveWatchedEpisode extends UseCaseFuture<void, EpisodeParams> {
     required this.repository,
   });
   @override
-  Future<Either<Failure, void>> call(EpisodeParams params) {
+  Future<Either<Failure, void>> call(EpisodeParams params) async {
     // TODO: implement call
-    return repository.saveEpisode(params.watchedEpisode);
+    return await repository.saveEpisode(params.watchedEpisode);
   }
 }
 

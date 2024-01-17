@@ -86,6 +86,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   Future<void> disposeControllers() async {
+    state.chewieController?.isPlaying ?? state.chewieController?.pause();
     bool watchedCompleted = false;
     final currentPositionInSeconds =
         state.videoPlayerController.value.position.inSeconds;

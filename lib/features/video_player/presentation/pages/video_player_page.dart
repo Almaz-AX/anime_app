@@ -60,6 +60,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late final VideoPlayerCubit cubit;
   late final VideoPlayerController videoPlayerController;
   ChewieController? chewieController;
+  bool _mounted = false;
 
   @override
   void initState() {
@@ -68,6 +69,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    _mounted = true;
+    changeVisibilityControls();
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     cubit = context.read<VideoPlayerCubit>();
@@ -75,6 +78,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
+    _mounted = false;
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -88,8 +92,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (visibilityControls == true) {
       Future.delayed(const Duration(seconds: 3), changeVisibilityControls);
     }
-
-    setState(() {});
+    if (_mounted) setState(() {});
+    ;
   }
 
   @override
