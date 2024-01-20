@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 
 import 'package:anime_app/core/data/local/entity/watched_episode.dart';
 import 'package:anime_app/core/error/failure.dart';
-import 'package:anime_app/core/data/datasourses/watched_episode_local_data_source.dart';
+import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 
 class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {

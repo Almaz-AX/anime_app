@@ -11,6 +11,7 @@ import '../../data/datasources/underseen_episodes_local_data_source.dart';
 abstract class HomeRepository {
   Future<Either<Failure, List<AnimeTitle>>> getTitles(List<int> titleIdList);
   Stream<List<WatchedEpisode>> listenUnderseenEpisodes();
+  Future<Either<Failure, void>> completeWatching(WatchedEpisode episode);
 }
 
 class HomeRepositoryImpl implements HomeRepository {
@@ -32,4 +33,15 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Stream<List<WatchedEpisode>> listenUnderseenEpisodes() =>
       _watchedEpisodesStream;
+
+  @override
+  Future<Either<Failure, void>> completeWatching(episode) async {
+    try {
+      return Right(await localDatasource.completeWatching(episode));
+    }
+    //заглушка, возможно надо будет добавить возбуждение ошибки в datasource если надо будет
+    on CasheFailure {
+      return Left(CasheFailure());
+    }
+  }
 }

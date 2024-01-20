@@ -6,18 +6,16 @@ enum VideoPlayerStatus { loading, loaded }
 class VideoPlayerState extends Equatable {
   final VideoPlayerStatus status;
   final int titleId;
-  final String host;
+  final Player player;
   final int currentEpisode;
-  final List<Episode> episodes;
   final VideoPlayerController videoPlayerController;
   final ChewieController? chewieController;
   final WatchedEpisode? watchedEpisode;
   VideoPlayerState({
     required this.status,
     required this.titleId,
-    required this.host,
+    required this.player,
     required this.currentEpisode,
-    required this.episodes,
     required this.videoPlayerController,
     this.chewieController,
     this.watchedEpisode,
@@ -36,7 +34,7 @@ class VideoPlayerState extends Equatable {
   VideoPlayerState copyWith({
     VideoPlayerStatus? status,
     int? titleId,
-    String? host,
+    Player? player,
     int? currentEpisode,
     List<Episode>? episodes,
     VideoPlayerController? videoPlayerController,
@@ -46,9 +44,8 @@ class VideoPlayerState extends Equatable {
     return VideoPlayerState(
       status: status ?? this.status,
       titleId: titleId ?? this.titleId,
-      host: host ?? this.host,
+      player: player ?? this.player,
       currentEpisode: currentEpisode ?? this.currentEpisode,
-      episodes: episodes ?? this.episodes,
       videoPlayerController:
           videoPlayerController ?? this.videoPlayerController,
       chewieController: chewieController ?? this.chewieController,

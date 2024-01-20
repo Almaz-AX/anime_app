@@ -39,11 +39,9 @@ class WatchedEpisodesDAO extends BaseDAO {
       await _addWatchedEpisode(watchedEpisode);
     }
     watchedEpisodeController
-        .add((await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId)));
-    if (watchedEpisode.watchCompleted == false) {
-      final episodes = await getUnderseenEpisodes();
-      watchedEpisodeHistoryController.add(episodes);
-    }
+        .add(await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId));
+
+    watchedEpisodeHistoryController.add(await getUnderseenEpisodes());
   }
 
   Future<void> deleteWatchedEpisode(WatchedEpisode watchedEpisode) async {
@@ -74,7 +72,9 @@ class WatchedEpisodesDAO extends BaseDAO {
 
   Future<void> _updateWatchedEpisode(WatchedEpisode watchedEpisode) async {
     final db = await getDB();
-    db.update(WatchedEpisode.tableName, watchedEpisode.toJson());
+    db.update(WatchedEpisode.tableName, watchedEpisode.toJson(),
+        where:
+            '${WatchedEpisode.fieldAnimeTitleId} = ${watchedEpisode.animeTitleId} AND ${WatchedEpisode.fieldEpisodeNumber} = ${watchedEpisode.episodeNumber}');
   }
 
   WatchedEpisodesDAO() {

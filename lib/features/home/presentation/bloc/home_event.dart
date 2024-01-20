@@ -17,5 +17,16 @@ class HomeGetUnderSeenTitlesEvent extends HomeEvent {
   });
   @override
   // TODO: implement props
-  List<Object> get props => [underseenEpisodes];
+  List<Object> get props => super.props..add(underseenEpisodes);
+}
+
+class HomeCompleteWatchingEvent extends HomeEvent {
+  final WatchedEpisode episode;
+  HomeCompleteWatchingEvent({
+    required this.episode,
+  });
+
+  @override
+  // TODO: implement props
+  List<Object> get props => super.props..add(episode);
 }

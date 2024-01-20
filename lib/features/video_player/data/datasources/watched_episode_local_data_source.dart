@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anime_app/core/data/local/DAO/watched_episode_dao.dart';
 
-import '../local/entity/watched_episode.dart';
+import '../../../../core/data/local/entity/watched_episode.dart';
 
 abstract class WatchedEpisodeLocalDataSource {
   Future<void> saveEpisode(WatchedEpisode episode);

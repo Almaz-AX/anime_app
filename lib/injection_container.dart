@@ -4,6 +4,7 @@ import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
 import 'package:anime_app/features/detail/domain/usecases/get_stream_watched_episodes.dart';
 import 'package:anime_app/features/home/domain/repositories/home_repository.dart';
+import 'package:anime_app/features/home/domain/usecases/complete_watching.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_episodes.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dart';
 import 'package:anime_app/features/home/presentation/bloc/home_bloc.dart';
@@ -12,7 +13,7 @@ import 'package:anime_app/features/search/data/repositories/search_titles_reposi
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
 
 import 'package:anime_app/features/search/presentation/bloc/search_bloc.dart';
-import 'package:anime_app/core/data/datasourses/watched_episode_local_data_source.dart';
+import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
 import 'package:dio/dio.dart';
@@ -40,15 +41,18 @@ Future<void> init() async {
 //! Features
   //HOME
   //Bloc
-  sl.registerFactory(
-      () => HomeBloc(getUnderseenEpisodes: sl(), getUnderseenTitles: sl()));
+  sl.registerFactory(() => HomeBloc(
+      getUnderseenEpisodes: sl(),
+      getUnderseenTitles: sl(),
+      completeWatching: sl()));
 
   //Use cases
   sl.registerLazySingleton<GetUnderseenEpisodes>(
       () => GetUnderseenEpisodes(repository: sl()));
   sl.registerLazySingleton<GetUnderseenTitles>(
       () => GetUnderseenTitles(repository: sl()));
-
+  sl.registerLazySingleton<CompleteWatching>(
+      () => CompleteWatching(repository: sl()));
   //Repsitory
   sl.registerLazySingleton<HomeRepository>(
       () => HomeRepositoryImpl(localDatasource: sl(), remoteDataSource: sl()));

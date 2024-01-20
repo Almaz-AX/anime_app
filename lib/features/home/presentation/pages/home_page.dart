@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../constants/constants.dart';
 import '../../../../assets/assets.dart';
 import '../../../../core/data/local/DAO/watched_episode_dao.dart';
+import '../../../../core/data/models/anime_title.dart';
 import '../../../../injection_container.dart';
 import '../bloc/home_bloc.dart';
 import '../widgets/underseen_episodes_widget.dart';
@@ -59,29 +60,10 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: [
-        BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state) {
-            if (state.status == HomeStatus.loading) {
-              return const CircularProgressIndicator();
-            }
-            if (state.status == HomeStatus.success) {
-              return MultiBlocProvider(
-                providers: [
-                  ProxyProvider0(
-                    update: (_, __) => state.underseenEpisodes,
-                  ),
-                  ProxyProvider0(update: (_, __) => state.underseenTitles),
-                ],
-                child: const UnderseenEpisodes(),
-              );
-            } else {
-              return Container();
-            }
-          },
-        ),
-        const _TopInThisMonth(),
-        const _RandomTitlesList(),
+      children: const [
+        UnderseenEpisodes(),
+        _TopInThisMonth(),
+        _RandomTitlesList(),
       ],
     );
   }

@@ -151,10 +151,10 @@ class EpisodeCard extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 VideoPlayerPage.createVideoPlayer(
-                  context,
-                  player.host,
-                  episodes,
-                  index,
+                  context: context,
+                  player: player,
+                  titleId: title.id,
+                  currentEpisodeId: index,
                 );
               },
             ),

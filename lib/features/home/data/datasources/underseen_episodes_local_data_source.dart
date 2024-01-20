@@ -5,6 +5,7 @@ import '../../../../core/data/local/entity/watched_episode.dart';
 
 abstract class UnderseenEpisodesLocalDataSource {
   Stream<List<WatchedEpisode>> listenUnderseenEpisodesHistory();
+  Future<void> completeWatching(WatchedEpisode episode);
 }
 
 class UnderseenEpisodesLocalDataSourceImpl
@@ -19,5 +20,10 @@ class UnderseenEpisodesLocalDataSourceImpl
   Stream<List<WatchedEpisode>> listenUnderseenEpisodesHistory() {
     local.getUnderseenEpisodes().then((value) => controller.add(value));
     return controller.stream;
+  }
+
+  @override
+  Future<void> completeWatching(episode) async {
+    await local.changeWatchedEpisode(episode.copyWith(watchCompleted: true));
   }
 }

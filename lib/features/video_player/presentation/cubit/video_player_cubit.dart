@@ -21,16 +21,14 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     required this.getWatchedEpisodes,
     required int titleId,
     required int currentEpisode,
-    required String host,
-    required List<Episode> episodes,
+    required Player player,
   }) : super(VideoPlayerState(
             status: VideoPlayerStatus.loading,
             titleId: titleId,
             currentEpisode: currentEpisode,
-            host: host,
-            episodes: episodes,
-            videoPlayerController: VideoPlayerController.networkUrl(
-                _getUrl(episode: episodes[currentEpisode], host: host)))) {
+            player: player,
+            videoPlayerController: VideoPlayerController.networkUrl(_getUrl(
+                episode: player.list[currentEpisode], host: player.host)))) {
     getWatchedEpisode(currentEpisode).then((episode) => _createChwieController(
             state.videoPlayerController, episode?.continueTimestamp)
         .then((value) => emit(state.copyWith(
@@ -59,7 +57,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
   Future<void> nextEpisode() async {
     final nextEpisodeNumber = state.currentEpisode + 1;
-    if (nextEpisodeNumber < state.episodes.length) {
+    if (nextEpisodeNumber < state.player.list.length) {
       await _changeEpisode(nextEpisodeNumber);
     }
   }
@@ -133,7 +131,8 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     disposeControllers();
 
     final newVideoPlayerController = VideoPlayerController.networkUrl(
-      _getUrl(episode: state.episodes[episodeNumber], host: state.host),
+      _getUrl(
+          episode: state.player.list[episodeNumber], host: state.player.host),
     );
     final watchedEpisode = await getWatchedEpisode(episodeNumber);
     final chewieController = await _createChwieController(

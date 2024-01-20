@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
 import 'anime_title_db.dart';
@@ -48,4 +49,20 @@ class WatchedEpisode extends BaseEntity {
         episodeNumber,
         animeTitleId,
       ];
+
+  WatchedEpisode copyWith({
+    int? episodeNumber,
+    int? updatedTime,
+    bool? watchCompleted,
+    int? continueTimestamp,
+    int? animeTitleId,
+  }) {
+    return WatchedEpisode(
+      episodeNumber: episodeNumber ?? this.episodeNumber,
+      updatedTime: updatedTime ?? this.updatedTime,
+      watchCompleted: watchCompleted ?? this.watchCompleted,
+      continueTimestamp: continueTimestamp ?? this.continueTimestamp,
+      animeTitleId: animeTitleId ?? this.animeTitleId,
+    );
+  }
 }

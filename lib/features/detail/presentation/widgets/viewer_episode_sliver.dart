@@ -59,7 +59,11 @@ class ViewerEpisodeSliver extends StatelessWidget {
                 ),
                 onPressed: () {
                   VideoPlayerPage.createVideoPlayer(
-                      context, player.host, player.list, currentEpisodeId);
+                    context: context,
+                    player: player,
+                    titleId: title.id,
+                    currentEpisodeId: currentEpisodeId,
+                  );
                 },
               ),
             ),

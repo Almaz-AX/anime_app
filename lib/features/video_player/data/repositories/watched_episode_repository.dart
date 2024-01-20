@@ -5,6 +5,5 @@ import '../../../../core/error/failure.dart';
 
 abstract class WatchedEpisodeRepository {
   Future<Either<Failure, void>> saveEpisode(WatchedEpisode episode);
-
   Future<Either<Failure, List<WatchedEpisode>>> getEpisodes(int titleId);
 }

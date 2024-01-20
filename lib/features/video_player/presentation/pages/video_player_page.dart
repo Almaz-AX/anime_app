@@ -13,10 +13,12 @@ import '../cubit/video_player_cubit.dart';
 class VideoPlayerPage extends StatelessWidget {
   const VideoPlayerPage({super.key});
 
-  static createVideoPlayer(BuildContext context, String host,
-      List<Episode> episodes, int currentEpisodeId,
-      [int? continuetimestamp]) {
-    final title = context.read<AnimeTitle>();
+  static createVideoPlayer({
+    required BuildContext context,
+    required int titleId,
+    required Player player,
+    required int currentEpisodeId,
+  }) {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (context) {
@@ -25,10 +27,9 @@ class VideoPlayerPage extends StatelessWidget {
                 return VideoPlayerCubit(
                   getWatchedEpisodes: sl(),
                   saveWatchedEpisode: sl(),
-                  titleId: title.id,
+                  titleId: titleId,
                   currentEpisode: currentEpisodeId,
-                  host: host,
-                  episodes: episodes,
+                  player: player,
                 );
               },
               child: const VideoPlayerPage());
