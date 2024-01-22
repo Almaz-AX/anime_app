@@ -5,9 +5,11 @@ import 'package:anime_app/features/detail/data/repositories/get_watched_episodes
 import 'package:anime_app/features/detail/domain/usecases/get_stream_watched_episodes.dart';
 import 'package:anime_app/features/home/domain/repositories/home_repository.dart';
 import 'package:anime_app/features/home/domain/usecases/complete_watching.dart';
+import 'package:anime_app/features/home/domain/usecases/get_title_updates.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_episodes.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dart';
-import 'package:anime_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
+import 'package:anime_app/features/home/presentation/bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
 import 'package:anime_app/features/search/data/datasources/search_remote_data_source.dart';
 import 'package:anime_app/features/search/data/repositories/search_titles_repository_impl.dart';
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
@@ -41,11 +43,12 @@ Future<void> init() async {
 //! Features
   //HOME
   //Bloc
-  sl.registerFactory(() => HomeBloc(
+  sl.registerFactory(() => UnderseenEpisodesBloc(
       getUnderseenEpisodes: sl(),
       getUnderseenTitles: sl(),
       completeWatching: sl()));
 
+  sl.registerFactory(() => LastUpdatesBloc(getTitleUpdates: sl()));
   //Use cases
   sl.registerLazySingleton<GetUnderseenEpisodes>(
       () => GetUnderseenEpisodes(repository: sl()));
@@ -53,9 +56,11 @@ Future<void> init() async {
       () => GetUnderseenTitles(repository: sl()));
   sl.registerLazySingleton<CompleteWatching>(
       () => CompleteWatching(repository: sl()));
+  sl.registerLazySingleton<GetTitleUpdates>(
+      () => GetTitleUpdates(repository: sl()));
   //Repsitory
-  sl.registerLazySingleton<HomeRepository>(
-      () => HomeRepositoryImpl(localDatasource: sl(), remoteDataSource: sl()));
+  sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl(
+      networkInfo: sl(), localDatasource: sl(), remoteDataSource: sl()));
   //DataSource
   sl.registerLazySingleton<UnderseenEpisodesLocalDataSource>(
       () => UnderseenEpisodesLocalDataSourceImpl(local: sl()));

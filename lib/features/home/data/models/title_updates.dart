@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:anime_app/core/data/models/anime_title.dart';
 
-part 'anime_title_updates.g.dart';
+part 'title_updates.g.dart';
 
 @JsonSerializable()
 class TitleUpdates {

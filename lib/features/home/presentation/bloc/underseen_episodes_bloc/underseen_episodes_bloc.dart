@@ -6,37 +6,39 @@ import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dar
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/data/local/entity/watched_episode.dart';
-import '../../domain/usecases/complete_watching.dart';
+import '../../../../../core/data/local/entity/watched_episode.dart';
+import '../../../domain/usecases/complete_watching.dart';
 
-part 'home_event.dart';
-part 'home_state.dart';
+part 'underseen_episodes_event.dart';
+part 'underseen_episodes_state.dart';
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
+class UnderseenEpisodesBloc
+    extends Bloc<UnderseenEpisodesEvent, UnderseenEpisodesState> {
   final GetUnderseenEpisodes getUnderseenEpisodes;
   final GetUnderseenTitles getUnderseenTitles;
   final CompleteWatching completeWatching;
   StreamSubscription<List<WatchedEpisode>>? underseenEpisodesSubcription;
-  HomeBloc(
+  UnderseenEpisodesBloc(
       {required this.getUnderseenEpisodes,
       required this.getUnderseenTitles,
       required this.completeWatching})
-      : super(HomeState(status: HomeStatus.loading)) {
-    on<HomeGetUnderSeenEpisodesEvent>(_onGetUnderseenEpisodes);
-    on<HomeGetUnderSeenTitlesEvent>(_onGetUnderseenTitles);
-    on<HomeCompleteWatchingEvent>(_onCompleteWatching);
+      : super(const UnderseenEpisodesState(
+            status: UnderseenEpisodesStatus.initial)) {
+    on<UnderseenEpisodesGetEvent>(_onGetUnderseenEpisodes);
+    on<UnderSeenTitlesGetEvent>(_onGetUnderseenTitles);
+    on<UnderSeenTitlesCompleteEvent>(_onCompleteWatching);
   }
 
-  void _onGetUnderseenEpisodes(HomeGetUnderSeenEpisodesEvent event, emit) {
+  void _onGetUnderseenEpisodes(UnderseenEpisodesGetEvent event, emit) {
     final streamUnderseendEpisodes = getUnderseenEpisodes(NoParams());
     underseenEpisodesSubcription?.cancel();
     underseenEpisodesSubcription = streamUnderseendEpisodes.listen((event) {
-      add(HomeGetUnderSeenTitlesEvent(underseenEpisodes: event));
+      add(UnderSeenTitlesGetEvent(underseenEpisodes: event));
     });
   }
 
   Future<void> _onGetUnderseenTitles(
-      HomeGetUnderSeenTitlesEvent event, emit) async {
+      UnderSeenTitlesGetEvent event, emit) async {
     if (event.underseenEpisodes
         .map((e) => e.animeTitleId)
         .toSet()
@@ -44,24 +46,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         .isEmpty) {
       emit(state.copyWith(
           underseenEpisodes: event.underseenEpisodes,
-          status: HomeStatus.success));
+          status: UnderseenEpisodesStatus.success));
       return;
     }
 
     final titleId = event.underseenEpisodes.map((e) => e.animeTitleId).toList();
     final underseendTitlesOrFailure =
         await getUnderseenTitles(Params(titlesId: titleId.toSet().toList()));
-    underseendTitlesOrFailure
-        .fold((failure) => emit(state.copyWith(status: HomeStatus.failure)),
-            (titles) {
+    underseendTitlesOrFailure.fold(
+        (failure) =>
+            emit(state.copyWith(status: UnderseenEpisodesStatus.failure)),
+        (titles) {
       if (titles.isEmpty) {
         emit(state.copyWith(
-            status: HomeStatus.initial,
+            status: UnderseenEpisodesStatus.initial,
             underseenEpisodes: event.underseenEpisodes,
             underseenTitles: titles));
       } else {
         emit(state.copyWith(
-            status: HomeStatus.success,
+            status: UnderseenEpisodesStatus.success,
             underseenEpisodes: event.underseenEpisodes,
             underseenTitles: titles));
       }
@@ -69,7 +72,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _onCompleteWatching(
-      HomeCompleteWatchingEvent event, emit) async {
+      UnderSeenTitlesCompleteEvent event, emit) async {
     await completeWatching(EpisodeParams(episode: event.episode));
   }
 

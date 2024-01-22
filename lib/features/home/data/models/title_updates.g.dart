@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'anime_title_updates.dart';
+part of 'title_updates.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

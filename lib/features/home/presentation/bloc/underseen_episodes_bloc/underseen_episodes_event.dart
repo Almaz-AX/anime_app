@@ -1,18 +1,18 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-part of 'home_bloc.dart';
+part of 'underseen_episodes_bloc.dart';
 
-abstract class HomeEvent extends Equatable {
-  const HomeEvent();
+abstract class UnderseenEpisodesEvent extends Equatable {
+  const UnderseenEpisodesEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class HomeGetUnderSeenEpisodesEvent extends HomeEvent {}
+class UnderseenEpisodesGetEvent extends UnderseenEpisodesEvent {}
 
-class HomeGetUnderSeenTitlesEvent extends HomeEvent {
+class UnderSeenTitlesGetEvent extends UnderseenEpisodesEvent {
   final List<WatchedEpisode> underseenEpisodes;
-  const HomeGetUnderSeenTitlesEvent({
+  const UnderSeenTitlesGetEvent({
     required this.underseenEpisodes,
   });
   @override
@@ -20,9 +20,9 @@ class HomeGetUnderSeenTitlesEvent extends HomeEvent {
   List<Object> get props => super.props..add(underseenEpisodes);
 }
 
-class HomeCompleteWatchingEvent extends HomeEvent {
+class UnderSeenTitlesCompleteEvent extends UnderseenEpisodesEvent {
   final WatchedEpisode episode;
-  HomeCompleteWatchingEvent({
+  const UnderSeenTitlesCompleteEvent({
     required this.episode,
   });
 

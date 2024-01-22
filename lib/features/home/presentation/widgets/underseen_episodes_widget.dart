@@ -6,19 +6,16 @@ import '../../../../assets/assets.dart';
 import '../../../../constants/constants.dart';
 import '../../../../core/data/models/anime_title.dart';
 import '../../../video_player/presentation/pages/video_player_page.dart';
-import '../bloc/home_bloc.dart';
+import '../bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
 
 class UnderseenEpisodes extends StatelessWidget {
   const UnderseenEpisodes({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
+    return BlocBuilder<UnderseenEpisodesBloc, UnderseenEpisodesState>(
       builder: (context, state) {
-        if (state.status == HomeStatus.loading) {
-          return const CircularProgressIndicator();
-        }
-        if (state.status == HomeStatus.success) {
+        if (state.status == UnderseenEpisodesStatus.success) {
           if (state.underseenEpisodes.isEmpty) {
             return Container();
           }
@@ -54,15 +51,14 @@ class UnderseenEpisodes extends StatelessWidget {
                     }
                     final episode = player
                         .list[state.underseenEpisodes[index].episodeNumber];
-                    return SizedBox(
+                    return Container(
+                      padding: const EdgeInsets.only(right: 8),
                       width: 260,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
+                          SizedBox(
                             height: 160,
-                            width: 260,
-                            padding: const EdgeInsets.only(right: 10),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Stack(
@@ -72,11 +68,12 @@ class UnderseenEpisodes extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Image.network(
-                                        '${Host.host}${episode.preview ?? underseenTitle.posters.small.url}',
+                                      Image(
+                                        image: NetworkImage(
+                                            '${Host.host}${episode.preview ?? underseenTitle.posters.small.url}'),
+                                        width: 260,
+                                        height: 160,
                                         fit: BoxFit.cover,
-                                        cacheHeight: 165,
-                                        cacheWidth: 260,
                                       ),
                                     ],
                                   ),
@@ -98,7 +95,9 @@ class UnderseenEpisodes extends StatelessWidget {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                                    padding: const EdgeInsets.only(
+                                      left: 10,
+                                    ),
                                     child: Row(
                                       children: [
                                         Text(underseenTitle.type?.lenght ?? '',
@@ -111,17 +110,23 @@ class UnderseenEpisodes extends StatelessWidget {
                                           ),
                                         ),
                                         MaterialButton(
+                                          height: 25,
+                                          color:
+                                              Colors.white70.withOpacity(0.5),
                                           shape: const CircleBorder(),
                                           minWidth: 0,
                                           onPressed: () {
-                                            context.read<HomeBloc>().add(
-                                                HomeCompleteWatchingEvent(
+                                            context
+                                                .read<UnderseenEpisodesBloc>()
+                                                .add(UnderSeenTitlesCompleteEvent(
                                                     episode:
                                                         state.underseenEpisodes[
                                                             index]));
                                           },
-                                          child: const ImageIcon(
-                                            AssetImage(IconAseet.cancel),
+                                          child: ImageIcon(
+                                            const AssetImage(IconAseet.cancel),
+                                            color:
+                                                Theme.of(context).primaryColor,
                                           ),
                                         ),
                                       ],

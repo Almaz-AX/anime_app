@@ -59,12 +59,7 @@ class CustomControls extends StatelessWidget {
               },
               icon: const ImageIcon(AssetImage(IconAseet.cancel)),
               splashRadius: 20),
-          PopScope(
-              canPop: true,
-              onPopInvoked: (didPop) async {
-                if (didPop) await cubit.disposeControllers();
-              },
-              child: const VideoSliderWidget())
+          const VideoSliderWidget()
         ],
       ),
     );

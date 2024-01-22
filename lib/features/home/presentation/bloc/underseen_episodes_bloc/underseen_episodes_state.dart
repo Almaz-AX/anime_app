@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-part of 'home_bloc.dart';
+part of 'underseen_episodes_bloc.dart';
 
-enum HomeStatus { initial, loading, success, failure }
+enum UnderseenEpisodesStatus { initial, success, failure }
 
-class HomeState extends Equatable {
-  final HomeStatus status;
+class UnderseenEpisodesState extends Equatable {
+  final UnderseenEpisodesStatus status;
   final List<WatchedEpisode> underseenEpisodes;
   final List<AnimeTitle> underseenTitles;
-  HomeState({
+  const UnderseenEpisodesState({
     required this.status,
     this.underseenEpisodes = const <WatchedEpisode>[],
     this.underseenTitles = const <AnimeTitle>[],
@@ -16,12 +16,12 @@ class HomeState extends Equatable {
   @override
   List<Object> get props => [status, underseenEpisodes, underseenTitles];
 
-  HomeState copyWith({
-    HomeStatus? status,
+  UnderseenEpisodesState copyWith({
+    UnderseenEpisodesStatus? status,
     List<WatchedEpisode>? underseenEpisodes,
     List<AnimeTitle>? underseenTitles,
   }) {
-    return HomeState(
+    return UnderseenEpisodesState(
       status: status ?? this.status,
       underseenEpisodes: underseenEpisodes ?? this.underseenEpisodes,
       underseenTitles: underseenTitles ?? this.underseenTitles,

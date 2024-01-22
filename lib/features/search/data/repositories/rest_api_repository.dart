@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:anime_app/features/search/data/models/search_titles.dart';
-import 'package:anime_app/features/search/data/models/anime_title_updates.dart';
+import 'package:anime_app/features/home/data/models/title_updates.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/host.dart';

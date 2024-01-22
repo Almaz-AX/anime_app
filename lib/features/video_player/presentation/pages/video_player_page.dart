@@ -40,9 +40,15 @@ class VideoPlayerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.black,
-      body: VideoPlayerWidget(),
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async {
+        await context.read<VideoPlayerCubit>().disposeControllers();
+      },
+      child: const Scaffold(
+        backgroundColor: Colors.black,
+        body: VideoPlayerWidget(),
+      ),
     );
   }
 }

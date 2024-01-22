@@ -1,4 +1,4 @@
-import 'package:anime_app/features/search/data/models/anime_title_updates.dart';
+import 'package:anime_app/features/home/data/models/title_updates.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 
