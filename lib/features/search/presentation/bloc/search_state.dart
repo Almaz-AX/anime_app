@@ -17,7 +17,6 @@ abstract class SearchState extends Equatable {
 
 class SearchInitialState extends SearchState {
   @override
-  // TODO: implement props
   List<Object?> get props => [
         super.titles,
       ];
@@ -25,7 +24,6 @@ class SearchInitialState extends SearchState {
 
 class SearchLoadingState extends SearchState {
   @override
-  // TODO: implement props
   List<Object?> get props => [
         super.titles,
       ];
@@ -40,7 +38,6 @@ class SearchLoadedState extends SearchState {
     required int pages,
   }) : super(query: query, titles: titles, pages: pages);
   @override
-  // TODO: implement props
   List<Object?> get props => [super.titles, super.query];
 }
 
@@ -50,7 +47,6 @@ class SearchErrorState extends SearchState {
     required this.message,
   });
   @override
-  // TODO: implement props
   List<Object?> get props => [message];
 }
 
@@ -60,6 +56,5 @@ class SearchRandomTitleState extends SearchState {
     required this.title,
   });
   @override
-  // TODO: implement props
   List<Object?> get props => [title];
 }

@@ -11,7 +11,6 @@ final _shellNavigatorSearchKey =
 abstract class SearchScreenPath {
   static const search = '/search';
   static const detail = '/search/details';
-  static const videoPlayer = '/search/videoPlayer';
 }
 
 abstract class SearchScreenBranch {
@@ -25,7 +24,7 @@ abstract class SearchScreenBranch {
         ),
         GoRoute(
           path: SearchScreenPath.detail,
-          builder: (context, state) => DetailPage(id:state.extra as int),
+          builder: (context, state) => DetailPage(id: state.extra as int),
         ),
       ],
     );

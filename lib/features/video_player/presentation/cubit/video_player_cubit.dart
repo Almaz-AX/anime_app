@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:equatable/equatable.dart';
@@ -111,7 +112,6 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
       startAt: Duration(seconds: continueTimestamp ?? 0),
       showControls: false,
       showControlsOnInitialize: false,
-      // aspectRatio: 25/ 8,
       autoInitialize: true,
       videoPlayerController: videoPlayerController,
       useRootNavigator: true,

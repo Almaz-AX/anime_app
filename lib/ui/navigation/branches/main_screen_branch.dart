@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../features/detail/presentation/pages/detail_page.dart';
 import '../../../features/home/presentation/pages/home_page.dart';
 
 final _shellNavigatorHomeKey = GlobalKey<NavigatorState>(debugLabel: 'home');
@@ -18,6 +19,10 @@ abstract class MainScreenBranch {
         GoRoute(
           path: MainScreenPath.home,
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: MainScreenPath.detail,
+          builder: (context, state) => DetailPage(id: state.extra as int),
         ),
       ],
     );

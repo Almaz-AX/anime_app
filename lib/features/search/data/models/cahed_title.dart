@@ -13,14 +13,9 @@ class CahedTitle extends Equatable {
     required this.poster,
     required this.genres,
   });
-  
+
   @override
-  // TODO: implement props
   List<Object> get props => [id, name, poster, genres];
-
-  
-
- 
 
   CahedTitle copyWith({
     int? id,
@@ -47,16 +42,18 @@ class CahedTitle extends Equatable {
 
   factory CahedTitle.fromMap(Map<String, dynamic> map) {
     return CahedTitle(
-      id: map['id'] as int,
-      name: map['name'] as String,
-      poster: map['poster'] as String,
-      genres: List<String>.from((map['genres'] as List<String>),
-    ));
+        id: map['id'] as int,
+        name: map['name'] as String,
+        poster: map['poster'] as String,
+        genres: List<String>.from(
+          (map['genres'] as List<String>),
+        ));
   }
 
   String toJson() => json.encode(toMap());
 
-  factory CahedTitle.fromJson(String source) => CahedTitle.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CahedTitle.fromJson(String source) =>
+      CahedTitle.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;

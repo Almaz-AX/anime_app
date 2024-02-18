@@ -4,7 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'watched_episode.dart';
 
 part 'anime_title_db.g.dart';
-abstract class BaseEntity extends Equatable{}
+
+abstract class BaseEntity extends Equatable {}
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class AnimeTitleDb extends BaseEntity {
@@ -32,8 +33,7 @@ class AnimeTitleDb extends BaseEntity {
 
   factory AnimeTitleDb.fromJson(Map<String, dynamic> json) =>
       _$AnimeTitleDbFromJson(json);
-      
-        @override
-        // TODO: implement props
-        List<Object?> get props => [id, titleName, watchedEpisode];
+
+  @override
+  List<Object?> get props => [id, titleName, watchedEpisode];
 }

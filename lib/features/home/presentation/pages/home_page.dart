@@ -53,7 +53,7 @@ class HomePage extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                sl<LastUpdatesBloc>()..add(LastUpdatesLoadPageEvent()),
+                sl<LastUpdatesBloc>()..add(const LastUpdatesLoadPageEvent()),
           ),
         ],
         child: const _Body(),

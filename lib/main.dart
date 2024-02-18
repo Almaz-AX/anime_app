@@ -2,11 +2,14 @@ import 'package:anime_app/injection_container.dart';
 import 'package:anime_app/ui/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'ui/navigation/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // ByteData data =
+  //     await PlatformAssetBundle().load('lib/assets/ca/lets-encrypt-r3.pem');
+  // SecurityContext.defaultContext
+  //     .setTrustedCertificatesBytes(data.buffer.asUint8List());
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
   await init();
@@ -28,7 +31,7 @@ class MyApp extends StatelessWidget {
 }
 
 // DevicePreview(
-      //   enabled: !kReleaseMode,
-      //   builder: (context) => const MyApp()
-      // ),
+//   enabled: !kReleaseMode,
+//   builder: (context) => const MyApp()
+// ),
 

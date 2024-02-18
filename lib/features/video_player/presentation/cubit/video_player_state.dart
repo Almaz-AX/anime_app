@@ -11,7 +11,7 @@ class VideoPlayerState extends Equatable {
   final VideoPlayerController videoPlayerController;
   final ChewieController? chewieController;
   final WatchedEpisode? watchedEpisode;
-  VideoPlayerState({
+  const VideoPlayerState({
     required this.status,
     required this.titleId,
     required this.player,
@@ -22,7 +22,6 @@ class VideoPlayerState extends Equatable {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         status,
         currentEpisode,

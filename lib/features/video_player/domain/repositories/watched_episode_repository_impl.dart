@@ -13,7 +13,6 @@ class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
   });
   @override
   Future<Either<Failure, void>> saveEpisode(WatchedEpisode episode) async {
-    // TODO: implement saveEpisode
     try {
       return Right(await localDataSource.saveEpisode(episode));
     }
@@ -25,7 +24,6 @@ class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
 
   @override
   Future<Either<Failure, List<WatchedEpisode>>> getEpisodes(int titleId) async {
-    // TODO: implement getEpisodes
     try {
       return Right(await localDataSource.getEpisodes(titleId));
     }

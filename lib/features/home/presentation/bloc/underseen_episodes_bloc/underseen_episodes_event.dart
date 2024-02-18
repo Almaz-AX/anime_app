@@ -16,7 +16,6 @@ class UnderSeenTitlesGetEvent extends UnderseenEpisodesEvent {
     required this.underseenEpisodes,
   });
   @override
-  // TODO: implement props
   List<Object> get props => super.props..add(underseenEpisodes);
 }
 
@@ -27,6 +26,5 @@ class UnderSeenTitlesCompleteEvent extends UnderseenEpisodesEvent {
   });
 
   @override
-  // TODO: implement props
   List<Object> get props => super.props..add(episode);
 }

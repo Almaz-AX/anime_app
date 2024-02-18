@@ -100,7 +100,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       Future.delayed(const Duration(seconds: 3), changeVisibilityControls);
     }
     if (_mounted) setState(() {});
-    ;
   }
 
   @override

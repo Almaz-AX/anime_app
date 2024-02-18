@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_episodes.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dart';
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 

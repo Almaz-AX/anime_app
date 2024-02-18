@@ -13,7 +13,6 @@ class SearchTitlesEvent extends SearchEvent {
 
   const SearchTitlesEvent({required this.query});
   @override
-  // TODO: implement props
   List<Object> get props => [query];
 }
 

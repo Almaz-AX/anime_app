@@ -22,6 +22,5 @@ class GetRandomTitle implements UseCaseFuture<AnimeTitle, NoParams> {
 
 class NoParams extends Equatable {
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }

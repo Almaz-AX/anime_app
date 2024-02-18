@@ -1,6 +1,8 @@
 import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
+import 'package:anime_app/ui/navigation/branches/main_screen_branch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/host.dart';
 
@@ -90,7 +92,10 @@ class LastUpdates extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(10),
-                              onTap: () {},
+                              onTap: () {
+                                context.push(MainScreenPath.detail,
+                                    extra: title.id);
+                              },
                             ),
                           ),
                         ],

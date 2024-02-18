@@ -18,11 +18,14 @@ class GetTitleRepositoryImpl implements GetTitleRepository {
   });
   @override
   Future<Either<Failure, AnimeTitle>> getTitle(int id) async {
-    try {
-      final remoteAnimeTitles = await remoteDataSource.getTitle(id);
-      return Right(remoteAnimeTitles);
-    } on ServerExeption {
-      return Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteAnimeTitles = await remoteDataSource.getTitle(id);
+        return Right(remoteAnimeTitles);
+      } on ServerExeption {
+        return Left(ServerFailure());
+      }
     }
+    return Left(CasheFailure());
   }
 }

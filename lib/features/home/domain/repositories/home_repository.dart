@@ -36,20 +36,26 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<Failure, List<AnimeTitle>>> getTitles(
       List<int> titleIdList) async {
-    try {
-      return Right(await remoteDataSource.getTitles(titleIdList));
-    } on ServerExeption {
-      return Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        return Right(await remoteDataSource.getTitles(titleIdList));
+      } on ServerExeption {
+        return Left(ServerFailure());
+      }
     }
+    return Left(CasheFailure());
   }
 
   @override
   Future<Either<Failure, TitleUpdates>> getUpdates(int page) async {
-    try {
-      return Right(await remoteDataSource.getUpdates(page));
-    } on ServerExeption {
-      return Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        return Right(await remoteDataSource.getUpdates(page));
+      } on ServerExeption {
+        return Left(ServerFailure());
+      }
     }
+    return Left(CasheFailure());
   }
 
   @override

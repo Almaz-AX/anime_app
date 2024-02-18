@@ -1,5 +1,5 @@
+import 'package:anime_app/core/data/client/dio_client.dart';
 import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
-import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
 import 'package:anime_app/features/detail/domain/usecases/get_stream_watched_episodes.dart';
@@ -65,7 +65,7 @@ Future<void> init() async {
   sl.registerLazySingleton<UnderseenEpisodesLocalDataSource>(
       () => UnderseenEpisodesLocalDataSourceImpl(local: sl()));
   sl.registerLazySingleton<HomeReomoteDataSource>(
-      () => HomeRemoteDataSourceImpl(dio: sl()));
+      () => HomeRemoteDataSourceImpl(client: sl()));
 
   // SEARCH
   // Bloc
@@ -82,7 +82,7 @@ Future<void> init() async {
 
   // DataSource
   sl.registerLazySingleton<SearchTitlesRemoteDataSource>(
-      () => SearchTitlesRemoteDataSourceImpl(dio: sl()));
+      () => SearchTitlesRemoteDataSourceImpl(client: sl()));
 
   // DETAIL
   // Bloc
@@ -102,7 +102,7 @@ Future<void> init() async {
 
   // DataSource
   sl.registerLazySingleton<GetTitleRemoteDataSource>(
-      () => GetTitleRemoteDataSourceImpl(dio: sl()));
+      () => GetTitleRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<GetWatchedEpisodesLocalDataSource>(
       () => GetWatchedEpisodesLocalDataSourceImpl(watchedEpisodesDAO: sl()));
 
@@ -132,14 +132,12 @@ Future<void> init() async {
 
   // DataSource
   sl.registerLazySingleton<GetRandomTitleRemoteDataSource>(
-      () => GetRandomTitleRemoteDataSourceImpl(dio: sl()));
+      () => GetRandomTitleRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton(() => DioClient(dio: sl()));
 
   // local
   //DAO
   sl.registerLazySingleton<WatchedEpisodesDAO>(() => WatchedEpisodesDAO());
-
   //! External
-  sl.registerLazySingleton<Dio>(() => Dio(
-        BaseOptions(baseUrl: Host.apiHost),
-      ));
+  sl.registerLazySingleton<Dio>(() => Dio());
 }

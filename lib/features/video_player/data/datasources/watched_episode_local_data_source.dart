@@ -18,19 +18,16 @@ class WatchedEpisodeLocalDataSourceImpl extends WatchedEpisodeLocalDataSource {
   });
   @override
   Future<void> saveEpisode(WatchedEpisode episode) async {
-    // TODO: implement saveEpisode
     return await watchedEpisodesDAO.changeWatchedEpisode(episode);
   }
 
   @override
   Future<List<WatchedEpisode>> getEpisodes(int titleId) async {
-    // TODO: implement getEpisodes
     return await watchedEpisodesDAO.getWatchedEpisodesByTitle(titleId);
   }
 
   @override
   Future<List<WatchedEpisode>> getAllUnderseenEpisodes() {
-    // TODO: implement getAllUnderseenEpisodes
     return watchedEpisodesDAO.getUnderseenEpisodes();
   }
 }
