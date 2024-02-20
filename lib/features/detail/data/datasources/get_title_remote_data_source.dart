@@ -1,4 +1,4 @@
-import 'package:anime_app/core/data/client/dio_client.dart';
+import 'package:anime_app/core/data/network/dio_client.dart';
 
 import '../../../../core/data/models/anime_title.dart';
 

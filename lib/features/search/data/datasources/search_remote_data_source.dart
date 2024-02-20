@@ -1,4 +1,4 @@
-import 'package:anime_app/core/data/client/dio_client.dart';
+import 'package:anime_app/core/data/network/dio_client.dart';
 import 'package:anime_app/features/search/data/models/search_titles.dart';
 
 abstract class SearchTitlesRemoteDataSource {

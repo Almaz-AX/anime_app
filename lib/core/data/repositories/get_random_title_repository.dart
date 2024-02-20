@@ -19,11 +19,15 @@ class GetRandomTitleRepositoryImpl implements GetRandomTitleRepository {
 
   @override
   Future<Either<Failure, AnimeTitle>> getRandomTitle() async {
-    try {
-      final remoteAnimeTitles = await remoteDataSource.getRandomTitle();
-      return Right(remoteAnimeTitles);
-    } on ServerExeption {
-      return Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteAnimeTitles = await remoteDataSource.getRandomTitle();
+        return Right(remoteAnimeTitles);
+      } on ServerExeption {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(NetworkConnectionFailure());
     }
   }
 }

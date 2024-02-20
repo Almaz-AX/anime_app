@@ -7,6 +7,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
 import '../../../../core/data/models/anime_title.dart';
+import '../../../../core/helpers/getResponseOrFailure.dart';
 import '../../../../core/platform/network_info.dart';
 import '../../data/datasources/home_remote_data_source.dart';
 import '../../data/datasources/underseen_episodes_local_data_source.dart';
@@ -36,26 +37,16 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<Failure, List<AnimeTitle>>> getTitles(
       List<int> titleIdList) async {
-    if (await networkInfo.isConnected) {
-      try {
-        return Right(await remoteDataSource.getTitles(titleIdList));
-      } on ServerExeption {
-        return Left(ServerFailure());
-      }
-    }
-    return Left(CasheFailure());
+    return await getResponseOrFailure(
+        () async => await remoteDataSource.getTitles(titleIdList),
+        (await networkInfo.isConnected));
   }
 
   @override
   Future<Either<Failure, TitleUpdates>> getUpdates(int page) async {
-    if (await networkInfo.isConnected) {
-      try {
-        return Right(await remoteDataSource.getUpdates(page));
-      } on ServerExeption {
-        return Left(ServerFailure());
-      }
-    }
-    return Left(CasheFailure());
+    return await getResponseOrFailure(
+        () async => await remoteDataSource.getUpdates(page),
+        (await networkInfo.isConnected));
   }
 
   @override
@@ -68,8 +59,8 @@ class HomeRepositoryImpl implements HomeRepository {
       return Right(await localDatasource.completeWatching(episode));
     }
     //заглушка, возможно надо будет добавить возбуждение ошибки в datasource если надо будет
-    on CasheExeption {
-      return Left(CasheFailure());
+    on NetworkExeption {
+      return Left(NetworkConnectionFailure());
     }
   }
 }

@@ -1,5 +1,5 @@
-class ServerExeption implements Exception{}
+class ServerExeption implements Exception {}
 
-class CasheExeption implements Exception{}
+class NetworkExeption implements Exception {}
 
-class DatabaseExeption implements Exception{}
+class DatabaseExeption implements Exception {}

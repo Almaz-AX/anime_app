@@ -1,4 +1,4 @@
-import 'package:anime_app/core/data/client/dio_client.dart';
+import 'package:anime_app/core/data/network/dio_client.dart';
 import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';

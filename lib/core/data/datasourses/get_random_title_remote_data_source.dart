@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:anime_app/core/data/client/dio_client.dart';
+import 'package:anime_app/core/data/network/dio_client.dart';
 
 import '../models/anime_title.dart';
 
