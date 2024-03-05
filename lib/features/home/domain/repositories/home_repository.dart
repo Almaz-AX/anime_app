@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:anime_app/core/error/expetions.dart';
+import 'package:anime_app/core/error/exceptions.dart';
 import 'package:anime_app/core/error/failure.dart';
 import 'package:anime_app/features/home/data/models/title_updates.dart';
 import 'package:dartz/dartz.dart';
@@ -59,8 +59,8 @@ class HomeRepositoryImpl implements HomeRepository {
       return Right(await localDatasource.completeWatching(episode));
     }
     //заглушка, возможно надо будет добавить возбуждение ошибки в datasource если надо будет
-    on NetworkExeption {
-      return Left(NetworkConnectionFailure());
+    on DatabaseExeption {
+      return Left(DatabaseFailure());
     }
   }
 }

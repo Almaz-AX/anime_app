@@ -35,8 +35,8 @@ final class LastUpdatesSuccessState extends LastUpdatesState {
 }
 
 final class LastUpdatesFailureState extends LastUpdatesState {
-  final String message;
+  final Failure failure;
   const LastUpdatesFailureState({
-    required this.message,
+    required this.failure,
   });
 }

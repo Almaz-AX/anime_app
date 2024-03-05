@@ -1,4 +1,6 @@
 import 'package:anime_app/core/data/network/dio_client.dart';
+import 'package:anime_app/core/data/network/interceptors/dio_connectivity_request_retrier.dart';
+import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
 import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
@@ -18,6 +20,7 @@ import 'package:anime_app/features/search/presentation/bloc/search_bloc.dart';
 import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -133,11 +136,17 @@ Future<void> init() async {
   // DataSource
   sl.registerLazySingleton<GetRandomTitleRemoteDataSource>(
       () => GetRandomTitleRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton(() => DioClient(dio: sl()));
-
+  sl.registerLazySingleton(
+      () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
+  sl.registerLazySingleton(
+      () => RetryOnConnectivityChangeInterceptor(requestRetrier: sl()));
+  sl.registerLazySingleton(
+    () => DioConnectivityRequestRetrier(dio: sl(), connectivity: sl()),
+  );
   // local
   //DAO
   sl.registerLazySingleton<WatchedEpisodesDAO>(() => WatchedEpisodesDAO());
   //! External
   sl.registerLazySingleton<Dio>(() => Dio());
+  sl.registerLazySingleton(() => Connectivity());
 }

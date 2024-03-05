@@ -12,7 +12,6 @@ import 'package:anime_app/features/search/domain/usecases/get_searched_titles.da
 import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/domain/usecases/get_random_title.dart';
-import '../../../../core/error/failure.dart';
 import '../../data/models/search_titles.dart';
 
 part 'search_event.dart';
@@ -45,8 +44,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final failureOrSearchedTitles =
         await getSearchedTitles(Params(query: event.query));
     failureOrSearchedTitles.fold(
-        (failure) =>
-            emit(SearchErrorState(message: _mapFailureToMessage(failure))),
+        (failure) => emit(SearchErrorState(message: 'Что то пошло не так')),
         (searchTitles) => emit(SearchLoadedState(
             query: event.query,
             titles: searchTitles.list,
@@ -67,8 +65,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final failureOrSearchedTitles =
         await getSearchedTitles(Params(query: state.query, page: nextPage));
     failureOrSearchedTitles.fold(
-        (failure) =>
-            emit(SearchErrorState(message: _mapFailureToMessage(failure))),
+        (failure) => emit(SearchErrorState(message: 'Что то пошло не так')),
         (searchTitles) {
       final titles = <AnimeTitle>[...state.titles, ...searchTitles.list];
       emit(SearchLoadedState(
@@ -84,18 +81,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(SearchLoadingState());
     final failureOrRandomTitle = await getRandomTitle(NoParams());
     failureOrRandomTitle.fold(
-        (failure) =>
-            emit(SearchErrorState(message: _mapFailureToMessage(failure))),
+        (failure) => emit(SearchErrorState(message: 'Что то пошло не так')),
         (title) => emit(SearchRandomTitleState(title: title)));
-  }
-
-  String _mapFailureToMessage(Failure failure) {
-    if (failure is ServerFailure) {
-      return 'Что-то с интернетом';
-    }
-    if (failure is CasheFailure) {
-      return 'Ошибка кеша';
-    }
-    return 'Что то пошло не так';
   }
 }

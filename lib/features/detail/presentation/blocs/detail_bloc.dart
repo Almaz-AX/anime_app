@@ -7,7 +7,6 @@ import '../../domain/usecases/get_stream_watched_episodes.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
 import '../../../../core/data/models/anime_title.dart';
-import '../../../../core/error/failure.dart';
 import '../../domain/usecases/get_title.dart';
 
 part 'detail_event.dart';
@@ -31,8 +30,7 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
     emit(DetailLoadingState());
     final failureOrTitle = await getTitle(Params(id: event.id));
     failureOrTitle.fold(
-        (failure) =>
-            emit(DetailErrorState(message: _mapFailureToMessage(failure))),
+        (failure) => emit(DetailErrorState(message: 'Что то пошло не так')),
         (title) async {
       emit(DetailLoadedState(
         title: title,
@@ -50,16 +48,6 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
       DetailGetWatchedEpisodesEvent event, Emitter<DetailState> emit) {
     emit(DetailLoadedState(
         title: event.title, watchedEpisodes: event.watchedEpisodes));
-  }
-
-  String _mapFailureToMessage(Failure failure) {
-    if (failure is ServerFailure) {
-      return 'Что-то с интернетом';
-    }
-    if (failure is CasheFailure) {
-      return 'Ошибка кеша';
-    }
-    return 'Что то пошло не так';
   }
 
   @override

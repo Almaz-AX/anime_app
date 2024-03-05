@@ -5,6 +5,7 @@ import 'package:anime_app/core/data/local/entity/watched_episode.dart';
 import 'package:anime_app/core/error/failure.dart';
 import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
+import 'package:sqflite/sqflite.dart';
 
 class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
   WatchedEpisodeLocalDataSource localDataSource;
@@ -17,8 +18,8 @@ class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
       return Right(await localDataSource.saveEpisode(episode));
     }
     //заглушка, возможно надо будет добавить возбуждение ошибки в datasource если надо будет
-    on CasheFailure {
-      return Left(CasheFailure());
+    on DatabaseException {
+      return Left(DatabaseFailure());
     }
   }
 
@@ -28,8 +29,8 @@ class WatchedEpisodeRepositoryImpl extends WatchedEpisodeRepository {
       return Right(await localDataSource.getEpisodes(titleId));
     }
     //заглушка, возможно надо будет добавить возбуждение ошибки в datasource если надо будет
-    on CasheFailure {
-      return Left(CasheFailure());
+    on DatabaseException {
+      return Left(DatabaseFailure());
     }
   }
 }

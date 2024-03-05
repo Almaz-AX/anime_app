@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore: depend_on_referenced_packages
+import 'package:anime_app/core/error/failure.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -25,8 +26,7 @@ class LastUpdatesBloc extends Bloc<LastUpdatesEvent, LastUpdatesState> {
     final titleUpdatesOrFailure =
         await getTitleUpdates(Params(page: event.currenPage + 1));
     titleUpdatesOrFailure.fold(
-        (failure) =>
-            emit(const LastUpdatesFailureState(message: 'Что-то пошло не так')),
+        (failure) => emit(LastUpdatesFailureState(failure: failure)),
         (titleUpdates) => emit(LastUpdatesSuccessState(
             titleUpdates: titleUpdates,
             titles: [...event.titles, ...titleUpdates.list],

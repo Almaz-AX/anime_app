@@ -1,4 +1,5 @@
 import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
+import 'package:anime_app/features/widgets/error_widgets/failure_widget.dart';
 import 'package:anime_app/ui/navigation/branches/main_screen_branch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,9 @@ class LastUpdates extends StatelessWidget {
           return const Center(
             child: CircularProgressIndicator(),
           );
+        }
+        if (state is LastUpdatesFailureState) {
+          return FailureWidget(failure: state.failure);
         }
         if (state is LastUpdatesSuccessState) {
           return Column(
