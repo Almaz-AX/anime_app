@@ -141,12 +141,11 @@ Future<void> init() async {
   sl.registerLazySingleton(
       () => RetryOnConnectivityChangeInterceptor(requestRetrier: sl()));
   sl.registerLazySingleton(
-    () => DioConnectivityRequestRetrier(dio: sl(), connectivity: sl()),
+    () => DioConnectivityRequestRetrier(dio: sl(), networkInfo: sl()),
   );
   // local
   //DAO
   sl.registerLazySingleton<WatchedEpisodesDAO>(() => WatchedEpisodesDAO());
   //! External
   sl.registerLazySingleton<Dio>(() => Dio());
-  sl.registerLazySingleton(() => Connectivity());
 }

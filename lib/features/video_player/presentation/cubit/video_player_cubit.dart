@@ -1,4 +1,5 @@
 // ignore: depend_on_referenced_packages
+import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:equatable/equatable.dart';
@@ -28,8 +29,8 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
             titleId: titleId,
             currentEpisode: currentEpisode,
             player: player,
-            videoPlayerController: VideoPlayerController.networkUrl(_getUrl(
-                episode: player.list[currentEpisode], host: player.host)))) {
+            videoPlayerController: _videoPlyerControllerInitialize(
+                episode: player.list[currentEpisode], host: player.host))) {
     getWatchedEpisode(currentEpisode).then((episode) => _createChwieController(
             state.videoPlayerController, episode?.continueTimestamp)
         .then((value) => emit(state.copyWith(
@@ -49,11 +50,12 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     return watchedEpisode;
   }
 
-  static Uri _getUrl({required Episode episode, required String host}) {
+  static VideoPlayerController _videoPlyerControllerInitialize(
+      {required Episode episode, required String host}) {
     final hls = episode.hls;
     final videoUrl = hls.fhd ?? hls.hd ?? hls.sd;
     final url = Uri.parse('https://$host$videoUrl');
-    return url;
+    return VideoPlayerController.networkUrl(url);
   }
 
   Future<void> nextEpisode() async {
@@ -109,8 +111,10 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
       int? continueTimestamp) async {
     await videoPlayerController.initialize();
     final chewieController = ChewieController(
+      customControls: const CustomControls(),
+      errorBuilder: (context, errorMessage) =>
+          Center(child: Text(errorMessage)),
       startAt: Duration(seconds: continueTimestamp ?? 0),
-      showControls: false,
       showControlsOnInitialize: false,
       autoInitialize: true,
       videoPlayerController: videoPlayerController,
@@ -130,10 +134,8 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     emit(state.copyWith(status: VideoPlayerStatus.loading));
     disposeControllers();
 
-    final newVideoPlayerController = VideoPlayerController.networkUrl(
-      _getUrl(
-          episode: state.player.list[episodeNumber], host: state.player.host),
-    );
+    final newVideoPlayerController = _videoPlyerControllerInitialize(
+        episode: state.player.list[episodeNumber], host: state.player.host);
     final watchedEpisode = await getWatchedEpisode(episodeNumber);
     final chewieController = await _createChwieController(
         newVideoPlayerController, watchedEpisode?.continueTimestamp);

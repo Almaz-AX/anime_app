@@ -15,11 +15,15 @@ class DioClient {
     required this.dio,
     required this.connectivityChangeInterceptor,
   }) {
-    dio.options.baseUrl = Host.apiHost;
+    dio.options = BaseOptions(
+        baseUrl: Host.apiHost,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30));
+
     dio.interceptors.add(connectivityChangeInterceptor);
   }
 
-  Future<dynamic> get(String path) async {
+  Future<T?> get<T>(String path) async {
     try {
       if (Platform.isAndroid) {
         (dio.httpClientAdapter = IOHttpClientAdapter(createHttpClient: () {
@@ -30,8 +34,11 @@ class DioClient {
         }));
       }
 
-      final response = await dio.get(path);
-      return response.data;
+      final Response<T> response = await dio.get(path);
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      // Не ловится ошибка!!!!!!!!!!!
       // } on DioException catch (e) {
       //   if (e.response != null) {
       //     print(e.response?.data);
@@ -43,7 +50,8 @@ class DioClient {
       //     print(e.message);
       //   }
     } catch (e) {
-      print(e);
+      rethrow;
     }
+    return null;
   }
 }

@@ -67,7 +67,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late final VideoPlayerCubit cubit;
   late final VideoPlayerController videoPlayerController;
   ChewieController? chewieController;
-  bool _mounted = false;
 
   @override
   void initState() {
@@ -76,8 +75,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    _mounted = true;
-    changeVisibilityControls();
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     cubit = context.read<VideoPlayerCubit>();
@@ -85,21 +82,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
-    _mounted = false;
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
-  }
-
-  Future<void> changeVisibilityControls() async {
-    visibilityControls = !visibilityControls;
-    // не совсем правильно работает
-    if (visibilityControls == true) {
-      Future.delayed(const Duration(seconds: 3), changeVisibilityControls);
-    }
-    if (_mounted) setState(() {});
   }
 
   @override
@@ -109,24 +96,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       final chewieController = state.chewieController;
       if (state.status == VideoPlayerStatus.loaded &&
           chewieController != null) {
-        return GestureDetector(
-          onTap: () {
-            changeVisibilityControls();
-          },
-          child: Stack(
-            children: [
-              Chewie(controller: chewieController),
-              Visibility(
-                  visible: visibilityControls, child: const CustomControls())
-            ],
-          ),
-        );
+        return Chewie(controller: chewieController);
       }
-      return const Center(
-          child: Align(
-        alignment: Alignment.center,
-        child: CircularProgressIndicator(),
-      ));
+      return const Center(child: CircularProgressIndicator());
     });
   }
 }

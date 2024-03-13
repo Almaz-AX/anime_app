@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
+
 import 'package:anime_app/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,59 +10,116 @@ import 'package:video_player/video_player.dart';
 
 import '../cubit/video_player_cubit.dart';
 
-class CustomControls extends StatelessWidget {
+class CustomControls extends StatefulWidget {
   const CustomControls({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<CustomControls> createState() => _CustomControlsState();
+}
+
+class _CustomControlsState extends State<CustomControls> {
+  late final VideoPlayerController videoPlayerController;
+  bool visibleControls = true;
+  late Duration currentPosition;
+  Duration hideControlsTimerDuration = const Duration(seconds: 3);
+  bool isBuffering = true;
+  bool isPlaying = false;
+  @override
+  void initState() {
+    super.initState();
+    videoPlayerController =
+        context.read<VideoPlayerCubit>().state.videoPlayerController;
+    currentPosition = videoPlayerController.value.position;
+    videoPlayerController.addListener(_listenBuffering);
+  }
+
+  void changeVisibilityControls() {
+    visibleControls = !visibleControls;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _listenBuffering() {
+    isBuffering = videoPlayerController.value.isBuffering;
+    isPlaying = videoPlayerController.value.isPlaying;
+    if (isBuffering) {
+      visibleControls = true;
+    }
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController.removeListener(_listenBuffering);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cubit = context.read<VideoPlayerCubit>();
     return GestureDetector(
-      child: Stack(
-        children: [
-          Center(
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              IconButton(
-                iconSize: 45,
-                onPressed: () {
-                  cubit.prevEpisode();
+      behavior: HitTestBehavior.translucent,
+      onTap: changeVisibilityControls,
+      child: Visibility(
+        replacement: Center(
+            child: Container(
+          color: Colors.transparent,
+        )),
+        visible: visibleControls,
+        child: Stack(
+          children: [
+            Center(
+              child: isBuffering
+                  ? const CircularProgressIndicator()
+                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      IconButton(
+                        iconSize: 45,
+                        onPressed: () {
+                          cubit.prevEpisode();
+                        },
+                        icon: const Icon(Icons.chevron_left_rounded),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      IconButton(
+                        iconSize: 45,
+                        onPressed: () {
+                          isPlaying = !isPlaying;
+                          cubit.pause();
+                          setState(() {});
+                        },
+                        icon: isPlaying
+                            ? const Icon(Icons.pause_outlined)
+                            : const Icon(Icons.play_arrow_rounded),
+                        splashRadius: 20,
+                        splashColor: Colors.green,
+                        highlightColor: Colors.amberAccent,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      IconButton(
+                          iconSize: 45,
+                          onPressed: () {
+                            cubit.nextEpisode();
+                          },
+                          icon: const Icon(Icons.chevron_right_rounded),
+                          splashRadius: 50),
+                    ]),
+            ),
+            IconButton(
+                onPressed: () async {
+                  await Future.microtask(() => context.pop());
                 },
-                icon: const Icon(Icons.chevron_left_rounded),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              IconButton(
-                iconSize: 45,
-                onPressed: () {
-                  cubit.pause();
-                },
-                icon: const Icon(Icons.play_arrow_rounded),
-                splashRadius: 20,
-                splashColor: Colors.green,
-                highlightColor: Colors.amberAccent,
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              IconButton(
-                  iconSize: 45,
-                  onPressed: () {
-                    cubit.nextEpisode();
-                  },
-                  icon: const Icon(Icons.chevron_right_rounded),
-                  splashRadius: 50),
-            ]),
-          ),
-          IconButton(
-              onPressed: () async {
-                await Future.microtask(() => context.pop());
-              },
-              icon: const ImageIcon(AssetImage(IconAseet.cancel)),
-              splashRadius: 20),
-          const VideoSliderWidget()
-        ],
+                icon: const ImageIcon(AssetImage(IconAseet.cancel)),
+                splashRadius: 20),
+            const VideoSliderWidget(),
+          ],
+        ),
       ),
     );
   }
@@ -79,7 +138,6 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   late final VideoPlayerController videoPlayerController;
   late int positionInSeconds;
   late final int durationInSeconds;
-  bool _mounted = false;
   @override
   void initState() {
     super.initState();
@@ -88,11 +146,10 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
     videoPlayerController.addListener(currentPosotion);
     positionInSeconds = videoPlayerController.value.position.inSeconds;
     durationInSeconds = videoPlayerController.value.duration.inSeconds;
-    _mounted = true;
   }
 
   void currentPosotion() {
-    if (_mounted) {
+    if (mounted) {
       setState(() {
         positionInSeconds = videoPlayerController.value.position.inSeconds;
       });
@@ -117,7 +174,6 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
 
   @override
   void dispose() {
-    _mounted = false;
     videoPlayerController.removeListener(currentPosotion);
     super.dispose();
   }

@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:anime_app/assets/assets.dart';
+import 'package:anime_app/core/platform/network_info.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../constants/constants.dart';
+import '../../../../injection_container.dart';
 
 // Stateful navigation based on:
 // https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
@@ -45,7 +49,7 @@ class MainPage extends StatelessWidget {
   }
 }
 
-class ScaffoldWithNavigationBar extends StatelessWidget {
+class ScaffoldWithNavigationBar extends StatefulWidget {
   const ScaffoldWithNavigationBar({
     super.key,
     required this.body,
@@ -57,9 +61,43 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
 
   @override
+  State<ScaffoldWithNavigationBar> createState() =>
+      _ScaffoldWithNavigationBarState();
+}
+
+class _ScaffoldWithNavigationBarState extends State<ScaffoldWithNavigationBar> {
+  late final StreamSubscription subcription;
+  final NetworkInfo networkInfo = sl();
+  @override
+  void initState() {
+    super.initState();
+    subcription = networkInfo.watchConnection.listen(_showDialog);
+  }
+
+  void _showDialog(bool isConnected) async {
+    if (!isConnected) {
+      Future.delayed(
+          Duration.zero,
+          () => showDialog(
+              context: context,
+              builder: (context) => const AlertDialog(
+                    content: Text("Отсутсвует подключение к интернету"),
+                  )));
+      await Future.delayed(
+          const Duration(seconds: 3), () => Navigator.pop(context));
+    }
+  }
+
+  @override
+  void dispose() {
+    subcription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: body,
+        body: widget.body,
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
@@ -77,8 +115,8 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
               label: Constants.profile,
             ),
           ],
-          currentIndex: selectedIndex,
-          onTap: onDestinationSelected,
+          currentIndex: widget.selectedIndex,
+          onTap: widget.onDestinationSelected,
         ));
   }
 }
@@ -121,6 +159,23 @@ class ScaffoldWithNavigationRail extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class InternetConnectionFailure extends StatefulWidget {
+  const InternetConnectionFailure({super.key});
+
+  @override
+  State<InternetConnectionFailure> createState() =>
+      _InternetConnectionFailureState();
+}
+
+class _InternetConnectionFailureState extends State<InternetConnectionFailure> {
+  @override
+  Widget build(BuildContext context) {
+    return const AlertDialog(
+      title: Text('Отсутсвует подключение к интернету'),
     );
   }
 }
