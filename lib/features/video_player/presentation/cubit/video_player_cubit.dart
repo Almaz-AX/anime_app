@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/data/models/anime_title.dart';
@@ -111,7 +112,17 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
       int? continueTimestamp) async {
     await videoPlayerController.initialize();
     final chewieController = ChewieController(
+      deviceOrientationsAfterFullScreen: [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown
+      ],
+      deviceOrientationsOnEnterFullScreen: [
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ],
       customControls: const CustomControls(),
+      zoomAndPan: true,
+      // maxScale: 1.5,
       errorBuilder: (context, errorMessage) =>
           Center(child: Text(errorMessage)),
       startAt: Duration(seconds: continueTimestamp ?? 0),

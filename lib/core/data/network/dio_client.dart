@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
 import 'package:anime_app/core/error/exceptions.dart';
+import 'package:anime_app/core/error/failure.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 
@@ -38,18 +39,22 @@ class DioClient {
       if (response.statusCode == 200) {
         return response.data;
       }
+      if (response.statusCode == 401) {
+        throw NetworkException(type: NetworkExceptionType.unauthorized);
+      }
       // Не ловится ошибка!!!!!!!!!!!
-      // } on DioException catch (e) {
-      //   if (e.response != null) {
-      //     print(e.response?.data);
-      //     print(e.response?.headers);
-      //     print(e.response?.requestOptions);
-      //   } else {
-      //     // Something happened in setting up or sending the request that triggered an Error
-      //     print(e.requestOptions);
-      //     print(e.message);
-      //   }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print(e.response?.data);
+        print(e.response?.headers);
+        print(e.response?.requestOptions);
+      } else {
+        // Something happened in setting up or sending the request that triggered an Error
+        print(e.requestOptions);
+        print(e.message);
+      }
     } catch (e) {
+      print(e);
       rethrow;
     }
     return null;

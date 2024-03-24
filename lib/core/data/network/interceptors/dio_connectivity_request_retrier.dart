@@ -2,7 +2,6 @@
 import 'dart:async';
 
 import 'package:anime_app/core/platform/network_info.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
 class DioConnectivityRequestRetrier {
@@ -15,20 +14,19 @@ class DioConnectivityRequestRetrier {
   Future<Response> sheduleRequestRetry(RequestOptions requestOptions) async {
     final responseCompleter = Completer<Response>();
     late final StreamSubscription<bool> subcription;
-    subcription = networkInfo.watchConnection.listen((isConnection) {});
-    //     networkInfo.watchConnection.listen((isConnection) {
-    //   if (connectivityResult != ConnectivityResult.none) {
-    //     responseCompleter.complete(dio.request(
-    //       requestOptions.path,
-    //       cancelToken: requestOptions.cancelToken,
-    //       data: requestOptions.data,
-    //       onReceiveProgress: requestOptions.onReceiveProgress,
-    //       onSendProgress: requestOptions.onSendProgress,
-    //       queryParameters: requestOptions.queryParameters,
-    //     ));
-    //     subcription.cancel();
-    //   }
-    // });
+    subcription = networkInfo.watchConnection.listen((isConnection) {
+      if (isConnection) {
+        responseCompleter.complete(dio.request(
+          requestOptions.path,
+          cancelToken: requestOptions.cancelToken,
+          data: requestOptions.data,
+          onReceiveProgress: requestOptions.onReceiveProgress,
+          onSendProgress: requestOptions.onSendProgress,
+          queryParameters: requestOptions.queryParameters,
+        ));
+        subcription.cancel();
+      }
+    });
 
     return responseCompleter.future;
   }

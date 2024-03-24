@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 abstract class NetworkInfo {
-  Future<bool> get isConnected;
   Stream<bool> get watchConnection;
 }
 
@@ -21,16 +20,6 @@ class NetworkInfoImpl implements NetworkInfo {
         controller.sink.add(true);
       }
     });
-  }
-
-  @override
-  Future<bool> get isConnected async {
-    final connectivityResult = await connectivityResultFuture;
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      return Future.value(true);
-    }
-    return Future.value(false);
   }
 
   @override

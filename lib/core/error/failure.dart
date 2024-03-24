@@ -9,15 +9,6 @@ class DatabaseFailure extends Failure {
   List<Object?> get props => [];
 }
 
-enum NetworkFailureTyp {
-  noInternetConnection,
-  unauthorized,
-  notFound,
-  // requestTimeout,
-  // sendTimeout,
-  unexpected,
-}
-
 class NetworkUnauthorizedFailure extends Failure {
   @override
   List<Object?> get props => [];

@@ -38,15 +38,13 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, List<AnimeTitle>>> getTitles(
       List<int> titleIdList) async {
     return await getResponseOrFailure(
-        () async => await remoteDataSource.getTitles(titleIdList),
-        (await networkInfo.isConnected));
+        () async => await remoteDataSource.getTitles(titleIdList));
   }
 
   @override
   Future<Either<Failure, TitleUpdates>> getUpdates(int page) async {
     return await getResponseOrFailure(
-        () async => await remoteDataSource.getUpdates(page),
-        (await networkInfo.isConnected));
+        () async => await remoteDataSource.getUpdates(page));
   }
 
   @override

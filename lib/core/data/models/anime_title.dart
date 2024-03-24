@@ -232,8 +232,8 @@ class Season {
 
 @JsonSerializable(explicitToJson: true)
 class Blocked {
-  final bool blocked;
-  final bool bakanim;
+  final bool? blocked;
+  final bool? bakanim;
   Blocked({
     required this.blocked,
     required this.bakanim,

@@ -193,8 +193,8 @@ Map<String, dynamic> _$SeasonToJson(Season instance) => <String, dynamic>{
     };
 
 Blocked _$BlockedFromJson(Map<String, dynamic> json) => Blocked(
-      blocked: json['blocked'] as bool,
-      bakanim: json['bakanim'] as bool,
+      blocked: json['blocked'] as bool?,
+      bakanim: json['bakanim'] as bool?,
     );
 
 Map<String, dynamic> _$BlockedToJson(Blocked instance) => <String, dynamic>{

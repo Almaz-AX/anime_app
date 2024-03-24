@@ -41,15 +41,14 @@ class VideoPlayerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) async {
-        await context.read<VideoPlayerCubit>().disposeControllers();
-      },
-      child: const Scaffold(
-        backgroundColor: Colors.black,
-        body: VideoPlayerWidget(),
-      ),
-    );
+        canPop: true,
+        onPopInvoked: (didPop) async {
+          await context.read<VideoPlayerCubit>().disposeControllers();
+        },
+        child: const Material(
+          color: Colors.black,
+          child: VideoPlayerWidget(),
+        ));
   }
 }
 
@@ -63,11 +62,6 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  bool visibilityControls = true;
-  late final VideoPlayerCubit cubit;
-  late final VideoPlayerController videoPlayerController;
-  ChewieController? chewieController;
-
   @override
   void initState() {
     super.initState();
@@ -75,9 +69,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    cubit = context.read<VideoPlayerCubit>();
   }
 
   @override

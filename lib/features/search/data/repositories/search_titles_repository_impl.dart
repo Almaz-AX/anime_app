@@ -20,7 +20,7 @@ class SearchTitlesRepositoryImpl implements SearhTitlesRepository {
   Future<Either<Failure, SearchTitles>> getSearchedTitles(
       String query, page) async {
     return getResponseOrFailure(
-        () async => await remoteDataSource.searchTitles(query, page),
-        (await networkInfo.isConnected));
+      () async => await remoteDataSource.searchTitles(query, page),
+    );
   }
 }

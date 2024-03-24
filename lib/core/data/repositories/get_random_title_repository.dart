@@ -19,7 +19,6 @@ class GetRandomTitleRepositoryImpl implements GetRandomTitleRepository {
   @override
   Future<Either<Failure, AnimeTitle>> getRandomTitle() async {
     return getResponseOrFailure(
-        () async => await remoteDataSource.getRandomTitle(),
-        (await networkInfo.isConnected));
+        () async => await remoteDataSource.getRandomTitle());
   }
 }

@@ -46,3 +46,4 @@ flutter:
           weight: 500
           style: normal
         - asset: fonts/Raleway-Italic.ttf
+          style: italic

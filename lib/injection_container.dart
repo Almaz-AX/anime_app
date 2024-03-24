@@ -11,6 +11,7 @@ import 'package:anime_app/features/home/domain/usecases/get_title_updates.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_episodes.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dart';
 import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
+import 'package:anime_app/features/home/presentation/bloc/random_titles_bloc/bloc/random_titles_bloc.dart';
 import 'package:anime_app/features/home/presentation/bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
 import 'package:anime_app/features/search/data/datasources/search_remote_data_source.dart';
 import 'package:anime_app/features/search/data/repositories/search_titles_repository_impl.dart';
@@ -52,6 +53,8 @@ Future<void> init() async {
       completeWatching: sl()));
 
   sl.registerFactory(() => LastUpdatesBloc(getTitleUpdates: sl()));
+
+  sl.registerFactory(() => RandomTitlesBloc(getRandomTitle: sl()));
   //Use cases
   sl.registerLazySingleton<GetUnderseenEpisodes>(
       () => GetUnderseenEpisodes(repository: sl()));

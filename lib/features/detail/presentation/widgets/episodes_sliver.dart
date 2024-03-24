@@ -126,10 +126,9 @@ class EpisodeCard extends StatelessWidget {
                       height: 5,
                     ),
                     if (episode.name != null)
-                      Text(
-                        episode.name!,
-                        maxLines: 3,
-                      ),
+                      Text(episode.name!,
+                          maxLines: 3,
+                          style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(
                       height: 5,
                     ),
