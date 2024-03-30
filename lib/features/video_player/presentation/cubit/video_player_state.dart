@@ -9,7 +9,6 @@ class VideoPlayerState extends Equatable {
   final Player player;
   final int currentEpisode;
   final VideoPlayerController videoPlayerController;
-  final ChewieController? chewieController;
   final WatchedEpisode? watchedEpisode;
   const VideoPlayerState({
     required this.status,
@@ -17,18 +16,12 @@ class VideoPlayerState extends Equatable {
     required this.player,
     required this.currentEpisode,
     required this.videoPlayerController,
-    this.chewieController,
     this.watchedEpisode,
   });
 
   @override
-  List<Object?> get props => [
-        status,
-        currentEpisode,
-        videoPlayerController,
-        chewieController,
-        watchedEpisode
-      ];
+  List<Object?> get props =>
+      [status, currentEpisode, videoPlayerController, watchedEpisode];
 
   VideoPlayerState copyWith({
     VideoPlayerStatus? status,
@@ -37,7 +30,6 @@ class VideoPlayerState extends Equatable {
     int? currentEpisode,
     List<Episode>? episodes,
     VideoPlayerController? videoPlayerController,
-    ChewieController? chewieController,
     WatchedEpisode? watchedEpisode,
   }) {
     return VideoPlayerState(
@@ -47,7 +39,6 @@ class VideoPlayerState extends Equatable {
       currentEpisode: currentEpisode ?? this.currentEpisode,
       videoPlayerController:
           videoPlayerController ?? this.videoPlayerController,
-      chewieController: chewieController ?? this.chewieController,
       watchedEpisode: watchedEpisode ?? this.watchedEpisode,
     );
   }

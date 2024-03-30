@@ -13,6 +13,7 @@ class AnimeTitleDb extends BaseEntity {
   static const fieldId = 'title_id';
   static const fieldTitleName = 'title_name';
   static const fieldWatchedEpisode = 'watched_episode';
+  static const fieldInFavorites = 'in_favorites';
 
   @JsonKey(name: fieldId)
   final int id;
@@ -23,10 +24,14 @@ class AnimeTitleDb extends BaseEntity {
   @JsonKey(name: fieldWatchedEpisode)
   final List<WatchedEpisode> watchedEpisode;
 
+  @JsonKey(name: fieldInFavorites)
+  final bool inFavorites;
+
   AnimeTitleDb({
     required this.id,
     required this.titleName,
     required this.watchedEpisode,
+    this.inFavorites = false,
   });
 
   Map<String, dynamic> toJson() => _$AnimeTitleDbToJson(this);

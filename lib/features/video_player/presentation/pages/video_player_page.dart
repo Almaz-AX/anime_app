@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,7 +42,7 @@ class VideoPlayerPage extends StatelessWidget {
     return PopScope(
         canPop: true,
         onPopInvoked: (didPop) async {
-          await context.read<VideoPlayerCubit>().disposeControllers();
+          await context.read<VideoPlayerCubit>().disposeController();
         },
         child: const Material(
           color: Colors.black,
@@ -85,10 +84,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
         builder: (context, state) {
-      final chewieController = state.chewieController;
-      if (state.status == VideoPlayerStatus.loaded &&
-          chewieController != null) {
-        return Chewie(controller: chewieController);
+      if (state.status == VideoPlayerStatus.loaded) {
+        return Stack(
+          children: [
+            VideoPlayer(state.videoPlayerController),
+            const CustomControls(),
+          ],
+        );
       }
       return const Center(child: CircularProgressIndicator());
     });

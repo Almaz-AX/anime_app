@@ -4,6 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AboutTitleSliver extends StatelessWidget {
   const AboutTitleSliver({super.key});
+  String dateFormat(int timestamp) {
+    final timeNow = DateTime.now();
+    final updatedTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    final difference = timeNow.difference(updatedTime);
+    if (!difference.isNegative && difference.inDays < 1) {
+      return 'сегодня в ${_timeFormat(updatedTime.hour)} : ${_timeFormat(updatedTime.minute)}';
+    } else if (!difference.isNegative && difference.inDays < 2) {
+      return 'вчера в  ${_timeFormat(updatedTime.hour)} : ${_timeFormat(updatedTime.minute)}';
+    } else {
+      return '${_timeFormat(updatedTime.day)}.${_timeFormat(updatedTime.month)}.${updatedTime.year} в ${_timeFormat(updatedTime.hour)} : ${_timeFormat(updatedTime.minute)}';
+    }
+  }
+
+  String _timeFormat(int value) {
+    if (value < 10) {
+      return '0$value';
+    }
+    return value.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +41,8 @@ class AboutTitleSliver extends StatelessWidget {
             title.genres.join(', '),
             style: Theme.of(context).textTheme.labelMedium,
           ),
-          const Text('Обновлено вчера'),
+          if (title.updated != null)
+            Text('Обновлено ${dateFormat(title.updated!)}'),
           if (title.status?.string != null)
             const SizedBox(
               height: 15,

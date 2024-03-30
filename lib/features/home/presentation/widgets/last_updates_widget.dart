@@ -45,7 +45,11 @@ class LastUpdates extends StatelessWidget {
                               titles: state.titles));
                     }
                     final title = state.titles[index];
-                    return TitleCardWidget(title: title);
+                    return Stack(
+                      children: [
+                        TitleCardWidget(title: title),
+                      ],
+                    );
                   },
                 ),
               ),

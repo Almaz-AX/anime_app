@@ -23,9 +23,9 @@ class _CustomControlsState extends State<CustomControls> {
   late final VideoPlayerController videoPlayerController;
   bool visibleControls = true;
   late Duration currentPosition;
-  Duration hideControlsTimerDuration = const Duration(seconds: 3);
   bool isBuffering = true;
   bool isPlaying = false;
+  Timer? timer;
   @override
   void initState() {
     super.initState();
@@ -42,13 +42,18 @@ class _CustomControlsState extends State<CustomControls> {
     }
   }
 
-  void _listenBuffering() {
+  void _listenBuffering() async {
     isBuffering = videoPlayerController.value.isBuffering;
     isPlaying = videoPlayerController.value.isPlaying;
     if (isBuffering) {
       visibleControls = true;
+    } else if (isPlaying && visibleControls) {
+      Future.delayed(const Duration(seconds: 3))
+          .then((value) => visibleControls = false);
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override

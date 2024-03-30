@@ -1,10 +1,6 @@
 // ignore: depend_on_referenced_packages
-import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 import 'package:bloc/bloc.dart';
-import 'package:chewie/chewie.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/data/models/anime_title.dart';
@@ -30,12 +26,9 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
             titleId: titleId,
             currentEpisode: currentEpisode,
             player: player,
-            videoPlayerController: _videoPlyerControllerInitialize(
+            videoPlayerController: _createVideoPlayerController(
                 episode: player.list[currentEpisode], host: player.host))) {
-    getWatchedEpisode(currentEpisode).then((episode) => _createChwieController(
-            state.videoPlayerController, episode?.continueTimestamp)
-        .then((value) => emit(state.copyWith(
-            status: VideoPlayerStatus.loaded, chewieController: value))));
+    _initVideoPlayer();
   }
 
   Future<WatchedEpisode?> getWatchedEpisode(int episodeNumber) async {
@@ -45,18 +38,35 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
       for (WatchedEpisode episode in watchedEpisodes) {
         if (episode.episodeNumber == episodeNumber) {
           watchedEpisode = episode;
+          print(episode.continueTimestamp);
         }
       }
     });
     return watchedEpisode;
   }
 
-  static VideoPlayerController _videoPlyerControllerInitialize(
+  Future<void> _initVideoPlayer() async {
+    final WatchedEpisode? watchedEpisode =
+        await getWatchedEpisode(state.currentEpisode);
+
+    await state.videoPlayerController.initialize();
+    await state.videoPlayerController.play();
+    if (watchedEpisode != null) {
+      state.videoPlayerController
+          .seekTo(Duration(seconds: watchedEpisode.continueTimestamp));
+    }
+    emit(
+      state.copyWith(status: VideoPlayerStatus.loaded),
+    );
+  }
+
+  static VideoPlayerController _createVideoPlayerController(
       {required Episode episode, required String host}) {
     final hls = episode.hls;
     final videoUrl = hls.fhd ?? hls.hd ?? hls.sd;
     final url = Uri.parse('https://$host$videoUrl');
-    return VideoPlayerController.networkUrl(url);
+    final controller = VideoPlayerController.networkUrl(url);
+    return controller;
   }
 
   Future<void> nextEpisode() async {
@@ -76,19 +86,16 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   void pause() {
-    final chewieController = state.chewieController;
-    if (chewieController == null) {
+    final controller = state.videoPlayerController;
+    if (controller.value.isPlaying) {
+      controller.pause();
       return;
     }
-    if (chewieController.isPlaying) {
-      chewieController.pause();
-      return;
-    }
-    chewieController.play();
+    controller.play();
   }
 
-  Future<void> disposeControllers() async {
-    state.chewieController?.isPlaying ?? state.chewieController?.pause();
+  Future<void> disposeController() async {
+    state.videoPlayerController.pause();
     bool watchedCompleted = false;
     final currentPositionInSeconds =
         state.videoPlayerController.value.position.inSeconds;
@@ -104,58 +111,16 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
         continueTimestamp: currentPositionInSeconds,
         watchCompleted: watchedCompleted)));
     state.videoPlayerController.dispose();
-    state.chewieController?.dispose();
-  }
-
-  Future<ChewieController> _createChwieController(
-      VideoPlayerController videoPlayerController,
-      int? continueTimestamp) async {
-    await videoPlayerController.initialize();
-    final chewieController = ChewieController(
-      deviceOrientationsAfterFullScreen: [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown
-      ],
-      deviceOrientationsOnEnterFullScreen: [
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      customControls: const CustomControls(),
-      zoomAndPan: true,
-      // maxScale: 1.5,
-      errorBuilder: (context, errorMessage) =>
-          Center(child: Text(errorMessage)),
-      startAt: Duration(seconds: continueTimestamp ?? 0),
-      showControlsOnInitialize: false,
-      autoInitialize: true,
-      videoPlayerController: videoPlayerController,
-      useRootNavigator: true,
-      autoPlay: true,
-      placeholder: Container(
-        color: Colors.black,
-      ),
-      materialProgressColors:
-          ChewieProgressColors(playedColor: const Color(0xFF2EAEBE)),
-      progressIndicatorDelay: const Duration(microseconds: 500),
-    );
-    return chewieController;
   }
 
   Future<void> _changeEpisode(int episodeNumber) async {
     emit(state.copyWith(status: VideoPlayerStatus.loading));
-    disposeControllers();
-
-    final newVideoPlayerController = _videoPlyerControllerInitialize(
+    await disposeController();
+    final newVideoPlayerController = _createVideoPlayerController(
         episode: state.player.list[episodeNumber], host: state.player.host);
-    final watchedEpisode = await getWatchedEpisode(episodeNumber);
-    final chewieController = await _createChwieController(
-        newVideoPlayerController, watchedEpisode?.continueTimestamp);
-
     emit(state.copyWith(
-      status: VideoPlayerStatus.loaded,
-      currentEpisode: episodeNumber,
-      videoPlayerController: newVideoPlayerController,
-      chewieController: chewieController,
-    ));
+        currentEpisode: episodeNumber,
+        videoPlayerController: newVideoPlayerController));
+    await _initVideoPlayer();
   }
 }

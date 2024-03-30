@@ -34,7 +34,8 @@ abstract class BaseDAO {
     batch.execute('''
       CREATE TABLE ${AnimeTitleDb.tableName}(
         ${AnimeTitleDb.fieldId} INTEGER PRIMARY KEY,
-        ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL
+        ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL,
+        ${AnimeTitleDb.fieldInFavorites} INTEGER DEFAULT 0
       )
       ''');
   }
@@ -47,7 +48,7 @@ abstract class BaseDAO {
       ${WatchedEpisode.fieldWatchCompleted} INTEGER NOT NULL,
       ${WatchedEpisode.fieldContinueTimestamp} INTEGER DEFAULT 0,
       ${WatchedEpisode.fieldAnimeTitleId} INTEGER NOT NULL,
-      ${WatchedEpisode.fieldUpdatedTime} INT NOT NULL,
+      ${WatchedEpisode.fieldUpdatedTime} INTEGER NOT NULL,
       FOREIGN KEY (${WatchedEpisode.fieldAnimeTitleId}) REFERENCES ${AnimeTitleDb.tableName}(${AnimeTitleDb.fieldId}) ON DELETE CASCADE
     )
     ''');
