@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
 import 'package:anime_app/core/error/exceptions.dart';
-import 'package:anime_app/core/error/failure.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 

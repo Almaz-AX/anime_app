@@ -1,13 +1,10 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:anime_app/core/data/local/entity/base_entity.dart';
+
+import 'favorite_title.dart';
 
 import 'watched_episode.dart';
 
-part 'anime_title_db.g.dart';
-
-abstract class BaseEntity extends Equatable {}
-
-@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class AnimeTitleDb extends BaseEntity {
   static const tableName = 'AnimeTitleDb';
   static const fieldId = 'title_id';
@@ -15,29 +12,17 @@ class AnimeTitleDb extends BaseEntity {
   static const fieldWatchedEpisode = 'watched_episode';
   static const fieldInFavorites = 'in_favorites';
 
-  @JsonKey(name: fieldId)
   final int id;
-
-  @JsonKey(name: fieldTitleName)
   final String titleName;
-
-  @JsonKey(name: fieldWatchedEpisode)
-  final List<WatchedEpisode> watchedEpisode;
-
-  @JsonKey(name: fieldInFavorites)
-  final bool inFavorites;
+  final List<WatchedEpisode>? watchedEpisode;
+  final FavoriteTitle? inFavorites;
 
   AnimeTitleDb({
     required this.id,
     required this.titleName,
-    required this.watchedEpisode,
-    this.inFavorites = false,
+    this.watchedEpisode,
+    this.inFavorites,
   });
-
-  Map<String, dynamic> toJson() => _$AnimeTitleDbToJson(this);
-
-  factory AnimeTitleDb.fromJson(Map<String, dynamic> json) =>
-      _$AnimeTitleDbFromJson(json);
 
   @override
   List<Object?> get props => [id, titleName, watchedEpisode];

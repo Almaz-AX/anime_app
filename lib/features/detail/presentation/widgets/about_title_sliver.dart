@@ -1,5 +1,7 @@
-import 'package:anime_app/core/data/models/anime_title.dart';
+import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AboutTitleSliver extends StatelessWidget {
@@ -26,16 +28,40 @@ class AboutTitleSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = context.read<AnimeTitle>();
+    final bloc = BlocProvider.of<DetailBloc>(context);
+    final title = bloc.state.title;
+    final isFavorite =
+        context.select((DetailBloc bloc) => bloc.state.isFavorite);
+    if (title == null) {
+      return Container();
+    }
+
     return SliverToBoxAdapter(
         child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.only(left: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title.names.ru,
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    title.names.ru,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ),
+              IconButton(
+                  iconSize: 25,
+                  onPressed: () =>
+                      bloc.add(DetailChangeFavoriteTitleEvent(title.id)),
+                  isSelected: isFavorite,
+                  selectedIcon: const Icon(Icons.favorite),
+                  icon: const Icon(Icons.favorite_border))
+            ],
           ),
           Text(
             title.genres.join(', '),

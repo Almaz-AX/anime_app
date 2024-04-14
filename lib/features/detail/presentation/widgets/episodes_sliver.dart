@@ -1,22 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../constants/constants.dart';
 import '../../../../core/data/local/entity/watched_episode.dart';
-import '../../../../core/data/models/anime_title.dart';
 import '../../../../core/host.dart';
 import '../../../video_player/presentation/pages/video_player_page.dart';
 
 class EpisodesSliver extends StatelessWidget {
   const EpisodesSliver({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final title = context.read<AnimeTitle>();
-    final player = title.player;
+    final title = BlocProvider.of<DetailBloc>(context).state.title;
+    final player = title?.player;
     if (player == null) {
       return const SliverToBoxAdapter();
     }
@@ -64,10 +64,11 @@ class EpisodeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = context.read<AnimeTitle>();
-    final player = title.player;
+    final state = BlocProvider.of<DetailBloc>(context).state;
+    final title = state.title;
+    final player = title?.player;
 
-    if (player == null) {
+    if (player == null || title == null) {
       return Container();
     }
 
@@ -78,7 +79,8 @@ class EpisodeCard extends StatelessWidget {
     if (previewRelativeUrl != null) {
       preview = '${Host.host}${episodes[index].preview}';
     }
-    final watchedEpisodes = context.watch<List<WatchedEpisode>>();
+    final watchedEpisodes =
+        context.select((DetailBloc bloc) => state.watchedEpisodes);
     final watchedEpisode = getEpisode(watchedEpisodes);
     final icon =
         watchedEpisode != null ? Icons.check : Icons.play_arrow_rounded;

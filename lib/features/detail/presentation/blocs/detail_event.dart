@@ -2,8 +2,6 @@
 
 part of 'detail_bloc.dart';
 
-
-
 abstract class DetailEvent extends Equatable {
   const DetailEvent();
 
@@ -22,10 +20,20 @@ class DetailGetTitleEvent extends DetailEvent {
 }
 
 class DetailGetWatchedEpisodesEvent extends DetailEvent {
-  final AnimeTitle title;
   final List<WatchedEpisode> watchedEpisodes;
   const DetailGetWatchedEpisodesEvent({
-    required this.title,
     required this.watchedEpisodes,
   });
+
+  @override
+  List<Object> get props => [watchedEpisodes];
+}
+
+class DetailChangeFavoriteTitleEvent extends DetailEvent {
+  final int id;
+  const DetailChangeFavoriteTitleEvent(
+    this.id,
+  );
+  @override
+  List<Object> get props => [id];
 }

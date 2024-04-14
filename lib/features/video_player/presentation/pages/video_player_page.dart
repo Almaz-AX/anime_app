@@ -45,7 +45,8 @@ class VideoPlayerPage extends StatelessWidget {
           await context.read<VideoPlayerCubit>().disposeController();
         },
         child: const Material(
-          color: Colors.black,
+          clipBehavior: Clip.hardEdge,
+          color: Colors.green,
           child: VideoPlayerWidget(),
         ));
   }

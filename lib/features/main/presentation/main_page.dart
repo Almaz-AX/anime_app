@@ -5,8 +5,8 @@ import 'package:anime_app/core/platform/network_info.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../constants/constants.dart';
-import '../../../../injection_container.dart';
+import '../../../constants/constants.dart';
+import '../../../injection_container.dart';
 
 // Stateful navigation based on:
 // https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart

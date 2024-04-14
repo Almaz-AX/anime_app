@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:anime_app/core/data/local/entity/favorite_title.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,6 +27,7 @@ abstract class BaseDAO {
       final batch = db.batch();
       _createAnimeTitlesTableV1(batch);
       _createWatchedEpisodeTableV1(batch);
+      _createFavoriteTitleTableV1(batch);
       await batch.commit();
     });
   }
@@ -34,8 +36,7 @@ abstract class BaseDAO {
     batch.execute('''
       CREATE TABLE ${AnimeTitleDb.tableName}(
         ${AnimeTitleDb.fieldId} INTEGER PRIMARY KEY,
-        ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL,
-        ${AnimeTitleDb.fieldInFavorites} INTEGER DEFAULT 0
+        ${AnimeTitleDb.fieldTitleName} TEXT NOT NULL
       )
       ''');
   }
@@ -50,6 +51,15 @@ abstract class BaseDAO {
       ${WatchedEpisode.fieldAnimeTitleId} INTEGER NOT NULL,
       ${WatchedEpisode.fieldUpdatedTime} INTEGER NOT NULL,
       FOREIGN KEY (${WatchedEpisode.fieldAnimeTitleId}) REFERENCES ${AnimeTitleDb.tableName}(${AnimeTitleDb.fieldId}) ON DELETE CASCADE
+    )
+    ''');
+  }
+
+  void _createFavoriteTitleTableV1(Batch batch) {
+    batch.execute('''
+    CREATE TABLE ${FavoriteTitle.tableName}(
+      ${FavoriteTitle.fieldAnimeTitleId} INTEGER NOT NULL,
+      FOREIGN KEY (${FavoriteTitle.fieldAnimeTitleId}) REFERENCES ${AnimeTitleDb.tableName}(${AnimeTitleDb.fieldId}) ON DELETE CASCADE
     )
     ''');
   }

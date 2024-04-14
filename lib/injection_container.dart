@@ -1,10 +1,21 @@
+import 'package:anime_app/core/data/datasourses/get_titles_remote_data_source.dart';
+import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 import 'package:anime_app/core/data/network/dio_client.dart';
 import 'package:anime_app/core/data/network/interceptors/dio_connectivity_request_retrier.dart';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
+import 'package:anime_app/core/data/repositories/favorite_title_repository.dart';
 import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
+import 'package:anime_app/core/data/repositories/get_titles_repositiry.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
+import 'package:anime_app/features/detail/domain/usecases/add_favorite_title.dart';
+import 'package:anime_app/features/detail/domain/usecases/get_favorite_title.dart';
 import 'package:anime_app/features/detail/domain/usecases/get_stream_watched_episodes.dart';
+import 'package:anime_app/features/detail/domain/usecases/remove_favorite_title.dart';
+import 'package:anime_app/features/favorites/domain/usecases/getFavoriteTitles.dart';
+import 'package:anime_app/features/favorites/domain/usecases/listenFavoriteTitles.dart';
+import 'package:anime_app/features/favorites/presentation/bloc/favorites_bloc.dart';
+
 import 'package:anime_app/features/home/domain/repositories/home_repository.dart';
 import 'package:anime_app/features/home/domain/usecases/complete_watching.dart';
 import 'package:anime_app/features/home/domain/usecases/get_title_updates.dart';
@@ -21,7 +32,6 @@ import 'package:anime_app/features/search/presentation/bloc/search_bloc.dart';
 import 'package:anime_app/features/video_player/data/datasources/watched_episode_local_data_source.dart';
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -70,8 +80,8 @@ Future<void> init() async {
   //DataSource
   sl.registerLazySingleton<UnderseenEpisodesLocalDataSource>(
       () => UnderseenEpisodesLocalDataSourceImpl(local: sl()));
-  sl.registerLazySingleton<HomeReomoteDataSource>(
-      () => HomeRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<GetUpdatesRemoteDataSource>(
+      () => GetUpdatesRemoteDataSourceImpl(client: sl()));
 
   // SEARCH
   // Bloc
@@ -92,13 +102,22 @@ Future<void> init() async {
 
   // DETAIL
   // Bloc
-  sl.registerFactory(
-      () => DetailBloc(getTitle: sl(), getWatchedEpisodes: sl()));
+  sl.registerFactory(() => DetailBloc(
+      getTitle: sl(),
+      getWatchedEpisodes: sl(),
+      getFavoriteTitle: sl(),
+      addFavoriteTitle: sl(),
+      removeFavoriteTitle: sl()));
 
   // Use cases
   sl.registerLazySingleton<GetTitle>(() => GetTitle(repository: sl()));
   sl.registerLazySingleton<GetStreamWatchedEpisodes>(
       () => GetStreamWatchedEpisodes(repository: sl()));
+  sl.registerLazySingleton<GetFavoriteTitle>(
+      () => GetFavoriteTitle(repository: sl()));
+  sl.registerLazySingleton<AddFavoriteTitle>(
+      () => AddFavoriteTitle(repository: sl()));
+  sl.registerLazySingleton(() => RemoveFavoriteTitle(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<GetTitleRepository>(
@@ -111,6 +130,13 @@ Future<void> init() async {
       () => GetTitleRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<GetWatchedEpisodesLocalDataSource>(
       () => GetWatchedEpisodesLocalDataSourceImpl(watchedEpisodesDAO: sl()));
+
+  //FAVORITES
+  sl.registerFactory(
+      () => FavoritesBloc(listenFavoriteTitles: sl(), getFavoriteTitles: sl()));
+  //Usecase
+  sl.registerLazySingleton(() => ListenFavoriteTitles(repository: sl()));
+  sl.registerLazySingleton(() => GetFavoriteTitles(repository: sl()));
 
   //VIDEOPLAYER
   //Usecase
@@ -135,12 +161,18 @@ Future<void> init() async {
   // Repository
   sl.registerLazySingleton<GetRandomTitleRepository>(() =>
       GetRandomTitleRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<FavoriteTitleRepository>(
+      () => FavoriteTitleRepositoryImpl(favioriteTitlesDAO: sl()));
+  sl.registerLazySingleton<GetTitlesRepository>(
+      () => GetTitlesRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
 
   // DataSource
   sl.registerLazySingleton<GetRandomTitleRemoteDataSource>(
       () => GetRandomTitleRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton(
       () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
+  sl.registerLazySingleton<GetTitlesRemoteDataSource>(
+      () => GetTitlesRemoteDataSourceIml(client: sl()));
   sl.registerLazySingleton(
       () => RetryOnConnectivityChangeInterceptor(requestRetrier: sl()));
   sl.registerLazySingleton(
@@ -149,6 +181,7 @@ Future<void> init() async {
   // local
   //DAO
   sl.registerLazySingleton<WatchedEpisodesDAO>(() => WatchedEpisodesDAO());
+  sl.registerLazySingleton<FavoriteTitlesDAO>(() => FavoriteTitlesDAO());
   //! External
   sl.registerLazySingleton<Dio>(() => Dio());
 }

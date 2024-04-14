@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import '../../../../injection_container.dart';
 import '../blocs/detail_bloc.dart';
 import '../widgets/about_title_sliver.dart';
@@ -32,24 +31,22 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DetailBloc, DetailState>(
       builder: (context, state) {
-        if (state is DetailLoadingState) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is DetailLoadedState) {
-          return MultiProvider(
-            providers: [
-              Provider(
-                create: (context) => state.title,
-              ),
-              ProxyProvider0(
-                update: (_, __) => state.watchedEpisodes,
-              ),
-            ],
-            child: const CustomScrollView(
+        switch (state.status) {
+          case Status.initial:
+            return const Center();
+          case Status.loading:
+            return const Center(child: CircularProgressIndicator());
+          case Status.failure:
+            return Center(
+              child: Text(state.message),
+            );
+          case Status.loaded:
+            return const CustomScrollView(
               slivers: [
                 ViewerEpisodeSliver(),
                 SliverToBoxAdapter(
                     child: SizedBox(
-                  height: 35,
+                  height: 15,
                 )),
                 AboutTitleSliver(),
                 SliverToBoxAdapter(
@@ -59,14 +56,7 @@ class Body extends StatelessWidget {
                 DescriptionSliver(),
                 EpisodesSliver(),
               ],
-            ),
-          );
-        } else if (state is DetailErrorState) {
-          return Center(
-            child: Text(state.message),
-          );
-        } else {
-          return const Center();
+            );
         }
       },
     );

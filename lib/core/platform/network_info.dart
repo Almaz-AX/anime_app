@@ -10,10 +10,11 @@ abstract class NetworkInfo {
 class NetworkInfoImpl implements NetworkInfo {
   final StreamController<bool> controller = StreamController<bool>.broadcast();
   final connectivityResultFuture = Connectivity().checkConnectivity();
-  late final StreamSubscription<ConnectivityResult> subscription;
+  late final StreamSubscription<List<ConnectivityResult>> subscription;
   NetworkInfoImpl() {
     subscription =
-        Connectivity().onConnectivityChanged.listen((connectivityResult) {
+        Connectivity().onConnectivityChanged.listen((connectivityResultList) {
+      final connectivityResult = connectivityResultList.last;
       if (connectivityResult == ConnectivityResult.none) {
         controller.sink.add(false);
       } else {

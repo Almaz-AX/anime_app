@@ -1,6 +1,7 @@
 import 'package:anime_app/constants/constants.dart';
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:anime_app/core/host.dart';
+import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
 import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,10 +15,11 @@ class ViewerEpisodeSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = context.read<AnimeTitle>();
-    final player = title.player;
-    final watchedEpisodes = context.watch<List<WatchedEpisode>>();
-    if (player == null) {
+    final state = BlocProvider.of<DetailBloc>(context).state;
+    final title = state.title;
+    final player = title?.player;
+    final watchedEpisodes = state.watchedEpisodes;
+    if (player == null || title == null) {
       return const SliverToBoxAdapter();
     }
     int currentEpisodeId = 0;

@@ -1,5 +1,5 @@
 import 'package:anime_app/ui/navigation/branches/search_page_branch.dart';
-import 'package:anime_app/features/home/presentation/pages/main_page.dart';
+import 'package:anime_app/features/main/presentation/main_page.dart';
 import 'package:go_router/go_router.dart';
 
 import 'branches/main_screen_branch.dart';

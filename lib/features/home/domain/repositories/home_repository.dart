@@ -13,8 +13,6 @@ import '../../data/datasources/home_remote_data_source.dart';
 import '../../data/datasources/underseen_episodes_local_data_source.dart';
 
 abstract class HomeRepository {
-  Future<Either<Failure, List<AnimeTitle>>> getTitles(List<int> titleIdList);
-
   Stream<List<WatchedEpisode>> listenUnderseenEpisodes();
 
   Future<Either<Failure, void>> completeWatching(WatchedEpisode episode);
@@ -24,7 +22,7 @@ abstract class HomeRepository {
 
 class HomeRepositoryImpl implements HomeRepository {
   final NetworkInfo networkInfo;
-  final HomeReomoteDataSource remoteDataSource;
+  final GetUpdatesRemoteDataSource remoteDataSource;
   final UnderseenEpisodesLocalDataSource localDatasource;
   late final Stream<List<WatchedEpisode>> _watchedEpisodesStream;
   HomeRepositoryImpl(
@@ -32,13 +30,6 @@ class HomeRepositoryImpl implements HomeRepository {
       required this.remoteDataSource,
       required this.localDatasource}) {
     _watchedEpisodesStream = localDatasource.listenUnderseenEpisodesHistory();
-  }
-
-  @override
-  Future<Either<Failure, List<AnimeTitle>>> getTitles(
-      List<int> titleIdList) async {
-    return await getResponseOrFailure(
-        () async => await remoteDataSource.getTitles(titleIdList));
   }
 
   @override

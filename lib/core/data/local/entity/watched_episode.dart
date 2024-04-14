@@ -1,11 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:anime_app/core/data/local/entity/base_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'anime_title_db.dart';
 
 part 'watched_episode.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(
+  fieldRename: FieldRename.snake,
+)
 class WatchedEpisode extends BaseEntity {
   static const tableName = 'WatchedEpisode';
   static const fieldEpisodeNumber = 'episode_number';

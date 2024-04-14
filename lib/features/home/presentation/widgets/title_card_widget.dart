@@ -6,12 +6,10 @@ import '../../../../core/host.dart';
 import '../../../../ui/navigation/branches/main_screen_branch.dart';
 
 class TitleCardWidget extends StatelessWidget {
-  const TitleCardWidget({
-    super.key,
-    required this.title,
-  });
+  const TitleCardWidget({super.key, required this.title, this.heigth = 224});
 
   final AnimeTitle title;
+  final double heigth;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,7 @@ class TitleCardWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: SizedBox(
-                  height: 224,
+                  height: heigth,
                   width: double.maxFinite,
                   child: Image(
                     image:

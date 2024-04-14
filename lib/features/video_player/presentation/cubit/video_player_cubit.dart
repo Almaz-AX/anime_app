@@ -38,7 +38,6 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
       for (WatchedEpisode episode in watchedEpisodes) {
         if (episode.episodeNumber == episodeNumber) {
           watchedEpisode = episode;
-          print(episode.continueTimestamp);
         }
       }
     });

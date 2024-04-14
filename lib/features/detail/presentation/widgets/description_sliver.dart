@@ -1,8 +1,7 @@
 import 'package:anime_app/constants/constants.dart';
+import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../../../../core/data/models/anime_title.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DescriptionSliver extends StatefulWidget {
   const DescriptionSliver({
@@ -25,7 +24,7 @@ class _DescriptionSliverState extends State<DescriptionSliver> {
 
   @override
   Widget build(BuildContext context) {
-    final title = context.read<AnimeTitle>();
+    final title = BlocProvider.of<DetailBloc>(context).state.title;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -39,7 +38,7 @@ class _DescriptionSliverState extends State<DescriptionSliver> {
                 height: _size,
                 child: Text(
                   textAlign: TextAlign.justify,
-                  title.description ?? '',
+                  title?.description ?? '',
                   style: Theme.of(context).textTheme.bodyLarge,
                   overflow: TextOverflow.fade,
                 ),
