@@ -271,7 +271,7 @@ class Player {
 class Episodes {
   final int? first;
   final int? last;
-  final String string;
+  final String? string;
   Episodes({
     this.first,
     this.last,
@@ -401,13 +401,13 @@ class Torrent {
 class Quality {
   final String string;
   final String type;
-  final String resolution;
+  final String? resolution;
   final String encoder;
   final dynamic lqAudio;
   Quality({
     required this.string,
     required this.type,
-    required this.resolution,
+    this.resolution,
     required this.encoder,
     required this.lqAudio,
   });

@@ -17,7 +17,7 @@ class FavoriteTitlesDAO extends BaseDAO {
     maps = await db.query(
       FavoriteTitle.tableName,
     );
-    final favoriteTitles = maps.map((e) => FavoriteTitle.fromMap(e)).toList();
+    final favoriteTitles = maps.map((e) => FavoriteTitle.fromJson(e)).toList();
     return favoriteTitles;
   }
 
@@ -30,7 +30,7 @@ class FavoriteTitlesDAO extends BaseDAO {
       limit: 1,
     );
     if (maps.isNotEmpty) {
-      return maps.map((e) => FavoriteTitle.fromMap(e)).first;
+      return maps.map((e) => FavoriteTitle.fromJson(e)).first;
     }
     return null;
   }
@@ -38,7 +38,7 @@ class FavoriteTitlesDAO extends BaseDAO {
   Future<int> addTitle(int titleId) async {
     final db = await getDB();
     final id = await db.insert(
-        FavoriteTitle.tableName, FavoriteTitle(animeTitleId: titleId).toMap());
+        FavoriteTitle.tableName, FavoriteTitle(animeTitleId: titleId).toJson());
     favoriteTitleController.sink.add(await _getTitles());
     return id;
   }

@@ -44,15 +44,20 @@ class FavoritesWidget extends StatelessWidget {
         case Status.loaded:
           return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 0.7),
+                crossAxisCount: 2,
+                childAspectRatio: 0.65,
+                // mainAxisExtent: 310
+              ),
               itemCount: state.favoriteTitles.length,
               itemBuilder: (
                 BuildContext context,
                 index,
               ) {
-                return TitleCardWidget(
-                  // heigth: 150,
-                  title: state.favoriteTitles[index],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: TitleCardWidget(
+                    title: state.favoriteTitles[index],
+                  ),
                 );
               });
       }

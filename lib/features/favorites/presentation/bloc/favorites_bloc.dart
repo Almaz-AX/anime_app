@@ -25,13 +25,14 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   }) : super(const FavoritesState(status: Status.loading)) {
     on<FavoritesChangedEvent>(_onListenFavorites);
     on<FavoritesGetEvent>(_onGetFavoritesEvent);
+    on<FavoritesRemoveEvent>(_onRemoveFavoritesEvent);
   }
 
   void _onListenFavorites(
       FavoritesChangedEvent event, Emitter<FavoritesState> emit) {
     subscription = listenFavoriteTitles(NoParams()).listen((event) async {
       if (event.isEmpty) {
-        emit(state.copyWith(favoriteTitles: <AnimeTitle>[]));
+        add(FavoritesRemoveEvent(removeTitles: state.favoriteTitles.toSet()));
         return;
       }
       if (state.favoriteTitles.isEmpty) {
@@ -51,8 +52,9 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
       }
       final revomedTitleId = stateId.difference(eventId).first;
       final titles = state.favoriteTitles;
-      titles.removeWhere((element) => element.id == revomedTitleId);
-      emit(state.copyWith(favoriteTitles: titles));
+      final removedTitles =
+          titles.where((element) => element.id == revomedTitleId).toSet();
+      add(FavoritesRemoveEvent(removeTitles: removedTitles));
     });
   }
 
@@ -67,6 +69,13 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
         (titles) => emit(state.copyWith(
             status: Status.loaded,
             favoriteTitles: [...state.favoriteTitles, ...titles])));
+  }
+
+  Future<void> _onRemoveFavoritesEvent(
+      FavoritesRemoveEvent event, Emitter<FavoritesState> emit) async {
+    final titles = state.favoriteTitles.toSet();
+    final dif = titles.difference(event.removeTitles);
+    emit(state.copyWith(status: Status.loaded, favoriteTitles: dif.toList()));
   }
 
   @override

@@ -35,12 +35,7 @@ class ThemeClass {
               foregroundColor: const Color(0xFF2EAEBE),
               iconSize: 45
 
-              // splashFactory:
-
               )),
-      // floatingActionButtonTheme: FloatingActionButtonThemeData(
-      //   backgroundColor: const Color(0xFF272B36)
-      //   ),
 
       appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(

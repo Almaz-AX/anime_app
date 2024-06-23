@@ -1,12 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'dart:convert';
-
 import 'package:anime_app/core/data/local/entity/base_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'favorite_title.g.dart';
 
+@JsonSerializable()
 class FavoriteTitle extends BaseEntity {
   static const tableName = 'FavoriteTitle';
   static const fieldAnimeTitleId = 'title_id';
+
+  @JsonKey(name: fieldAnimeTitleId)
   final int animeTitleId;
 
   FavoriteTitle({
@@ -17,20 +20,8 @@ class FavoriteTitle extends BaseEntity {
   // TODO: implement props
   List<Object?> get props => [animeTitleId];
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      fieldAnimeTitleId: animeTitleId,
-    };
-  }
+  Map<String, dynamic> toJson() => _$FavoriteTitleToJson(this);
 
-  factory FavoriteTitle.fromMap(Map<String, dynamic> map) {
-    return FavoriteTitle(
-      animeTitleId: map[fieldAnimeTitleId] as int,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory FavoriteTitle.fromJson(String source) =>
-      FavoriteTitle.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory FavoriteTitle.fromJson(Map<String, dynamic> json) =>
+      _$FavoriteTitleFromJson(json);
 }

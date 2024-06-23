@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:anime_app/core/data/local/entity/favorite_title.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../entity/anime_title_db.dart';
 import '../entity/watched_episode.dart';
+import 'package:path_provider/path_provider.dart';
 
 abstract class BaseDAO {
   static const databaseVersion = 1;
@@ -20,16 +23,35 @@ abstract class BaseDAO {
   }
 
   Future<Database> _getDatabase() async {
-    var databasesPath = await getDatabasesPath();
+    final databasesPath = await getApplicationDocumentsDirectory();
     final path = '$databasesPath/$_databaseName';
-    return openDatabase(path, version: databaseVersion,
-        onCreate: (db, version) async {
-      final batch = db.batch();
-      _createAnimeTitlesTableV1(batch);
-      _createWatchedEpisodeTableV1(batch);
-      _createFavoriteTitleTableV1(batch);
-      await batch.commit();
-    });
+    if (Platform.isWindows || Platform.isLinux) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+      return await databaseFactoryFfi.openDatabase(path,
+          options: OpenDatabaseOptions(
+            version: databaseVersion,
+            onCreate: (db, version) async {
+              final batch = db.batch();
+              _createAnimeTitlesTableV1(batch);
+              _createWatchedEpisodeTableV1(batch);
+              _createFavoriteTitleTableV1(batch);
+              await batch.commit();
+            },
+          ));
+    }
+
+    return await openDatabase(
+      path,
+      version: databaseVersion,
+      onCreate: (db, version) async {
+        final batch = db.batch();
+        _createAnimeTitlesTableV1(batch);
+        _createWatchedEpisodeTableV1(batch);
+        _createFavoriteTitleTableV1(batch);
+        await batch.commit();
+      },
+    );
   }
 
   void _createAnimeTitlesTableV1(Batch batch) {

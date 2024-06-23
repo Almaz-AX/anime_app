@@ -1,3 +1,4 @@
+import 'package:anime_app/features/profile/domain/repositories/auth_repository.dart';
 import 'package:anime_app/core/data/datasourses/get_titles_remote_data_source.dart';
 import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 import 'package:anime_app/core/data/network/dio_client.dart';
@@ -6,6 +7,7 @@ import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_c
 import 'package:anime_app/core/data/repositories/favorite_title_repository.dart';
 import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
 import 'package:anime_app/core/data/repositories/get_titles_repositiry.dart';
+import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
 import 'package:anime_app/features/detail/domain/usecases/add_favorite_title.dart';
@@ -24,6 +26,8 @@ import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dar
 import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
 import 'package:anime_app/features/home/presentation/bloc/random_titles_bloc/bloc/random_titles_bloc.dart';
 import 'package:anime_app/features/home/presentation/bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
+import 'package:anime_app/features/profile/domain/repositories/profile_repository.dart';
+import 'package:anime_app/features/profile/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:anime_app/features/search/data/datasources/search_remote_data_source.dart';
 import 'package:anime_app/features/search/data/repositories/search_titles_repository_impl.dart';
 import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
@@ -33,7 +37,10 @@ import 'package:anime_app/features/video_player/data/datasources/watched_episode
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/data/datasourses/get_random_title_remote_data_source.dart';
 import 'core/data/local/DAO/watched_episode_dao.dart';
@@ -47,6 +54,7 @@ import 'features/detail/domain/usecases/get_title.dart';
 import 'features/detail/presentation/blocs/detail_bloc.dart';
 import 'features/home/data/datasources/home_remote_data_source.dart';
 import 'features/home/data/datasources/underseen_episodes_local_data_source.dart';
+import 'features/profile/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'features/search/domain/repositories/search_titles.repository.dart';
 import 'features/video_player/domain/usecases/get_watched_episodes.dart';
 import 'features/video_player/domain/usecases/save_watched_episode.dart';
@@ -54,6 +62,9 @@ import 'features/video_player/domain/usecases/save_watched_episode.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  await dotenv.load(fileName: '.env');
+  final supabase = await Supabase.initialize(
+      url: Host.supabaseUrl, anonKey: dotenv.get('SUPABASE_KEY'));
 //! Features
   //HOME
   //Bloc
@@ -138,6 +149,16 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ListenFavoriteTitles(repository: sl()));
   sl.registerLazySingleton(() => GetFavoriteTitles(repository: sl()));
 
+  //PROFILE
+  //Bloc
+  sl.registerFactory(() => ProfileBloc());
+  sl.registerFactory(() => AuthBloc(repository: sl()));
+  //Repository
+  sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(supabase: sl(), secureStorage: sl()));
+  sl.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositiryImpl(supabase: sl()));
+
   //VIDEOPLAYER
   //Usecase
   sl.registerLazySingleton<SaveWatchedEpisode>(
@@ -184,4 +205,7 @@ Future<void> init() async {
   sl.registerLazySingleton<FavoriteTitlesDAO>(() => FavoriteTitlesDAO());
   //! External
   sl.registerLazySingleton<Dio>(() => Dio());
+
+  sl.registerLazySingleton<Supabase>(() => supabase);
+  sl.registerLazySingleton<FlutterSecureStorage>(() => const FlutterSecureStorage());
 }

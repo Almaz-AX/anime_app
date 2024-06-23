@@ -16,3 +16,10 @@ class FavoritesGetEvent extends FavoritesEvent {
     required this.titlesId,
   });
 }
+
+class FavoritesRemoveEvent extends FavoritesEvent {
+  final Set<AnimeTitle> removeTitles;
+  const FavoritesRemoveEvent({
+    required this.removeTitles,
+  });
+}

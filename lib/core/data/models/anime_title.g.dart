@@ -219,7 +219,7 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
 Episodes _$EpisodesFromJson(Map<String, dynamic> json) => Episodes(
       first: json['first'] as int?,
       last: json['last'] as int?,
-      string: json['string'] as String,
+      string: json['string'] as String?,
     );
 
 Map<String, dynamic> _$EpisodesToJson(Episodes instance) => <String, dynamic>{
@@ -328,7 +328,7 @@ Map<String, dynamic> _$TorrentToJson(Torrent instance) => <String, dynamic>{
 Quality _$QualityFromJson(Map<String, dynamic> json) => Quality(
       string: json['string'] as String,
       type: json['type'] as String,
-      resolution: json['resolution'] as String,
+      resolution: json['resolution'] as String?,
       encoder: json['encoder'] as String,
       lqAudio: json['lq_audio'],
     );
