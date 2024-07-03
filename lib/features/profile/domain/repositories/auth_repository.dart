@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class AuthRepository {
@@ -15,9 +15,9 @@ abstract class AuthRepository {
 class AuthRepositoryImpl implements AuthRepository {
   final StreamController<bool> controller = StreamController<bool>.broadcast();
   final Supabase supabase;
-  final FlutterSecureStorage secureStorage;
+  // final FlutterSecureStorage secureStorage;
   StreamSubscription<AuthState>? subscription;
-  AuthRepositoryImpl({required this.supabase, required this.secureStorage}) {
+  AuthRepositoryImpl({required this.supabase}) {
     _listenSupabase();
     final session = supabase.client.auth.currentSession?.toString();
     print(session);
@@ -30,8 +30,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<bool> signIn() async {
     final rez = await supabase.client.auth.signInWithOAuth(OAuthProvider.google,
         redirectTo: AuthRepository.redirect);
-    final token = supabase.client.auth.currentSession?.toString();
-    await secureStorage.write(key: 'session', value: token);
     return rez;
   }
 

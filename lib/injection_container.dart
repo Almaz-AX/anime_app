@@ -37,7 +37,7 @@ import 'package:anime_app/features/video_player/data/datasources/watched_episode
 import 'package:anime_app/features/video_player/data/repositories/watched_episode_repository.dart';
 import 'package:anime_app/features/video_player/domain/repositories/watched_episode_repository_impl.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -156,7 +156,7 @@ Future<void> init() async {
       () => AuthBloc(repository: sl()));
   //Repository
   sl.registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(supabase: sl(), secureStorage: sl()));
+      () => AuthRepositoryImpl(supabase: sl(),));
   sl.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositiryImpl(supabase: sl()));
 
@@ -208,6 +208,6 @@ Future<void> init() async {
   sl.registerLazySingleton<Dio>(() => Dio());
 
   sl.registerLazySingleton<Supabase>(() => supabase);
-  sl.registerLazySingleton<FlutterSecureStorage>(
-      () => const FlutterSecureStorage());
+  // sl.registerLazySingleton<FlutterSecureStorage>(
+  //     () => const FlutterSecureStorage());
 }
