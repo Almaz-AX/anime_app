@@ -11,29 +11,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;
   StreamSubscription<bool>? subscription;
   AuthBloc({required this.repository}) : super(AuthUnknownState()) {
-    // on<AuthListenEvent>(_onListen);
-    on<AuthStatusEvent>(_onIsAuth);
+    _onListen();
+    on<AuthStatusChangedEvent>(_onIsAuth);
   }
 
-  Future<void> _onIsAuth(AuthStatusEvent event, Emitter<AuthState> emit) async {
-    final isAuth = await repository.isAuth();
-    if (isAuth) {
+  Future<void> _onIsAuth(
+      AuthStatusChangedEvent event, Emitter<AuthState> emit) async {
+    if (event.isAuth) {
       emit(AuthorizedState());
     } else {
       emit(NotAuthorizedState());
     }
   }
 
-  // Future<void> _onListen(AuthListenEvent event, Emitter<AuthState> emit) async {
-  //   subscription?.cancel();
-  //   subscription = repository.isAuth().listen((event) {
-  //     if (event) {
-  //       add(const AuthChangedEvent(isAuth: true));
-  //     } else {
-  //       add(const AuthChangedEvent(isAuth: false));
-  //     }
-  //   });
-  // }
+  Future<void> _onListen() async {
+    subscription?.cancel();
+    subscription = repository.isAuth().listen((event) {
+      if (event) {
+        add(const AuthStatusChangedEvent(true));
+      } else {
+        add(const AuthStatusChangedEvent(false));
+      }
+    });
+  }
 
   @override
   Future<void> close() {

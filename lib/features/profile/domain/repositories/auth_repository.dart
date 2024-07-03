@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class AuthRepository {
   static const redirect = 'io.supabase.flutteranimeapp://login-callback';
-  Future<bool> isAuth();
+  Stream<bool> isAuth();
   Future<bool> signIn();
   Future<void> signOut();
   Future<Session?> getSession();
@@ -24,14 +24,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> isAuth() async => supabase.client.auth.currentSession != null;
+  Stream<bool> isAuth() => controller.stream;
 
   @override
   Future<bool> signIn() async {
     final rez = await supabase.client.auth.signInWithOAuth(OAuthProvider.google,
         redirectTo: AuthRepository.redirect);
     final token = supabase.client.auth.currentSession?.toString();
-    print(token);
     await secureStorage.write(key: 'session', value: token);
     return rez;
   }
@@ -49,8 +48,10 @@ class AuthRepositoryImpl implements AuthRepository {
     subscription =
         supabase.client.auth.onAuthStateChange.listen((AuthState authState) {
       final event = authState.event;
-      print(event);
-      if (event == AuthChangeEvent.signedIn) {
+      if (event == AuthChangeEvent.initialSession) {
+        final session = supabase.client.auth.currentSession;
+        session != null? controller.sink.add(true): controller.sink.add(false);
+      } else if (event == AuthChangeEvent.signedIn) {
         controller.sink.add(true);
       } else {
         controller.sink.add(false);

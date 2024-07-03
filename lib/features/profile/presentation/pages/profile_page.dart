@@ -1,4 +1,9 @@
+import 'package:anime_app/ui/navigation/branches/profile_screen_branch.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../injection_container.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -45,7 +50,10 @@ class UserWidget extends StatelessWidget {
           Align(
               alignment: Alignment.topRight,
               child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    sl<AuthRepository>().signOut(); 
+                    context.go(ProfileScreenPath.loader);
+                  },
                   icon: const Icon(
                     Icons.exit_to_app_rounded,
                     size: 30,

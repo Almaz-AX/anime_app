@@ -1,8 +1,9 @@
+import 'package:anime_app/ui/navigation/branches/profile_screen_branch.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../injection_container.dart';
 import '../../domain/repositories/auth_repository.dart';
-import 'auth_page.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({
@@ -31,8 +32,11 @@ class SignInPage extends StatelessWidget {
             width: double.infinity,
           ),
           ElevatedButton(
-            onPressed: () async {
-              await sl<AuthRepository>().signIn();
+            onPressed: () {
+              sl<AuthRepository>().signIn();
+              context.go(
+                ProfileScreenPath.loader,
+              );
             },
             child: const Text('Авторизация с помощью google'),
           ),

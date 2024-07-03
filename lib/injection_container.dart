@@ -152,7 +152,8 @@ Future<void> init() async {
   //PROFILE
   //Bloc
   sl.registerFactory(() => ProfileBloc());
-  sl.registerFactory(() => AuthBloc(repository: sl()));
+  sl.registerFactory(
+      () => AuthBloc(repository: sl()));
   //Repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(supabase: sl(), secureStorage: sl()));
@@ -207,5 +208,6 @@ Future<void> init() async {
   sl.registerLazySingleton<Dio>(() => Dio());
 
   sl.registerLazySingleton<Supabase>(() => supabase);
-  sl.registerLazySingleton<FlutterSecureStorage>(() => const FlutterSecureStorage());
+  sl.registerLazySingleton<FlutterSecureStorage>(
+      () => const FlutterSecureStorage());
 }

@@ -4,21 +4,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../blocs/auth_bloc/auth_bloc.dart' as bloc;
-import 'sign_in_page.dart';
 
-class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+class LoaderPage extends StatelessWidget {
+  const LoaderPage({super.key});
   @override
   Widget build(BuildContext context) {
     return BlocListener<bloc.AuthBloc, bloc.AuthState>(
         listener: ((context, state) {
           switch (state) {
             case bloc.AuthorizedState():
-              context.pushReplacement(ProfileScreenPath.profile);
+              context.go(ProfileScreenPath.profile);
               break;
-            default:
+            case bloc.NotAuthorizedState():
+              context.go(ProfileScreenPath.login);
+            case bloc.AuthUnknownState():
+              return;
           }
         }),
-        child: const SignInPage());
+        child: const Center(child: CircularProgressIndicator()));
   }
 }
