@@ -6,7 +6,6 @@ import 'package:anime_app/features/home/data/models/title_updates.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
-import '../../../../core/data/models/anime_title.dart';
 import '../../../../core/helpers/getResponseOrFailure.dart';
 import '../../../../core/platform/network_info.dart';
 import '../../data/datasources/home_remote_data_source.dart';

@@ -1,24 +1,24 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
+part 'profile.g.dart';
 
-@JsonSerializable()
-class User extends Equatable {
+@JsonSerializable(fieldRename: FieldRename.snake)
+class Profile extends Equatable {
+  static const tableName = 'profile';
   final String id;
   final String userName;
   final String? avatarUrl;
-  const User({
+  const Profile({
     required this.id,
     required this.userName,
     this.avatarUrl,
   });
-  
+
   @override
   List<Object?> get props => [id, userName, avatarUrl];
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory Profile.fromJson(Map<String, dynamic> json) =>
+      _$ProfileFromJson(json);
 
-  toJson() => _$UserToJson(this);
-  
-  
+  toJson() => _$ProfileToJson(this);
 }

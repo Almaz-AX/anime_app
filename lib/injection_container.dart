@@ -151,9 +151,8 @@ Future<void> init() async {
 
   //PROFILE
   //Bloc
-  sl.registerFactory(() => ProfileBloc());
-  sl.registerFactory(
-      () => AuthBloc(repository: sl()));
+  sl.registerFactory(() => ProfileBloc(repository: sl<ProfileRepository>()));
+  sl.registerFactory(() => AuthBloc(repository: sl()));
   //Repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(supabase: sl(),));

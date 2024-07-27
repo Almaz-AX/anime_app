@@ -15,7 +15,6 @@ abstract class AuthRepository {
 class AuthRepositoryImpl implements AuthRepository {
   final StreamController<bool> controller = StreamController<bool>.broadcast();
   final Supabase supabase;
-  // final FlutterSecureStorage secureStorage;
   StreamSubscription<AuthState>? subscription;
   AuthRepositoryImpl({required this.supabase}) {
     _listenSupabase();

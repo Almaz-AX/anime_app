@@ -35,6 +35,7 @@ class DioClient {
       }
 
       final Response<T> response = await dio.get(path);
+      print(response);
       if (response.statusCode == 200) {
         return response.data;
       }
