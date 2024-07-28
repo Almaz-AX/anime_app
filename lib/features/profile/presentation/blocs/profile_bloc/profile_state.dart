@@ -13,4 +13,7 @@ final class ProfileUser extends ProfileState {
   final Profile user;
 
   const ProfileUser({required this.user});
+   @override
+  List<Object> get props => [user];
+  
 }

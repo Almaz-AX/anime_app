@@ -26,7 +26,7 @@ class UserWidget extends StatelessWidget {
                   Stack(
                     children: [
                       AvatarWidget(avatarUrl: state.user.avatarUrl),
-                      const UploadAvatarButton(),
+                      UploadAvatarButton(profile: state.user,),
                     ],
                   ),
                   Text(state.user.userName,

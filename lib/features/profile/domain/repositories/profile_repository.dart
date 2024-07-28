@@ -6,8 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/profile.dart';
 
 abstract class ProfileRepository {
-  Future<Profile?>getProfile();
-  uploadAvatar(File file);
+  Future<Profile?> getProfile();
+  Future<String> uploadAvatar(File file, Profile profile);
   changeProfileName(String newName);
 }
 
@@ -28,8 +28,17 @@ class ProfileRepositiryImpl implements ProfileRepository {
   }
 
   @override
-  Future<void> uploadAvatar(File file) async {
-    throw UnimplementedError();
+  Future<String> uploadAvatar(File file, Profile profile) async {
+    DateTime.timestamp().toString();
+    final path =
+        '/${profile.userName}/${DateTime.timestamp().toIso8601String().toString()}';
+    await supabase.client.storage.from('avatars').upload(path, file,
+        fileOptions: const FileOptions(contentType: 'image/jpeg'));
+    String url = supabase.client.storage.from('avatars').getPublicUrl(path);
+    await supabase.client
+        .from(Profile.tableName)
+        .update({'avatar_url': url}).eq('id', profile.id);
+    return url;
   }
 
   @override
