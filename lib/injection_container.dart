@@ -55,6 +55,7 @@ import 'features/detail/presentation/blocs/detail_bloc.dart';
 import 'features/home/data/datasources/home_remote_data_source.dart';
 import 'features/home/data/datasources/underseen_episodes_local_data_source.dart';
 import 'features/profile/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'features/profile/presentation/blocs/change_user_name_bloc/change_user_name_bloc.dart';
 import 'features/search/domain/repositories/search_titles.repository.dart';
 import 'features/video_player/domain/usecases/get_watched_episodes.dart';
 import 'features/video_player/domain/usecases/save_watched_episode.dart';
@@ -153,6 +154,7 @@ Future<void> init() async {
   //Bloc
   sl.registerFactory(() => ProfileBloc(repository: sl<ProfileRepository>()));
   sl.registerFactory(() => AuthBloc(repository: sl()));
+  sl.registerFactory(() => ChangeUserNameBloc(repository: sl()));
   //Repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(supabase: sl(),));

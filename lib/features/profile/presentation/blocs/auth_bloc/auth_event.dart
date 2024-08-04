@@ -10,4 +10,7 @@ sealed class AuthEvent extends Equatable {
 final class AuthStatusChangedEvent extends AuthEvent {
   final bool isAuth;
   const AuthStatusChangedEvent(this.isAuth);
+  @override
+  // TODO: implement props
+  List<Object> get props => [isAuth];
 }

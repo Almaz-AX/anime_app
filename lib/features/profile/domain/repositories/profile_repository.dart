@@ -8,7 +8,8 @@ import '../../data/models/profile.dart';
 abstract class ProfileRepository {
   Future<Profile?> getProfile();
   Future<String> uploadAvatar(File file, Profile profile);
-  changeProfileName(String newName);
+  Future<void> changeProfileName(String newName);
+  Future<bool> userNameIsUse(String name);
 }
 
 class ProfileRepositiryImpl implements ProfileRepository {
@@ -53,5 +54,17 @@ class ProfileRepositiryImpl implements ProfileRepository {
             .eq('id', currentUser.id))
         .first;
     return Profile.fromJson(data);
+  }
+
+  @override
+  Future<bool> userNameIsUse(String name) async {
+    final data = await supabase.client
+        .from(Profile.tableName)
+        .select('user_name')
+        .eq('user_name', name);
+    if(data.isNotEmpty){
+      return true;
+    }
+    return false;
   }
 }
