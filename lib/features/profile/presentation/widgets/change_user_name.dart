@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../blocs/change_user_name_bloc/change_user_name_bloc.dart';
 
@@ -17,14 +16,19 @@ class ChangeUserName extends StatelessWidget {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 3,
       width: double.infinity,
-      child: BlocBuilder<ChangeUserNameBloc, ChangeUserNameState>(
+      child: BlocConsumer<ChangeUserNameBloc, ChangeUserNameState>(
+        listener: (context, state) {
+          if (state.status == ChangeUserNameStatus.nameIsChanged) {
+            Navigator.of(context).pop(state.newUserName);
+          }
+        },
         builder: (context, state) {
           return Column(
             children: [
               Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
-                      onPressed: () => context.pop(),
+                      onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(
                         Icons.cancel,
                         size: 30,
@@ -48,7 +52,6 @@ class ChangeUserName extends StatelessWidget {
                               bloc.add(
                                 const ChangeUserNameSendEvent(),
                               );
-                              Navigator.of(context).pop(state.newUserName);
                             },
                   autofocus: true,
                   decoration: InputDecoration(
@@ -70,7 +73,6 @@ class ChangeUserName extends StatelessWidget {
                   onPressed: state.status == ChangeUserNameStatus.nameIsNotUsed
                       ? () {
                           bloc.add(const ChangeUserNameSendEvent());
-                          Navigator.of(context).pop(state.newUserName);
                         }
                       : null,
                   child: const Padding(
