@@ -2,6 +2,7 @@
 import 'package:anime_app/core/data/models/anime_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 import 'package:video_player/video_player.dart';
@@ -45,7 +46,7 @@ class VideoPlayerPage extends StatelessWidget {
           await context.read<VideoPlayerCubit>().disposeController();
         },
         child: const Material(
-          color: Colors.green,
+          color: Colors.black,
           child: VideoPlayerWidget(),
         ));
   }
@@ -53,8 +54,8 @@ class VideoPlayerPage extends StatelessWidget {
 
 class VideoPlayerWidget extends StatefulWidget {
   const VideoPlayerWidget({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -88,7 +89,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       if (state.status == VideoPlayerStatus.loaded) {
         return Stack(
           children: [
-            VideoPlayer(state.videoPlayerController),
+            InteractiveViewer(
+              minScale: 1,
+                maxScale: 1.3,
+                child: Center(
+                  child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: VideoPlayer(state.videoPlayerController)),
+                )),
             const CustomControls(),
           ],
         );
