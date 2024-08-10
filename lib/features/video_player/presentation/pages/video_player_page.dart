@@ -45,7 +45,6 @@ class VideoPlayerPage extends StatelessWidget {
           await context.read<VideoPlayerCubit>().disposeController();
         },
         child: const Material(
-          clipBehavior: Clip.hardEdge,
           color: Colors.green,
           child: VideoPlayerWidget(),
         ));
@@ -69,7 +68,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
+        overlays: SystemUiOverlay.values);
   }
 
   @override
