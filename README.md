@@ -4,5 +4,9 @@
 
 # Запись экрана с приложением
 
-https://github.com/user-attachments/assets/4eddbc98-8b59-4951-985f-8c4337126e9a
+
+
+
+https://github.com/user-attachments/assets/7c4e7878-2136-4420-9c70-a70108aa5563
+
 
