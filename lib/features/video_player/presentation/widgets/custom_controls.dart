@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
-import 'package:anime_app/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../assets.dart';
 import '../cubit/video_player_cubit.dart';
 
 class CustomControls extends StatefulWidget {

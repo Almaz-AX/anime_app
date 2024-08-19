@@ -1,9 +1,9 @@
-import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../assets.dart';
+import '../bloc/last_updates_bloc/last_updates_bloc.dart';
 import '../../../../constants/constants.dart';
-import '../../../../assets/assets.dart';
 import '../../../../core/data/local/DAO/watched_episode_dao.dart';
 import '../../../../injection_container.dart';
 import '../bloc/random_titles_bloc/bloc/random_titles_bloc.dart';

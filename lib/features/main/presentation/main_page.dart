@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:anime_app/assets/assets.dart';
-import 'package:anime_app/core/platform/network_info.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../assets.dart';
 import '../../../constants/constants.dart';
+import '../../../core/platform/network_info.dart';
 import '../../../injection_container.dart';
 
 // Stateful navigation based on:

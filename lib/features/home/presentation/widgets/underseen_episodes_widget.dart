@@ -2,7 +2,8 @@ import 'package:anime_app/core/host.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../assets/assets.dart';
+
+import '../../../../assets.dart';
 import '../../../../constants/constants.dart';
 import '../../../../core/data/models/anime_title.dart';
 import '../../../video_player/presentation/pages/video_player_page.dart';
