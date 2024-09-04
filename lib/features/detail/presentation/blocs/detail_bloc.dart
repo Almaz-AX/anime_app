@@ -1,5 +1,6 @@
 import 'dart:async';
 // ignore: depend_on_referenced_packages
+import '../../../../core/data/models/release.dart';
 import '../../domain/usecases/add_favorite_title.dart';
 import '../../domain/usecases/get_favorite_title.dart';
 import 'package:bloc/bloc.dart';
@@ -7,7 +8,6 @@ import 'package:equatable/equatable.dart';
 import '../../domain/usecases/get_stream_watched_episodes.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
-import '../../../../core/data/models/anime_title.dart';
 import '../../domain/usecases/get_title.dart';
 import '../../domain/usecases/remove_favorite_title.dart';
 

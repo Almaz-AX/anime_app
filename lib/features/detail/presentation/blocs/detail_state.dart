@@ -5,31 +5,31 @@ enum Status { initial, loading, loaded, failure }
 
 class DetailState extends Equatable {
   final Status status;
-  final AnimeTitle? title;
+  final Release? release;
   final List<WatchedEpisode> watchedEpisodes;
   final bool isFavorite;
   final String message;
 
   const DetailState(
       {required this.status,
-      this.title,
+      this.release,
       this.watchedEpisodes = const <WatchedEpisode>[],
       this.isFavorite = false,
       this.message = 'ok'});
 
   @override
-  List<Object?> get props => [status, title, watchedEpisodes, isFavorite];
+  List<Object?> get props => [status, release, watchedEpisodes, isFavorite];
 
   DetailState copyWith({
     Status? status,
-    AnimeTitle? title,
+    Release? title,
     List<WatchedEpisode>? watchedEpisodes,
     bool? isFavorite,
     String? message,
   }) {
     return DetailState(
       status: status ?? this.status,
-      title: title ?? this.title,
+      release: title ?? this.release,
       watchedEpisodes: watchedEpisodes ?? this.watchedEpisodes,
       isFavorite: isFavorite ?? this.isFavorite,
       message: message ?? this.message,

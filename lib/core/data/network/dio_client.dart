@@ -1,14 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
-import 'dart:io';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
 import 'package:anime_app/core/error/exceptions.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 
 import '../../host.dart';
 
-class DioClient {
+abstract class Client {
+  Future<T?> get<T>(String path);
+}
+
+class DioClient extends Client {
   final Dio dio;
   final RetryOnConnectivityChangeInterceptor connectivityChangeInterceptor;
   DioClient({
@@ -23,19 +25,11 @@ class DioClient {
     dio.interceptors.add(connectivityChangeInterceptor);
   }
 
+  @override
   Future<T?> get<T>(String path) async {
     try {
-      if (Platform.isAndroid) {
-        (dio.httpClientAdapter = IOHttpClientAdapter(createHttpClient: () {
-          final HttpClient client = HttpClient();
-          client.badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
-          return client;
-        }));
-      }
-
       final Response<T> response = await dio.get(path);
-      print(response);
+ 
       if (response.statusCode == 200) {
         return response.data;
       }

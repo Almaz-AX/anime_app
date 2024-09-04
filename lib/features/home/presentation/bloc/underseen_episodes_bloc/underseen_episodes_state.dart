@@ -6,25 +6,25 @@ enum UnderseenEpisodesStatus { initial, success, failure }
 class UnderseenEpisodesState extends Equatable {
   final UnderseenEpisodesStatus status;
   final List<WatchedEpisode> underseenEpisodes;
-  final List<AnimeTitle> underseenTitles;
+  final List<Release> underseenReleases;
   const UnderseenEpisodesState({
     required this.status,
     this.underseenEpisodes = const <WatchedEpisode>[],
-    this.underseenTitles = const <AnimeTitle>[],
+    this.underseenReleases = const <Release>[],
   });
 
   @override
-  List<Object> get props => [status, underseenEpisodes, underseenTitles];
+  List<Object> get props => [status, underseenEpisodes, underseenReleases];
 
   UnderseenEpisodesState copyWith({
     UnderseenEpisodesStatus? status,
     List<WatchedEpisode>? underseenEpisodes,
-    List<AnimeTitle>? underseenTitles,
+    List<Release>? underseenReleases,
   }) {
     return UnderseenEpisodesState(
       status: status ?? this.status,
       underseenEpisodes: underseenEpisodes ?? this.underseenEpisodes,
-      underseenTitles: underseenTitles ?? this.underseenTitles,
+      underseenReleases: underseenReleases ?? this.underseenReleases,
     );
   }
 }

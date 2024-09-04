@@ -1,4 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:collection';
+
+import 'package:anime_app/core/data/models/release.dart';
 import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,13 +18,11 @@ class EpisodesSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = BlocProvider.of<DetailBloc>(context).state.title;
-    final player = title?.player;
-    if (player == null) {
-      return const SliverToBoxAdapter();
+    final release = BlocProvider.of<DetailBloc>(context).state.release;
+    final episodes = release?.episodes;
+    if (episodes == null) {
+      return Container();
     }
-    final episodes = player.list;
-
     return SliverList.builder(
       itemBuilder: (context, index) {
         return EpisodeCard(
@@ -40,9 +41,10 @@ class EpisodeCard extends StatelessWidget {
   });
   final int index;
 
-  WatchedEpisode? getEpisode(List<WatchedEpisode> watchedEpisodes) {
+  WatchedEpisode? getEpisode(
+      List<WatchedEpisode> watchedEpisodes, Episode episode) {
     for (WatchedEpisode watchedEpisode in watchedEpisodes) {
-      if (watchedEpisode.episodeNumber == index) {
+      if (watchedEpisode.episodeNumber == episode.ordinal) {
         return watchedEpisode;
       }
     }
@@ -56,32 +58,30 @@ class EpisodeCard extends StatelessWidget {
     return watchedEpisode.watchCompleted;
   }
 
-  String readTimeStamp(int timestamp) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-
+  String formatTime(DateTime date) {
     return '${date.day.toString()}.${date.month < 10 ? '0${date.month}' : date.month}.${date.year}';
   }
 
   @override
   Widget build(BuildContext context) {
     final state = BlocProvider.of<DetailBloc>(context).state;
-    final title = state.title;
-    final player = title?.player;
+    final release = BlocProvider.of<DetailBloc>(context).state.release;
+    final episodes = release?.episodes;
 
-    if (player == null || title == null) {
+    if (release == null || episodes == null) {
       return Container();
     }
-
-    final episodes = player.list;
+    
     final episode = episodes[index];
-    final previewRelativeUrl = player.list.first.preview;
-    String preview = '${Host.host}${title.posters.small.url}';
+    final previewRelativeUrl = episode.preview?.src;
+
+    String preview = '${Host.host}${release.poster.src}';
     if (previewRelativeUrl != null) {
-      preview = '${Host.host}${episodes[index].preview}';
+      preview = '${Host.host}$previewRelativeUrl';
     }
     final watchedEpisodes =
         context.select((DetailBloc bloc) => state.watchedEpisodes);
-    final watchedEpisode = getEpisode(watchedEpisodes);
+    final watchedEpisode = getEpisode(watchedEpisodes, episode);
     final icon =
         watchedEpisode != null ? Icons.check : Icons.play_arrow_rounded;
 
@@ -121,7 +121,7 @@ class EpisodeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${episode.episode} ${Constants.episode}',
+                      '${episode.ordinal} ${Constants.episode}',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(
@@ -134,14 +134,15 @@ class EpisodeCard extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    Text(
-                      '${Constants.added} ${readTimeStamp(episode.createdTimestamp)}',
-                      maxLines: 2,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 13),
-                    ),
+                    if (episode.updatedAt != null)
+                      Text(
+                        '${Constants.added} ${formatTime(episode.updatedAt!)}',
+                        maxLines: 2,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 13),
+                      ),
                   ],
                 ),
               )
@@ -153,9 +154,9 @@ class EpisodeCard extends StatelessWidget {
               onTap: () {
                 VideoPlayerPage.createVideoPlayer(
                   context: context,
-                  player: player,
-                  titleId: title.id,
-                  currentEpisodeId: index,
+                  episodes: episodes,
+                  releaseId: release.id,
+                  ordinal: episodes[index].ordinal,
                 );
               },
             ),

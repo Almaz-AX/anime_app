@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/data/models/anime_title.dart';
+
+import '../../../../core/data/models/release.dart';
 import '../../../../core/host.dart';
 import '../../../../ui/navigation/branches/main_screen_branch.dart';
 
-class TitleCardWidget extends StatelessWidget {
-  const TitleCardWidget({super.key, required this.title, this.heigth = 224});
+class ReleaseCardWidget extends StatelessWidget {
+  const ReleaseCardWidget(
+      {super.key, required this.release, this.heigth = 224});
 
-  final AnimeTitle title;
+  final Release release;
   final double heigth;
 
   @override
@@ -27,8 +29,8 @@ class TitleCardWidget extends StatelessWidget {
                   height: heigth,
                   width: double.maxFinite,
                   child: Image(
-                    image:
-                        NetworkImage('${Host.host}${title.posters.small.url}'),
+                    image: NetworkImage(
+                        '${Host.host}${release.poster.src}'),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -36,7 +38,7 @@ class TitleCardWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: Text(
-                  title.names.ru,
+                  release.name.main,
                   maxLines: 2,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
@@ -45,7 +47,7 @@ class TitleCardWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: Text(
-                  title.genres.join(','),
+                  release.genres?.map((genre) => genre.name).join(',')?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelMedium,
@@ -59,7 +61,7 @@ class TitleCardWidget extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(10),
               onTap: () {
-                context.push(MainScreenPath.detail, extra: title.id);
+                context.push(MainScreenPath.detail, extra: release.id);
               },
             ),
           ),

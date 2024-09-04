@@ -3,12 +3,12 @@ import '../entity/watched_episode.dart';
 import 'base_dao.dart';
 
 class WatchedEpisodesDAO extends BaseDAO {
-  Future<List<WatchedEpisode>> getWatchedEpisodesByTitle(int titleId) async {
+  Future<List<WatchedEpisode>> getWatchedEpisodesByTitle(int releaseId) async {
     final db = await getDB();
     List<Map<String, dynamic>> maps;
     maps = await db.query(
       WatchedEpisode.tableName,
-      where: '${WatchedEpisode.fieldAnimeTitleId} = $titleId',
+      where: '${WatchedEpisode.fieldReleaseId} = $releaseId',
     );
 
     final watchedEpisodes =
@@ -32,14 +32,14 @@ class WatchedEpisodesDAO extends BaseDAO {
 
   Future<void> changeWatchedEpisode(WatchedEpisode watchedEpisode) async {
     final watchedEpisodes =
-        await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId);
+        await getWatchedEpisodesByTitle(watchedEpisode.releaseId);
     if (watchedEpisodes.contains(watchedEpisode)) {
       await _updateWatchedEpisode(watchedEpisode);
     } else {
       await _addWatchedEpisode(watchedEpisode);
     }
     watchedEpisodeController
-        .add(await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId));
+        .add(await getWatchedEpisodesByTitle(watchedEpisode.releaseId));
 
     watchedEpisodeHistoryController.add(await getUnderseenEpisodes());
   }
@@ -49,10 +49,10 @@ class WatchedEpisodesDAO extends BaseDAO {
     db.delete(
       WatchedEpisode.tableName,
       where:
-          '${WatchedEpisode.fieldAnimeTitleId} = ${watchedEpisode.animeTitleId}',
+          '${WatchedEpisode.fieldReleaseId} = ${watchedEpisode.releaseId}',
     );
     watchedEpisodeController
-        .add((await getWatchedEpisodesByTitle(watchedEpisode.animeTitleId)));
+        .add((await getWatchedEpisodesByTitle(watchedEpisode.releaseId)));
   }
 
   Future<void> deleteWatchedEpisodes() async {
@@ -74,7 +74,7 @@ class WatchedEpisodesDAO extends BaseDAO {
     final db = await getDB();
     db.update(WatchedEpisode.tableName, watchedEpisode.toJson(),
         where:
-            '${WatchedEpisode.fieldAnimeTitleId} = ${watchedEpisode.animeTitleId} AND ${WatchedEpisode.fieldEpisodeNumber} = ${watchedEpisode.episodeNumber}');
+            '${WatchedEpisode.fieldReleaseId} = ${watchedEpisode.releaseId} AND ${WatchedEpisode.fieldEpisodeNumber} = ${watchedEpisode.episodeNumber}');
   }
 
   WatchedEpisodesDAO() {

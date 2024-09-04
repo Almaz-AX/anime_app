@@ -1,24 +1,32 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:anime_app/core/data/models/anime_title.dart';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 import 'package:video_player/video_player.dart';
+
+import 'package:anime_app/core/data/models/release.dart';
+import 'package:anime_app/features/video_player/presentation/widgets/custom_controls.dart';
 
 import '../../../../injection_container.dart';
 import '../cubit/video_player_cubit.dart';
 
 class VideoPlayerPage extends StatelessWidget {
-  const VideoPlayerPage({super.key});
+  const VideoPlayerPage({
+    Key? key,
+  }) : super(key: key);
 
   static createVideoPlayer({
     required BuildContext context,
-    required int titleId,
-    required Player player,
-    required int currentEpisodeId,
+    required int releaseId,
+    required List<Episode> episodes,
+    required int ordinal,
   }) {
+    final linkedepisodes = LinkedList<EntryItem>();
+    for (var episode in episodes) {
+      linkedepisodes.add(EntryItem(releaseId: releaseId, episode: episode));
+    }
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (context) {
@@ -27,9 +35,8 @@ class VideoPlayerPage extends StatelessWidget {
                 return VideoPlayerCubit(
                   getWatchedEpisodes: sl(),
                   saveWatchedEpisode: sl(),
-                  titleId: titleId,
-                  currentEpisode: currentEpisodeId,
-                  player: player,
+                  episode: linkedepisodes.firstWhere((element) => element.episode.ordinal == ordinal),
+                  linkedEpisodes: linkedepisodes,
                 );
               },
               child: const VideoPlayerPage());
@@ -90,7 +97,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         return Stack(
           children: [
             InteractiveViewer(
-              minScale: 1,
+                minScale: 1,
                 maxScale: 1.3,
                 child: Center(
                   child: AspectRatio(

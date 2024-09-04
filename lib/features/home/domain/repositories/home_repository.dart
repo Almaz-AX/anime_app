@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:anime_app/core/data/models/release.dart';
 import 'package:anime_app/core/error/exceptions.dart';
 import 'package:anime_app/core/error/failure.dart';
 import 'package:anime_app/features/home/data/models/title_updates.dart';
@@ -16,7 +17,7 @@ abstract class HomeRepository {
 
   Future<Either<Failure, void>> completeWatching(WatchedEpisode episode);
 
-  Future<Either<Failure, TitleUpdates>> getUpdates(int page);
+  Future<Either<Failure, List<Release>>> latestReleases(int? page);
 }
 
 class HomeRepositoryImpl implements HomeRepository {
@@ -32,9 +33,9 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, TitleUpdates>> getUpdates(int page) async {
+  Future<Either<Failure, List<Release>>> latestReleases(int? page) async {
     return await getResponseOrFailure(
-        () async => await remoteDataSource.getUpdates(page));
+        () async => await remoteDataSource.latestReleases(page));
   }
 
   @override

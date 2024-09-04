@@ -5,41 +5,41 @@ enum VideoPlayerStatus { loading, loaded }
 
 class VideoPlayerState extends Equatable {
   final VideoPlayerStatus status;
-  final int titleId;
-  final Player player;
-  final int currentEpisode;
+  final EntryItem episode;
+  final LinkedList<EntryItem> linkedEpisodes;
   final VideoPlayerController videoPlayerController;
   final WatchedEpisode? watchedEpisode;
   const VideoPlayerState({
     required this.status,
-    required this.titleId,
-    required this.player,
-    required this.currentEpisode,
+    required this.episode,
+    required this.linkedEpisodes,
     required this.videoPlayerController,
     this.watchedEpisode,
   });
 
   @override
-  List<Object?> get props =>
-      [status, currentEpisode, videoPlayerController, watchedEpisode];
+  List<Object?> get props => [status, videoPlayerController, watchedEpisode];
 
   VideoPlayerState copyWith({
     VideoPlayerStatus? status,
-    int? titleId,
-    Player? player,
-    int? currentEpisode,
-    List<Episode>? episodes,
+    EntryItem? episode,
+    LinkedList<EntryItem>? linkedEpisodes,
     VideoPlayerController? videoPlayerController,
     WatchedEpisode? watchedEpisode,
   }) {
     return VideoPlayerState(
       status: status ?? this.status,
-      titleId: titleId ?? this.titleId,
-      player: player ?? this.player,
-      currentEpisode: currentEpisode ?? this.currentEpisode,
+      episode: episode ?? this.episode,
+      linkedEpisodes: linkedEpisodes ?? this.linkedEpisodes,
       videoPlayerController:
           videoPlayerController ?? this.videoPlayerController,
       watchedEpisode: watchedEpisode ?? this.watchedEpisode,
     );
   }
+}
+
+final class EntryItem extends LinkedListEntry<EntryItem> {
+  final int releaseId;
+  final Episode episode;
+  EntryItem({required this.releaseId, required this.episode});
 }

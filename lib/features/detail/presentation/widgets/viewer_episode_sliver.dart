@@ -1,5 +1,6 @@
 import 'package:anime_app/constants/constants.dart';
-import 'package:anime_app/core/data/models/anime_title.dart';
+import 'package:anime_app/core/data/models/release.dart';
+
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
 import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
@@ -16,21 +17,22 @@ class ViewerEpisodeSliver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = BlocProvider.of<DetailBloc>(context).state;
-    final title = state.title;
-    final player = title?.player;
+    final release = state.release;
+    final episodes = release?.episodes;
     final watchedEpisodes = state.watchedEpisodes;
-    if (player == null || title == null) {
+    if (episodes == null || release == null) {
       return const SliverToBoxAdapter();
     }
-    int currentEpisodeId = 0;
+    Episode currentEpisode = episodes.first;
     for (WatchedEpisode watchedEpisode in watchedEpisodes) {
-      if (watchedEpisode.episodeNumber > currentEpisodeId &&
+      if (watchedEpisode.episodeNumber > currentEpisode.ordinal &&
           watchedEpisode.watchCompleted == false) {
-        currentEpisodeId = watchedEpisode.episodeNumber;
+        currentEpisode = episodes
+            .where((episode) => episode.ordinal == watchedEpisode.episodeNumber)
+            .first;
       }
     }
-    late final Episode currentEpisode = player.list[currentEpisodeId];
-    final String preview = currentEpisode.preview ?? title.posters.original.url;
+    final String preview = currentEpisode.preview?.src ?? release.poster.src;
 
     return SliverToBoxAdapter(
       child: SizedBox(
@@ -56,15 +58,15 @@ class ViewerEpisodeSliver extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    Text('${currentEpisode.episode} ${Constants.episode}'),
+                    Text('${currentEpisode.ordinal} ${Constants.episode}'),
                   ],
                 ),
                 onPressed: () {
                   VideoPlayerPage.createVideoPlayer(
                     context: context,
-                    player: player,
-                    titleId: title.id,
-                    currentEpisodeId: currentEpisodeId,
+                    episodes: episodes,
+                    releaseId: release.id,
+                    ordinal: currentEpisode.ordinal,
                   );
                 },
               ),

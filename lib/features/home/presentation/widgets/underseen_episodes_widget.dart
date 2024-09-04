@@ -2,10 +2,9 @@ import 'package:anime_app/core/host.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import '../../../../assets.dart';
 import '../../../../constants/constants.dart';
-import '../../../../core/data/models/anime_title.dart';
+import '../../../../core/data/models/release.dart';
 import '../../../video_player/presentation/pages/video_player_page.dart';
 import '../bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
 
@@ -38,20 +37,21 @@ class UnderseenEpisodes extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: state.underseenEpisodes.length,
                   itemBuilder: (context, index) {
-                    AnimeTitle? underseenTitle;
-                    for (AnimeTitle title in state.underseenTitles) {
-                      if (title.id ==
-                          state.underseenEpisodes[index].animeTitleId) {
-                        underseenTitle = title;
+                    Release? underseenRelease;
+                    for (Release release in state.underseenReleases) {
+                      if (release.id ==
+                          state.underseenEpisodes[index].releaseId) {
+                        underseenRelease = release;
                         break;
                       }
                     }
-                    final player = underseenTitle?.player;
-                    if (player == null || underseenTitle == null) {
+                    final episodes = underseenRelease?.episodes;
+                    if (episodes == null || underseenRelease == null) {
                       return Container();
                     }
-                    final episode = player
-                        .list[state.underseenEpisodes[index].episodeNumber];
+                    final episode = episodes.firstWhere((episode) =>
+                        episode.ordinal ==
+                        state.underseenEpisodes[index].episodeNumber);
                     return Container(
                       padding: const EdgeInsets.only(right: 8),
                       width: 260,
@@ -71,7 +71,7 @@ class UnderseenEpisodes extends StatelessWidget {
                                     children: [
                                       Image(
                                         image: NetworkImage(
-                                            '${Host.host}${episode.preview ?? underseenTitle.posters.small.url}'),
+                                            '${Host.host}${episode.preview?.src ?? underseenRelease.poster.src}'),
                                         width: 260,
                                         height: 160,
                                         fit: BoxFit.cover,
@@ -85,13 +85,14 @@ class UnderseenEpisodes extends StatelessWidget {
                                           .primaryColor
                                           .withOpacity(0.5),
                                       onTap: () {
+                                        if (underseenRelease == null) {
+                                          return;
+                                        }
                                         VideoPlayerPage.createVideoPlayer(
                                             context: context,
-                                            titleId: underseenTitle!.id,
-                                            player: player,
-                                            currentEpisodeId: state
-                                                .underseenEpisodes[index]
-                                                .episodeNumber);
+                                            releaseId: underseenRelease.id,
+                                            episodes: episodes,
+                                            ordinal: episode.ordinal);
                                       },
                                     ),
                                   ),
@@ -101,10 +102,6 @@ class UnderseenEpisodes extends StatelessWidget {
                                     ),
                                     child: Row(
                                       children: [
-                                        Text(underseenTitle.type?.lenght ?? '',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium),
                                         const Expanded(
                                           child: SizedBox(
                                             height: 10,
@@ -139,13 +136,13 @@ class UnderseenEpisodes extends StatelessWidget {
                           ),
                           SizedBox(
                             child: Text(
-                              underseenTitle.names.ru,
+                              underseenRelease.name.main,
                               maxLines: 2,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ),
                           Text(
-                            'Серия ${(state.underseenEpisodes[index].episodeNumber + (underseenTitle.player?.episodes.first ?? 1)).toString()}',
+                            'Серия ${episode.ordinal}',
                             maxLines: 1,
                             style: Theme.of(context).textTheme.labelMedium,
                           ),

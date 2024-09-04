@@ -6,16 +6,16 @@ import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 import '../../error/failure.dart';
 import '../local/entity/favorite_title.dart';
 
-abstract class FavoriteTitleRepository {
-  Future<Either<Failure, FavoriteTitle?>> getTitle(int titleId);
-  Future<Either<Failure, int>> removeTitle(int titleId);
-  Future<Either<Failure, int>> addTitle(int titleId);
-  Stream<List<FavoriteTitle>> listenTitles();
+abstract class FavoriteReleaseRepository {
+  Future<Either<Failure, FavoriteTitle?>> getRelease(int titleId);
+  Future<Either<Failure, int>> removeRelease(int titleId);
+  Future<Either<Failure, int>> addRelease(int titleId);
+  Stream<List<FavoriteTitle>> listenReleases();
 }
 
-class FavoriteTitleRepositoryImpl implements FavoriteTitleRepository {
+class FavoriteReleaseRepositoryImpl implements FavoriteReleaseRepository {
   final FavoriteTitlesDAO favioriteTitlesDAO;
-  FavoriteTitleRepositoryImpl({
+  FavoriteReleaseRepositoryImpl({
     required this.favioriteTitlesDAO,
   });
 
@@ -28,22 +28,22 @@ class FavoriteTitleRepositoryImpl implements FavoriteTitleRepository {
   }
 
   @override
-  Future<Either<Failure, int>> addTitle(int titleId) async {
+  Future<Either<Failure, int>> addRelease(int titleId) async {
     return await _response<int>(() => favioriteTitlesDAO.addTitle(titleId));
   }
 
   @override
-  Future<Either<Failure, FavoriteTitle?>> getTitle(int titleId) async {
+  Future<Either<Failure, FavoriteTitle?>> getRelease(int titleId) async {
     return await _response<FavoriteTitle?>(
         () => favioriteTitlesDAO.getTitle(titleId));
   }
 
   @override
-  Future<Either<Failure, int>> removeTitle(int titleId) async {
+  Future<Either<Failure, int>> removeRelease(int titleId) async {
     return await _response<int>(() => favioriteTitlesDAO.removeTitle(titleId));
   }
 
   @override
-  Stream<List<FavoriteTitle>> listenTitles() =>
+  Stream<List<FavoriteTitle>> listenReleases() =>
       favioriteTitlesDAO.listenTitles();
 }

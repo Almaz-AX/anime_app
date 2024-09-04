@@ -1,5 +1,5 @@
 import 'package:anime_app/features/favorites/presentation/bloc/favorites_bloc.dart';
-import 'package:anime_app/features/home/presentation/widgets/title_card_widget.dart';
+import 'package:anime_app/features/home/presentation/widgets/release_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,9 +55,10 @@ class FavoritesWidget extends StatelessWidget {
               ) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: TitleCardWidget(
-                    title: state.favoriteTitles[index],
-                  ),
+                  child: Container()
+                  // ReleaseCardWidget(
+                  //   release: state.favoriteTitles[index],
+                  // ),
                 );
               });
       }

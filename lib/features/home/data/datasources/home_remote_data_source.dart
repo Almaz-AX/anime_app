@@ -1,8 +1,9 @@
+import 'package:anime_app/core/data/models/release.dart';
+
 import '../../../../core/data/network/dio_client.dart';
-import '../models/title_updates.dart';
 
 abstract class GetUpdatesRemoteDataSource {
-  Future<TitleUpdates> getUpdates(int page);
+  Future<List<Release>> latestReleases(int? limit);
 }
 
 class GetUpdatesRemoteDataSourceImpl implements GetUpdatesRemoteDataSource {
@@ -14,11 +15,13 @@ class GetUpdatesRemoteDataSourceImpl implements GetUpdatesRemoteDataSource {
   GetUpdatesRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<TitleUpdates> getUpdates(int page) async {
-    final path =
-        'title/updates?filter=id,names,genres,posters&since=$since&page=$page';
-    final responseData = await client.get(path);
-    final titleUpdates = TitleUpdates.fromJson(responseData);
-    return titleUpdates;
+  Future<List<Release>> latestReleases(int? limit) async {
+    String path = '/anime/releases/latest';
+    if (limit != null && limit > 0) {
+      path = '$path?limit=$limit';
+    }
+    final List responseData = await client.get(path);
+
+    return responseData.map((e) => Release.fromJson(e)).toList();
   }
 }

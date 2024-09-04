@@ -7,7 +7,7 @@ import 'package:anime_app/core/error/failure.dart';
 
 import '../repositories/home_repository.dart';
 
-class CompleteWatching extends UseCaseFuture {
+class CompleteWatching extends UseCaseFuture<void, EpisodeParams> {
   final HomeRepository repository;
   CompleteWatching({
     required this.repository,

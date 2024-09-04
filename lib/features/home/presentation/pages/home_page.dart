@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../assets.dart';
-import '../bloc/last_updates_bloc/last_updates_bloc.dart';
+import '../bloc/latest_releases_bloc/latest_releases_bloc.dart';
 import '../../../../constants/constants.dart';
 import '../../../../core/data/local/DAO/watched_episode_dao.dart';
 import '../../../../injection_container.dart';
-import '../bloc/random_titles_bloc/bloc/random_titles_bloc.dart';
+import '../bloc/random_releases_bloc/bloc/random_releases_bloc.dart';
 import '../bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
-import '../widgets/last_updates_widget.dart';
-import '../widgets/random_titles.dart';
+import '../widgets/latest_releases_widget.dart';
+import '../widgets/random_releases.dart';
 import '../widgets/underseen_episodes_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -55,11 +55,11 @@ class HomePage extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                sl<LastUpdatesBloc>()..add(const LastUpdatesLoadPageEvent()),
+                sl<LatestReleasesBloc>()..add(const LatestReleasesGetEvent()),
           ),
           BlocProvider(
             create: (context) =>
-                sl<RandomTitlesBloc>()..add(RandomTitlesGetEvent()),
+                sl<RandomReleasesBloc>()..add(RandomTitlesGetEvent()),
           ),
         ],
         child: const _Body(),
@@ -76,8 +76,8 @@ class _Body extends StatelessWidget {
     return ListView(
       children: const [
         UnderseenEpisodes(),
-        LastUpdates(),
-        RandomTitles(),
+        LatesetReleases(),
+        RandomReleases(),
       ],
     );
   }

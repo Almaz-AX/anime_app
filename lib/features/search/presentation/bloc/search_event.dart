@@ -16,13 +16,5 @@ class SearchTitlesEvent extends SearchEvent {
   List<Object> get props => [query];
 }
 
-class SearchTitlesNextPageEvent extends SearchEvent {
-  final int currentTitleIndex;
-  final SearchTitles searchTitles;
-  const SearchTitlesNextPageEvent(
-    this.currentTitleIndex,
-    this.searchTitles,
-  );
-}
 
 class RandomTitleEvent extends SearchEvent {}

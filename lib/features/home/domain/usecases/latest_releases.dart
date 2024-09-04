@@ -1,29 +1,29 @@
+import 'package:anime_app/core/data/models/release.dart';
 import 'package:anime_app/core/error/failure.dart';
-import 'package:anime_app/features/home/data/models/title_updates.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/domain/usecases/usecase.dart';
 import '../repositories/home_repository.dart';
 
-class GetTitleUpdates extends UseCaseFuture {
+class LatesetReleases extends UseCaseFuture {
   final HomeRepository repository;
-  GetTitleUpdates({
+  LatesetReleases({
     required this.repository,
   });
 
   @override
-  Future<Either<Failure, TitleUpdates>> call(params) {
-    return repository.getUpdates(params.page);
+  Future<Either<Failure, List<Release>>> call(params) {
+    return repository.latestReleases(params.limit);
   }
 }
 
 class Params extends Equatable {
-  final int page;
+  final int? limit;
   const Params({
-    required this.page,
+    this.limit,
   });
 
   @override
-  List<Object?> get props => [page];
+  List<Object?> get props => [limit];
 }

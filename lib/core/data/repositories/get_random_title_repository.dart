@@ -3,22 +3,22 @@ import 'package:anime_app/core/helpers/getResponseOrFailure.dart';
 import 'package:dartz/dartz.dart';
 import '../../error/failure.dart';
 import '../../platform/network_info.dart';
-import '../datasourses/get_random_title_remote_data_source.dart';
-import '../models/anime_title.dart';
+import '../datasourses/get_random_release_remote_data_source.dart';
+import '../models/release.dart';
 
 abstract class GetRandomTitleRepository {
-  Future<Either<Failure, AnimeTitle>> getRandomTitle();
+  Future<Either<Failure, List<Release>>> getRandomReleases(int? limit);
 }
 
 class GetRandomTitleRepositoryImpl implements GetRandomTitleRepository {
   final NetworkInfo networkInfo;
-  final GetRandomTitleRemoteDataSource remoteDataSource;
+  final GetRandomReleaseRemoteDataSource remoteDataSource;
   GetRandomTitleRepositoryImpl(
       {required this.remoteDataSource, required this.networkInfo});
 
   @override
-  Future<Either<Failure, AnimeTitle>> getRandomTitle() async {
+  Future<Either<Failure, List<Release>>> getRandomReleases(int? limit) async {
     return getResponseOrFailure(
-        () async => await remoteDataSource.getRandomTitle());
+        () async => await remoteDataSource.getRandomRelease(limit));
   }
 }

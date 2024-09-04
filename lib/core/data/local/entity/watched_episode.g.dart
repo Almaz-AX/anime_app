@@ -13,7 +13,7 @@ WatchedEpisode _$WatchedEpisodeFromJson(Map<String, dynamic> json) =>
           ? false
           : WatchedEpisode._parseToBool(json['watch_completed']),
       continueTimestamp: json['continue_timestamp'] as int? ?? 0,
-      animeTitleId: json['title_id'] as int,
+      releaseId: json['release_id'] as int,
       updatedTime: json['updated_time'] as int,
     );
 
@@ -23,5 +23,5 @@ Map<String, dynamic> _$WatchedEpisodeToJson(WatchedEpisode instance) =>
       'updated_time': instance.updatedTime,
       'watch_completed': instance.watchCompleted,
       'continue_timestamp': instance.continueTimestamp,
-      'title_id': instance.animeTitleId,
+      'release_id': instance.releaseId,
     };

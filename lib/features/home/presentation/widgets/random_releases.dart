@@ -1,15 +1,15 @@
-import 'package:anime_app/features/home/presentation/widgets/title_card_widget.dart';
+import 'package:anime_app/features/home/presentation/widgets/release_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/random_titles_bloc/bloc/random_titles_bloc.dart';
+import '../bloc/random_releases_bloc/bloc/random_releases_bloc.dart';
 
-class RandomTitles extends StatelessWidget {
-  const RandomTitles();
+class RandomReleases extends StatelessWidget {
+  const RandomReleases({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RandomTitlesBloc, RandomTitlesState>(
+    return BlocBuilder<RandomReleasesBloc, RandomReleasesState>(
       builder: (context, state) {
         if (state is RandomTitlesLoaded) {
           return Column(
@@ -27,9 +27,9 @@ class RandomTitles extends StatelessWidget {
                 height: 290,
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: state.randomTitles.length,
-                    itemBuilder: (context, index) => TitleCardWidget(
-                          title: state.randomTitles[index],
+                    itemCount: state.randomReleases.length,
+                    itemBuilder: (context, index) => ReleaseCardWidget(
+                          release: state.randomReleases[index],
                         )),
               ),
             ],

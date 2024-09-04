@@ -1,9 +1,11 @@
 // ignore: depend_on_referenced_packages
+import 'dart:collection';
+
+import 'package:anime_app/core/data/models/release.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../../core/data/models/anime_title.dart';
 import '../../domain/usecases/save_watched_episode.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
@@ -18,21 +20,20 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   VideoPlayerCubit({
     required this.saveWatchedEpisode,
     required this.getWatchedEpisodes,
-    required int titleId,
-    required int currentEpisode,
-    required Player player,
+    required EntryItem episode,
+    required LinkedList<EntryItem> linkedEpisodes,
   }) : super(VideoPlayerState(
             status: VideoPlayerStatus.loading,
-            titleId: titleId,
-            currentEpisode: currentEpisode,
-            player: player,
-            videoPlayerController: _createVideoPlayerController(
-                episode: player.list[currentEpisode], host: player.host))) {
+            episode: episode,
+            linkedEpisodes: linkedEpisodes,
+            videoPlayerController:
+                _createVideoPlayerController(episode: episode.episode))) {
     _initVideoPlayer();
   }
 
   Future<WatchedEpisode?> getWatchedEpisode(int episodeNumber) async {
-    final episodesOrFailure = await getWatchedEpisodes(Params(state.titleId));
+    final episodesOrFailure =
+        await getWatchedEpisodes(Params(state.episode.releaseId));
     WatchedEpisode? watchedEpisode;
     episodesOrFailure.fold((l) => null, (watchedEpisodes) {
       for (WatchedEpisode episode in watchedEpisodes) {
@@ -46,7 +47,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
   Future<void> _initVideoPlayer() async {
     final WatchedEpisode? watchedEpisode =
-        await getWatchedEpisode(state.currentEpisode);
+        await getWatchedEpisode(state.episode.releaseId);
 
     await state.videoPlayerController.initialize();
     await state.videoPlayerController.play();
@@ -59,29 +60,29 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     );
   }
 
-  static VideoPlayerController _createVideoPlayerController(
-      {required Episode episode, required String host}) {
-    final hls = episode.hls;
-    final videoUrl = hls.fhd ?? hls.hd ?? hls.sd;
-    final url = Uri.parse('https://$host$videoUrl');
+  static VideoPlayerController _createVideoPlayerController({
+    required Episode episode,
+  }) {
+    final String videoUrl = episode.hls1080 ?? episode.hls720 ?? episode.hls480;
+    final url = Uri.parse(videoUrl);
     final controller = VideoPlayerController.networkUrl(url);
     return controller;
   }
 
   Future<void> nextEpisode() async {
-    final nextEpisodeNumber = state.currentEpisode + 1;
-    if (nextEpisodeNumber < state.player.list.length) {
-      await _changeEpisode(nextEpisodeNumber);
+    final episode = state.episode.next?.episode;
+    if (episode == null) {
+      return;
     }
+    await _changeEpisode(episode);
   }
 
   Future<void> prevEpisode() async {
-    final prevEpisodeNumber = state.currentEpisode - 1;
-    if (prevEpisodeNumber < 0) {
-      await _changeEpisode(0);
+    final episode = state.episode.previous?.episode;
+    if (episode == null) {
       return;
     }
-    await _changeEpisode(prevEpisodeNumber);
+    await _changeEpisode(episode);
   }
 
   void pause() {
@@ -105,20 +106,22 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     }
     await saveWatchedEpisode(EpisodeParams(WatchedEpisode(
         updatedTime: DateTime.timestamp().millisecondsSinceEpoch,
-        episodeNumber: state.currentEpisode,
-        animeTitleId: state.titleId,
+        episodeNumber: state.episode.episode.ordinal,
+        releaseId: state.episode.releaseId,
         continueTimestamp: currentPositionInSeconds,
         watchCompleted: watchedCompleted)));
     state.videoPlayerController.dispose();
   }
 
-  Future<void> _changeEpisode(int episodeNumber) async {
-    emit(state.copyWith(status: VideoPlayerStatus.loading));
-    await disposeController();
-    final newVideoPlayerController = _createVideoPlayerController(
-        episode: state.player.list[episodeNumber], host: state.player.host);
+  Future<void> _changeEpisode(Episode episode) async {
     emit(state.copyWith(
-        currentEpisode: episodeNumber,
+      status: VideoPlayerStatus.loading,
+    ));
+    await disposeController();
+    final newVideoPlayerController =
+        _createVideoPlayerController(episode: episode);
+    emit(state.copyWith(
+        episode: state.episode.next,
         videoPlayerController: newVideoPlayerController));
     await _initVideoPlayer();
   }

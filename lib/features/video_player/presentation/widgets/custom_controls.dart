@@ -36,7 +36,11 @@ class _CustomControlsState extends State<CustomControls> {
   }
 
   void changeVisibilityControls() {
-    visibleControls = !visibleControls;
+    visibleControls = true;
+    timer?.cancel();
+    timer = Timer(const Duration(seconds: 3), () {
+      visibleControls = false;
+    });
     if (mounted) {
       setState(() {});
     }
@@ -46,14 +50,9 @@ class _CustomControlsState extends State<CustomControls> {
     isBuffering = videoPlayerController.value.isBuffering;
     isPlaying = videoPlayerController.value.isPlaying;
     if (isBuffering) {
-      visibleControls = true;
-    } else if (isPlaying && visibleControls) {
-      Future.delayed(const Duration(seconds: 3))
-          .then((value) => visibleControls = false);
+      changeVisibilityControls();
     }
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
   }
 
   @override
@@ -82,9 +81,11 @@ class _CustomControlsState extends State<CustomControls> {
                   : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       IconButton(
                         iconSize: 45,
-                        onPressed: () {
-                          cubit.prevEpisode();
-                        },
+                        onPressed: cubit.state.episode.previous != null
+                            ? () {
+                                cubit.prevEpisode();
+                              }
+                            : null,
                         icon: const Icon(Icons.chevron_left_rounded),
                       ),
                       const SizedBox(
@@ -109,9 +110,11 @@ class _CustomControlsState extends State<CustomControls> {
                       ),
                       IconButton(
                           iconSize: 45,
-                          onPressed: () {
-                            cubit.nextEpisode();
-                          },
+                          onPressed: cubit.state.episode.next != null
+                              ? () {
+                                  cubit.nextEpisode();
+                                }
+                              : null,
                           icon: const Icon(Icons.chevron_right_rounded),
                           splashRadius: 50),
                     ]),

@@ -5,40 +5,31 @@ enum SearchStatus { empty, loading, randomTitle, failure }
 
 abstract class SearchState extends Equatable {
   final String query;
-  final List<AnimeTitle> titles;
-  final int pages;
+
 
   const SearchState({
-    this.titles = const <AnimeTitle>[],
     this.query = '',
-    this.pages = 1,
   });
 }
 
 class SearchInitialState extends SearchState {
   @override
-  List<Object?> get props => [
-        super.titles,
-      ];
+  List<Object?> get props => [];
 }
 
 class SearchLoadingState extends SearchState {
   @override
-  List<Object?> get props => [
-        super.titles,
-      ];
+  List<Object?> get props => [];
 }
 
 class SearchLoadedState extends SearchState {
-  final SearchTitles searchTitles;
+  final List<Release> releases;
   const SearchLoadedState({
-    required List<AnimeTitle> titles,
-    required this.searchTitles,
-    required String query,
-    required int pages,
-  }) : super(query: query, titles: titles, pages: pages);
+    required this.releases,
+    required super.query,
+  });
   @override
-  List<Object?> get props => [super.titles, super.query];
+  List<Object?> get props => [releases, super.query];
 }
 
 class SearchErrorState extends SearchState {
@@ -51,10 +42,10 @@ class SearchErrorState extends SearchState {
 }
 
 class SearchRandomTitleState extends SearchState {
-  final AnimeTitle title;
+  final Release release;
   const SearchRandomTitleState({
-    required this.title,
+    required this.release,
   });
   @override
-  List<Object?> get props => [title];
+  List<Object?> get props => [release];
 }

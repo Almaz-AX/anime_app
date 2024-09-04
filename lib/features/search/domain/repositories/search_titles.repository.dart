@@ -1,9 +1,8 @@
+import 'package:anime_app/core/data/models/release.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failure.dart';
-import '../../data/models/search_titles.dart';
 
 abstract class SearhTitlesRepository {
-  Future<Either<Failure, SearchTitles>> getSearchedTitles(
-      String query, int page);
+  Future<Either<Failure, List<Release>>> getSearchedTitles(String query);
 }

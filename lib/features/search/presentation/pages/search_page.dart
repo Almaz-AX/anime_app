@@ -1,11 +1,11 @@
-import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/ui/navigation/branches/search_page_branch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/data/models/release.dart';
 import '../../../../core/host.dart';
 import '../../../../injection_container.dart';
+import '../../../../ui/navigation/branches/search_page_branch.dart';
 import '../bloc/search_bloc.dart';
 
 class SearchPage extends StatelessWidget {
@@ -80,13 +80,13 @@ class SearchTitleBody extends StatelessWidget {
       if (state is SearchInitialState) {
         return const SliverToBoxAdapter();
       } else if (state is SearchRandomTitleState) {
-        final title = state.title;
+        final title = state.release;
         return SliverToBoxAdapter(
             child: Column(
           children: [
             const TitleWidget(text: 'Рандомный тайтл'),
-            TitleCardWidget(
-              title: title,
+            ReleaseWidget(
+              release: title,
             ),
           ],
         ));
@@ -103,16 +103,13 @@ class SearchTitleBody extends StatelessWidget {
         return SliverList(
           delegate:
               SliverChildBuilderDelegate((BuildContext context, int index) {
-            final titleList = state.titles;
+            final titleList = state.releases;
             final title = titleList[index];
-            context
-                .read<SearchBloc>()
-                .add(SearchTitlesNextPageEvent(index, state.searchTitles));
-            return TitleCardWidget(
-              title: title,
+            return ReleaseWidget(
+              release: title,
               height: 570,
             );
-          }, childCount: state.titles.length),
+          }, childCount: state.releases.length),
         );
       } else if (state is SearchErrorState) {
         return SliverToBoxAdapter(
@@ -125,17 +122,17 @@ class SearchTitleBody extends StatelessWidget {
   }
 }
 
-class TitleCardWidget extends StatelessWidget {
+class ReleaseWidget extends StatelessWidget {
   final double height;
   final double? width;
-  const TitleCardWidget({
+  const ReleaseWidget({
     super.key,
-    required this.title,
+    required this.release,
     this.height = 570,
     this.width,
   });
 
-  final AnimeTitle title;
+  final Release release;
 
   @override
   Widget build(BuildContext context) {
@@ -155,8 +152,8 @@ class TitleCardWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                          image: NetworkImage(
-                              '${Host.host}${title.posters.medium.url}'),
+                          image:
+                              NetworkImage('${Host.host}${release.poster.src}'),
                           fit: BoxFit.fitWidth)),
                 ),
                 const SizedBox(
@@ -164,16 +161,35 @@ class TitleCardWidget extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: Text(title.names.ru,
+                  child: Text('${release.name.main}  ${release.ageRating.label}',
                       maxLines: 2,
                       style: Theme.of(context).textTheme.titleSmall),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: Text(
-                    title.genres.join(', '),
-                    style: Theme.of(context).textTheme.labelMedium,
-                    maxLines: 1,
+                  child: RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Сезон: ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(color: Colors.white)),
+                      TextSpan(
+                          text:
+                              '${release.year} ${release.season.description?.toLowerCase()}',
+                          style: Theme.of(context).textTheme.labelMedium),
+                      TextSpan(
+                          text: '\t\tТип: ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(color: Colors.white)),
+                      TextSpan(
+                          text:
+                              '${release.type.description} (${release.episodesTotal} эп.)',
+                          style: Theme.of(context).textTheme.labelMedium),
+                    ]),
                   ),
                 ),
               ],
@@ -187,7 +203,7 @@ class TitleCardWidget extends StatelessWidget {
                 radius: 5,
                 onTap: () {
                   FocusManager.instance.primaryFocus?.unfocus();
-                  context.push(SearchScreenPath.detail, extra: title.id);
+                  context.push(SearchScreenPath.detail, extra: release.id);
                 },
               ),
             )

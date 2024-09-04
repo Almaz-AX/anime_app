@@ -1,15 +1,15 @@
-import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
-import 'package:anime_app/features/home/presentation/widgets/title_card_widget.dart';
+import 'package:anime_app/features/home/presentation/bloc/latest_releases_bloc/latest_releases_bloc.dart';
+import 'package:anime_app/features/home/presentation/widgets/release_card_widget.dart';
 import 'package:anime_app/features/widgets/error_widgets/failure_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LastUpdates extends StatelessWidget {
-  const LastUpdates({super.key});
+class LatesetReleases extends StatelessWidget {
+  const LatesetReleases({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LastUpdatesBloc, LastUpdatesState>(
+    return BlocBuilder<LatestReleasesBloc, LatestReleasesState>(
       builder: (context, state) {
         if (state is LastUpdatesInitial) {
           return const Center(
@@ -35,19 +35,12 @@ class LastUpdates extends StatelessWidget {
                 height: 290,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: state.titles.length,
+                  itemCount: state.releases.length,
                   itemBuilder: (context, index) {
-                    if (index > state.titles.length - 2 && !state.pageIsEmtpy) {
-                      context.read<LastUpdatesBloc>().add(
-                          LastUpdatesLoadPageEvent(
-                              currenPage:
-                                  state.titleUpdates.pagination.currentPage,
-                              titles: state.titles));
-                    }
-                    final title = state.titles[index];
+                    final release = state.releases[index];
                     return Stack(
                       children: [
-                        TitleCardWidget(title: title),
+                        ReleaseCardWidget(release: release),
                       ],
                     );
                   },

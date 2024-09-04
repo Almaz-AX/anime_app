@@ -24,7 +24,7 @@ class _DescriptionSliverState extends State<DescriptionSliver> {
 
   @override
   Widget build(BuildContext context) {
-    final title = BlocProvider.of<DetailBloc>(context).state.title;
+    final release = BlocProvider.of<DetailBloc>(context).state.release;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -38,7 +38,7 @@ class _DescriptionSliverState extends State<DescriptionSliver> {
                 height: _size,
                 child: Text(
                   textAlign: TextAlign.justify,
-                  title?.description ?? '',
+                  release?.description ?? '',
                   style: Theme.of(context).textTheme.bodyLarge,
                   overflow: TextOverflow.fade,
                 ),

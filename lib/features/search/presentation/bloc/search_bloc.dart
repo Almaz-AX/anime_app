@@ -1,25 +1,20 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-
-import 'package:anime_app/core/data/models/anime_title.dart';
-import 'package:anime_app/features/search/domain/usecases/get_searched_titles.dart';
-// ignore: depend_on_referenced_packages
 import 'package:rxdart/rxdart.dart';
 
+import '../../../../core/data/models/release.dart';
 import '../../../../core/domain/usecases/get_random_title.dart';
-import '../../data/models/search_titles.dart';
+import '../../domain/usecases/get_searched_titles.dart';
 
 part 'search_event.dart';
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final GetSearchedTitles getSearchedTitles;
-  final GetRandomTitle getRandomTitle;
+  final GetRandomReleases getRandomTitle;
 
   SearchBloc({
     required this.getSearchedTitles,
@@ -31,8 +26,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .debounceTime(const Duration(milliseconds: 300))
           .asyncExpand(mapper);
     });
-    on<SearchTitlesNextPageEvent>(_onSearchTitlesNextPage,
-        transformer: droppable());
   }
 
   Future<void> _onGetSearchedTitles(
@@ -44,44 +37,21 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final failureOrSearchedTitles =
         await getSearchedTitles(Params(query: event.query));
     failureOrSearchedTitles.fold(
-        (failure) => emit(SearchErrorState(message: 'Что то пошло не так')),
-        (searchTitles) => emit(SearchLoadedState(
-            query: event.query,
-            titles: searchTitles.list,
-            searchTitles: searchTitles,
-            pages: searchTitles.pagination.pages)));
-  }
-
-  Future<void> _onSearchTitlesNextPage(
-      SearchTitlesNextPageEvent event, Emitter<SearchState> emit) async {
-    if (event.currentTitleIndex == state.titles.length - 2 ||
-        state.titles.isEmpty) {
-      return;
-    }
-    final nextPage = event.searchTitles.pagination.currentPage + 1;
-    if (nextPage > state.pages) {
-      return;
-    }
-    final failureOrSearchedTitles =
-        await getSearchedTitles(Params(query: state.query, page: nextPage));
-    failureOrSearchedTitles.fold(
-        (failure) => emit(SearchErrorState(message: 'Что то пошло не так')),
-        (searchTitles) {
-      final titles = <AnimeTitle>[...state.titles, ...searchTitles.list];
-      emit(SearchLoadedState(
-          titles: titles,
-          searchTitles: searchTitles,
-          query: state.query,
-          pages: state.pages));
-    });
+        (failure) =>
+            emit(const SearchErrorState(message: 'Что то пошло не так')),
+        (releases) => emit(SearchLoadedState(
+              query: event.query,
+              releases: releases,
+            )));
   }
 
   Future<void> _onGetRandomTitle(
       RandomTitleEvent event, Emitter<SearchState> emit) async {
     emit(SearchLoadingState());
-    final failureOrRandomTitle = await getRandomTitle(NoParams());
+    final failureOrRandomTitle = await getRandomTitle(const RandomParams());
     failureOrRandomTitle.fold(
-        (failure) => emit(SearchErrorState(message: 'Что то пошло не так')),
-        (title) => emit(SearchRandomTitleState(title: title)));
+        (failure) =>
+            emit(const SearchErrorState(message: 'Что то пошло не так')),
+        (title) => emit(SearchRandomTitleState(release: title.first)));
   }
 }

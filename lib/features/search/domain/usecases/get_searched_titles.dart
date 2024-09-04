@@ -2,20 +2,19 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:anime_app/features/search/data/models/search_titles.dart';
-import 'package:anime_app/features/search/domain/repositories/search_titles.repository.dart';
-
+import '../../../../core/data/models/release.dart';
 import '../../../../core/domain/usecases/usecase.dart';
 import '../../../../core/error/failure.dart';
+import '../repositories/search_titles.repository.dart';
 
-class GetSearchedTitles extends UseCaseFuture<SearchTitles, Params> {
+class GetSearchedTitles extends UseCaseFuture<List<Release>, Params> {
   final SearhTitlesRepository repository;
   GetSearchedTitles({
     required this.repository,
   });
   @override
-  Future<Either<Failure, SearchTitles>> call(Params params) async {
-    return await repository.getSearchedTitles(params.query, params.page);
+  Future<Either<Failure, List<Release>>> call(Params params) async {
+    return await repository.getSearchedTitles(params.query);
   }
 }
 

@@ -12,7 +12,7 @@ class WatchedEpisode extends BaseEntity {
   static const fieldEpisodeNumber = 'episode_number';
   static const fieldWatchCompleted = 'watch_completed';
   static const fieldContinueTimestamp = 'continue_timestamp';
-  static const fieldAnimeTitleId = 'title_id';
+  static const fieldReleaseId = 'release_id';
   static const fieldUpdatedTime = 'updated_time';
 
   @JsonKey(name: fieldEpisodeNumber)
@@ -27,14 +27,14 @@ class WatchedEpisode extends BaseEntity {
   @JsonKey(name: fieldContinueTimestamp)
   final int continueTimestamp;
 
-  @JsonKey(name: fieldAnimeTitleId)
-  final int animeTitleId;
+  @JsonKey(name: fieldReleaseId)
+  final int releaseId;
 
   WatchedEpisode({
     required this.episodeNumber,
     this.watchCompleted = false,
     this.continueTimestamp = 0,
-    required this.animeTitleId,
+    required this.releaseId,
     required this.updatedTime,
   });
 
@@ -48,7 +48,7 @@ class WatchedEpisode extends BaseEntity {
   @override
   List<Object?> get props => [
         episodeNumber,
-        animeTitleId,
+        releaseId,
       ];
 
   WatchedEpisode copyWith({
@@ -56,14 +56,14 @@ class WatchedEpisode extends BaseEntity {
     int? updatedTime,
     bool? watchCompleted,
     int? continueTimestamp,
-    int? animeTitleId,
+    int? releaseId,
   }) {
     return WatchedEpisode(
       episodeNumber: episodeNumber ?? this.episodeNumber,
       updatedTime: updatedTime ?? this.updatedTime,
       watchCompleted: watchCompleted ?? this.watchCompleted,
       continueTimestamp: continueTimestamp ?? this.continueTimestamp,
-      animeTitleId: animeTitleId ?? this.animeTitleId,
+      releaseId: releaseId ?? this.releaseId,
     );
   }
 }

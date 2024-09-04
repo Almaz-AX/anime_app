@@ -4,7 +4,7 @@ import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 import 'package:anime_app/core/data/network/dio_client.dart';
 import 'package:anime_app/core/data/network/interceptors/dio_connectivity_request_retrier.dart';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
-import 'package:anime_app/core/data/repositories/favorite_title_repository.dart';
+import 'package:anime_app/core/data/repositories/favorite_release_repository.dart';
 import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
 import 'package:anime_app/core/data/repositories/get_titles_repositiry.dart';
 import 'package:anime_app/core/host.dart';
@@ -20,11 +20,11 @@ import 'package:anime_app/features/favorites/presentation/bloc/favorites_bloc.da
 
 import 'package:anime_app/features/home/domain/repositories/home_repository.dart';
 import 'package:anime_app/features/home/domain/usecases/complete_watching.dart';
-import 'package:anime_app/features/home/domain/usecases/get_title_updates.dart';
+import 'package:anime_app/features/home/domain/usecases/latest_releases.dart';
 import 'package:anime_app/features/home/domain/usecases/get_underseen_episodes.dart';
-import 'package:anime_app/features/home/domain/usecases/get_underseen_titles.dart';
-import 'package:anime_app/features/home/presentation/bloc/last_updates_bloc/last_updates_bloc.dart';
-import 'package:anime_app/features/home/presentation/bloc/random_titles_bloc/bloc/random_titles_bloc.dart';
+import 'package:anime_app/features/home/domain/usecases/get_underseen_releases.dart';
+import 'package:anime_app/features/home/presentation/bloc/latest_releases_bloc/latest_releases_bloc.dart';
+import 'package:anime_app/features/home/presentation/bloc/random_releases_bloc/bloc/random_releases_bloc.dart';
 import 'package:anime_app/features/home/presentation/bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
 import 'package:anime_app/features/profile/domain/repositories/profile_repository.dart';
 import 'package:anime_app/features/profile/presentation/blocs/profile_bloc/profile_bloc.dart';
@@ -42,11 +42,11 @@ import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'core/data/datasourses/get_random_title_remote_data_source.dart';
+import 'core/data/datasourses/get_random_release_remote_data_source.dart';
 import 'core/data/local/DAO/watched_episode_dao.dart';
 import 'core/domain/usecases/get_random_title.dart';
 import 'core/platform/network_info.dart';
-import 'features/detail/data/datasources/get_title_remote_data_source.dart';
+import 'features/detail/data/datasources/get_release_remote_data_source.dart';
 import 'features/detail/data/repositories/get_title_repository_impl.dart';
 import 'features/detail/domain/repositories/get_title_repository.dart';
 import 'features/detail/domain/repositories/get_watched_episodes_repository.dart';
@@ -74,18 +74,18 @@ Future<void> init() async {
       getUnderseenTitles: sl(),
       completeWatching: sl()));
 
-  sl.registerFactory(() => LastUpdatesBloc(getTitleUpdates: sl()));
+  sl.registerFactory(() => LatestReleasesBloc(getLatestReleases: sl()));
 
-  sl.registerFactory(() => RandomTitlesBloc(getRandomTitle: sl()));
+  sl.registerFactory(() => RandomReleasesBloc(getRandomTitle: sl()));
   //Use cases
   sl.registerLazySingleton<GetUnderseenEpisodes>(
       () => GetUnderseenEpisodes(repository: sl()));
-  sl.registerLazySingleton<GetUnderseenTitles>(
-      () => GetUnderseenTitles(repository: sl()));
+  sl.registerLazySingleton<GetUnderseenReleases>(
+      () => GetUnderseenReleases(repository: sl()));
   sl.registerLazySingleton<CompleteWatching>(
       () => CompleteWatching(repository: sl()));
-  sl.registerLazySingleton<GetTitleUpdates>(
-      () => GetTitleUpdates(repository: sl()));
+  sl.registerLazySingleton<LatesetReleases>(
+      () => LatesetReleases(repository: sl()));
   //Repsitory
   sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl(
       networkInfo: sl(), localDatasource: sl(), remoteDataSource: sl()));
@@ -138,8 +138,9 @@ Future<void> init() async {
       () => GetWatchedEpisodesRepositoryImpl(localDataSource: sl()));
 
   // DataSource
-  sl.registerLazySingleton<GetTitleRemoteDataSource>(
-      () => GetTitleRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<GetReleaseRemoteDataSource>(
+      () => GetReleaseRemoteDataSourceImpl(client: sl()));
+
   sl.registerLazySingleton<GetWatchedEpisodesLocalDataSource>(
       () => GetWatchedEpisodesLocalDataSourceImpl(watchedEpisodesDAO: sl()));
 
@@ -156,8 +157,9 @@ Future<void> init() async {
   sl.registerFactory(() => AuthBloc(repository: sl()));
   sl.registerFactory(() => ChangeUserNameBloc(repository: sl()));
   //Repository
-  sl.registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(supabase: sl(),));
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
+        supabase: sl(),
+      ));
   sl.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositiryImpl(supabase: sl()));
 
@@ -176,22 +178,24 @@ Future<void> init() async {
 
 //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
+  sl.registerLazySingleton<Client>(
+      () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
 
   // Use case
-  sl.registerLazySingleton<GetRandomTitle>(
-      () => GetRandomTitle(repository: sl()));
+  sl.registerLazySingleton<GetRandomReleases>(
+      () => GetRandomReleases(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<GetRandomTitleRepository>(() =>
       GetRandomTitleRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
-  sl.registerLazySingleton<FavoriteTitleRepository>(
-      () => FavoriteTitleRepositoryImpl(favioriteTitlesDAO: sl()));
+  sl.registerLazySingleton<FavoriteReleaseRepository>(
+      () => FavoriteReleaseRepositoryImpl(favioriteTitlesDAO: sl()));
   sl.registerLazySingleton<GetTitlesRepository>(
       () => GetTitlesRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
 
   // DataSource
-  sl.registerLazySingleton<GetRandomTitleRemoteDataSource>(
-      () => GetRandomTitleRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<GetRandomReleaseRemoteDataSource>(
+      () => GetRandomReleaseRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton(
       () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
   sl.registerLazySingleton<GetTitlesRemoteDataSource>(

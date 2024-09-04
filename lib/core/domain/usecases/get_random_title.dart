@@ -1,26 +1,35 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // import 'package:anime_app/core/domain/usecases/get_title_by_id.dart';
+
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../data/models/anime_title.dart';
+import 'package:anime_app/core/data/models/release.dart';
+
 import '../../data/repositories/get_random_title_repository.dart';
 import '../../error/failure.dart';
 import 'usecase.dart';
 
-class GetRandomTitle implements UseCaseFuture<AnimeTitle, NoParams> {
+class GetRandomReleases implements UseCaseFuture<List<Release>, RandomParams> {
   final GetRandomTitleRepository repository;
-  GetRandomTitle({
+  GetRandomReleases({
     required this.repository,
   });
 
   @override
-  Future<Either<Failure, AnimeTitle>> call(NoParams params) async {
-    final title = await repository.getRandomTitle();
-    return title;
+  Future<Either<Failure, List<Release>>> call(RandomParams params) async {
+    final releases = await repository.getRandomReleases(params.limit);
+    return releases;
   }
 }
 
-class NoParams extends Equatable {
+class RandomParams extends Equatable {
+  final int? limit;
+  const RandomParams({
+    this.limit,
+  });
+
   @override
-  List<Object?> get props => [];
+  // TODO: implement props
+  List<Object?> get props => [limit];
 }
