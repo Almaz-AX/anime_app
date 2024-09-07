@@ -18,7 +18,7 @@ class FavoritesGetEvent extends FavoritesEvent {
 }
 
 class FavoritesRemoveEvent extends FavoritesEvent {
-  final Set<AnimeTitle> removeTitles;
+  final Set<Release> removeTitles;
   const FavoritesRemoveEvent({
     required this.removeTitles,
   });

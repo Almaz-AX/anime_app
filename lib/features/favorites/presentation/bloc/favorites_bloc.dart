@@ -1,15 +1,13 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-// ignore: depend_on_referenced_packages
 import 'dart:async';
 
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:anime_app/features/favorites/domain/usecases/listenFavoriteTitles.dart';
-
 import '../../../../core/data/local/entity/favorite_title.dart';
-import '../../../../core/data/models/anime_title.dart';
+import '../../../../core/data/models/release.dart';
 import '../../domain/usecases/getFavoriteTitles.dart';
+import '../../domain/usecases/listenFavoriteTitles.dart';
 
 part 'favorites_event.dart';
 part 'favorites_state.dart';
@@ -32,26 +30,26 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
       FavoritesChangedEvent event, Emitter<FavoritesState> emit) {
     subscription = listenFavoriteTitles(NoParams()).listen((event) async {
       if (event.isEmpty) {
-        add(FavoritesRemoveEvent(removeTitles: state.favoriteTitles.toSet()));
+        add(FavoritesRemoveEvent(removeTitles: state.favoriteReleases.toSet()));
         return;
       }
-      if (state.favoriteTitles.isEmpty) {
+      if (state.favoriteReleases.isEmpty) {
         final newTitlesId = <int>[];
         for (var element in event) {
-          newTitlesId.add(element.animeTitleId);
+          newTitlesId.add(element.releaseId);
         }
         add(FavoritesGetEvent(titlesId: newTitlesId));
         return;
       }
-      final stateId = state.favoriteTitles.map((e) => e.id).toSet();
-      final eventId = event.map((e) => e.animeTitleId).toSet();
+      final stateId = state.favoriteReleases.map((e) => e.id).toSet();
+      final eventId = event.map((e) => e.releaseId).toSet();
       if (eventId.length > stateId.length) {
         final addedTitleId = eventId.difference(stateId).first;
         add(FavoritesGetEvent(titlesId: [addedTitleId]));
         return;
       }
       final revomedTitleId = stateId.difference(eventId).first;
-      final titles = state.favoriteTitles;
+      final titles = state.favoriteReleases;
       final removedTitles =
           titles.where((element) => element.id == revomedTitleId).toSet();
       add(FavoritesRemoveEvent(removeTitles: removedTitles));
@@ -61,19 +59,19 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   Future<void> _onGetFavoritesEvent(
       FavoritesGetEvent event, Emitter<FavoritesState> emit) async {
     final responseOrFailure =
-        await getFavoriteTitles(Params(titlesId: event.titlesId));
+        await getFavoriteTitles(Params(releasesId: event.titlesId));
     responseOrFailure.fold(
         (failure) => emit(state.copyWith(
               status: Status.failure,
             )),
         (titles) => emit(state.copyWith(
             status: Status.loaded,
-            favoriteTitles: [...state.favoriteTitles, ...titles])));
+            favoriteTitles: [...state.favoriteReleases, ...titles])));
   }
 
   Future<void> _onRemoveFavoritesEvent(
       FavoritesRemoveEvent event, Emitter<FavoritesState> emit) async {
-    final titles = state.favoriteTitles.toSet();
+    final titles = state.favoriteReleases.toSet();
     final dif = titles.difference(event.removeTitles);
     emit(state.copyWith(status: Status.loaded, favoriteTitles: dif.toList()));
   }

@@ -46,20 +46,18 @@ class FavoritesWidget extends StatelessWidget {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.65,
-                // mainAxisExtent: 310
               ),
-              itemCount: state.favoriteTitles.length,
+              itemCount: state.favoriteReleases.length,
               itemBuilder: (
                 BuildContext context,
                 index,
               ) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Container()
-                  // ReleaseCardWidget(
-                  //   release: state.favoriteTitles[index],
-                  // ),
-                );
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: ReleaseCardWidget(
+                      release: state.favoriteReleases[index],
+                    ),
+                    );
               });
       }
     });

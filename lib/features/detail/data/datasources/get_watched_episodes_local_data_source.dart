@@ -19,7 +19,7 @@ class GetWatchedEpisodesLocalDataSourceImpl
   @override
   Stream<List<WatchedEpisode>> getWatchedEpisodes(int id) {
     watchedEpisodesDAO
-        .getWatchedEpisodesByTitle(id)
+        .getWatchedEpisodesByReleaseId(id)
         .then((value) => controller.sink.add(value));
     return controller.stream;
   }

@@ -69,7 +69,7 @@ class EpisodeCard extends StatelessWidget {
     final episodes = release?.episodes;
 
     if (release == null || episodes == null) {
-      return Container();
+      return const SliverToBoxAdapter();
     }
     
     final episode = episodes[index];

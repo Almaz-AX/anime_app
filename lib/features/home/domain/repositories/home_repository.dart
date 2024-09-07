@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:anime_app/core/data/models/release.dart';
+import 'package:anime_app/core/data/repositories/anime_releases_repository.dart';
 import 'package:anime_app/core/error/exceptions.dart';
 import 'package:anime_app/core/error/failure.dart';
-import 'package:anime_app/features/home/data/models/title_updates.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/data/local/entity/watched_episode.dart';
 import '../../../../core/helpers/getResponseOrFailure.dart';
-import '../../../../core/platform/network_info.dart';
-import '../../data/datasources/home_remote_data_source.dart';
 import '../../data/datasources/underseen_episodes_local_data_source.dart';
 
 abstract class HomeRepository {
@@ -21,12 +19,11 @@ abstract class HomeRepository {
 }
 
 class HomeRepositoryImpl implements HomeRepository {
-  final NetworkInfo networkInfo;
-  final GetUpdatesRemoteDataSource remoteDataSource;
+  final AnimeReleasesRepository remoteDataSource;
   final UnderseenEpisodesLocalDataSource localDatasource;
   late final Stream<List<WatchedEpisode>> _watchedEpisodesStream;
   HomeRepositoryImpl(
-      {required this.networkInfo,
+      {
       required this.remoteDataSource,
       required this.localDatasource}) {
     _watchedEpisodesStream = localDatasource.listenUnderseenEpisodesHistory();

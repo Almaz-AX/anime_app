@@ -10,26 +10,28 @@ sealed class LatestReleasesState extends Equatable {
 
 final class LastUpdatesInitial extends LatestReleasesState {}
 
-final class LastUpdatesSuccessState extends LatestReleasesState {
+final class LastUpdatesSuccess extends LatestReleasesState {
   final List<Release> releases;
-  const LastUpdatesSuccessState({
+  const LastUpdatesSuccess({
     required this.releases,
   });
   @override
-  List<Object> get props => [ releases,];
+  List<Object> get props => [
+        releases,
+      ];
 
-  LastUpdatesSuccessState copyWith({
+  LastUpdatesSuccess copyWith({
     List<Release>? releases,
   }) {
-    return LastUpdatesSuccessState(
+    return LastUpdatesSuccess(
       releases: releases ?? this.releases,
     );
   }
 }
 
-final class LastUpdatesFailureState extends LatestReleasesState {
+final class LastUpdatesFailure extends LatestReleasesState {
   final Failure failure;
-  const LastUpdatesFailureState({
+  const LastUpdatesFailure({
     required this.failure,
   });
 }

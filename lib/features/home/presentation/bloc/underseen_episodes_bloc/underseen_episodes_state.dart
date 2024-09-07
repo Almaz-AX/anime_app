@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'underseen_episodes_bloc.dart';
 
-enum UnderseenEpisodesStatus { initial, success, failure }
+enum UnderseenEpisodesStatus { loading, success, failure }
 
 class UnderseenEpisodesState extends Equatable {
   final UnderseenEpisodesStatus status;

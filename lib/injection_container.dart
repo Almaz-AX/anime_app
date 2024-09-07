@@ -1,12 +1,10 @@
 import 'package:anime_app/features/profile/domain/repositories/auth_repository.dart';
-import 'package:anime_app/core/data/datasourses/get_titles_remote_data_source.dart';
 import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 import 'package:anime_app/core/data/network/dio_client.dart';
 import 'package:anime_app/core/data/network/interceptors/dio_connectivity_request_retrier.dart';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
-import 'package:anime_app/core/data/repositories/favorite_release_repository.dart';
-import 'package:anime_app/core/data/repositories/get_random_title_repository.dart';
-import 'package:anime_app/core/data/repositories/get_titles_repositiry.dart';
+import 'package:anime_app/features/favorites/domain/repositories/favorite_release_repository.dart';
+import 'package:anime_app/core/data/repositories/anime_releases_repository.dart';
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
@@ -46,13 +44,9 @@ import 'core/data/datasourses/get_random_release_remote_data_source.dart';
 import 'core/data/local/DAO/watched_episode_dao.dart';
 import 'core/domain/usecases/get_random_title.dart';
 import 'core/platform/network_info.dart';
-import 'features/detail/data/datasources/get_release_remote_data_source.dart';
-import 'features/detail/data/repositories/get_title_repository_impl.dart';
-import 'features/detail/domain/repositories/get_title_repository.dart';
 import 'features/detail/domain/repositories/get_watched_episodes_repository.dart';
 import 'features/detail/domain/usecases/get_title.dart';
 import 'features/detail/presentation/blocs/detail_bloc.dart';
-import 'features/home/data/datasources/home_remote_data_source.dart';
 import 'features/home/data/datasources/underseen_episodes_local_data_source.dart';
 import 'features/profile/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'features/profile/presentation/blocs/change_user_name_bloc/change_user_name_bloc.dart';
@@ -87,13 +81,11 @@ Future<void> init() async {
   sl.registerLazySingleton<LatesetReleases>(
       () => LatesetReleases(repository: sl()));
   //Repsitory
-  sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl(
-      networkInfo: sl(), localDatasource: sl(), remoteDataSource: sl()));
+  sl.registerLazySingleton<HomeRepository>(
+      () => HomeRepositoryImpl(localDatasource: sl(), remoteDataSource: sl()));
   //DataSource
   sl.registerLazySingleton<UnderseenEpisodesLocalDataSource>(
       () => UnderseenEpisodesLocalDataSourceImpl(local: sl()));
-  sl.registerLazySingleton<GetUpdatesRemoteDataSource>(
-      () => GetUpdatesRemoteDataSourceImpl(client: sl()));
 
   // SEARCH
   // Bloc
@@ -132,15 +124,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RemoveFavoriteTitle(repository: sl()));
 
   // Repository
-  sl.registerLazySingleton<GetTitleRepository>(
-      () => GetTitleRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<GetWatchedEpisodesRepository>(
       () => GetWatchedEpisodesRepositoryImpl(localDataSource: sl()));
 
   // DataSource
-  sl.registerLazySingleton<GetReleaseRemoteDataSource>(
-      () => GetReleaseRemoteDataSourceImpl(client: sl()));
-
   sl.registerLazySingleton<GetWatchedEpisodesLocalDataSource>(
       () => GetWatchedEpisodesLocalDataSourceImpl(watchedEpisodesDAO: sl()));
 
@@ -186,20 +173,15 @@ Future<void> init() async {
       () => GetRandomReleases(repository: sl()));
 
   // Repository
-  sl.registerLazySingleton<GetRandomTitleRepository>(() =>
-      GetRandomTitleRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<AnimeReleasesRepository>(
+      () => AnimeReleasesRepositoryImpl(client: sl()));
   sl.registerLazySingleton<FavoriteReleaseRepository>(
       () => FavoriteReleaseRepositoryImpl(favioriteTitlesDAO: sl()));
-  sl.registerLazySingleton<GetTitlesRepository>(
-      () => GetTitlesRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
-
   // DataSource
   sl.registerLazySingleton<GetRandomReleaseRemoteDataSource>(
       () => GetRandomReleaseRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton(
       () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
-  sl.registerLazySingleton<GetTitlesRemoteDataSource>(
-      () => GetTitlesRemoteDataSourceIml(client: sl()));
   sl.registerLazySingleton(
       () => RetryOnConnectivityChangeInterceptor(requestRetrier: sl()));
   sl.registerLazySingleton(

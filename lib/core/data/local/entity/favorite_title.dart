@@ -10,15 +10,15 @@ class FavoriteTitle extends BaseEntity {
   static const fieldAnimeTitleId = 'title_id';
 
   @JsonKey(name: fieldAnimeTitleId)
-  final int animeTitleId;
+  final int releaseId;
 
   FavoriteTitle({
-    required this.animeTitleId,
+    required this.releaseId,
   });
 
   @override
   // TODO: implement props
-  List<Object?> get props => [animeTitleId];
+  List<Object?> get props => [releaseId];
 
   Map<String, dynamic> toJson() => _$FavoriteTitleToJson(this);
 

@@ -3,7 +3,8 @@ import '../entity/watched_episode.dart';
 import 'base_dao.dart';
 
 class WatchedEpisodesDAO extends BaseDAO {
-  Future<List<WatchedEpisode>> getWatchedEpisodesByTitle(int releaseId) async {
+  Future<List<WatchedEpisode>> getWatchedEpisodesByReleaseId(
+      int releaseId) async {
     final db = await getDB();
     List<Map<String, dynamic>> maps;
     maps = await db.query(
@@ -32,14 +33,14 @@ class WatchedEpisodesDAO extends BaseDAO {
 
   Future<void> changeWatchedEpisode(WatchedEpisode watchedEpisode) async {
     final watchedEpisodes =
-        await getWatchedEpisodesByTitle(watchedEpisode.releaseId);
+        await getWatchedEpisodesByReleaseId(watchedEpisode.releaseId);
     if (watchedEpisodes.contains(watchedEpisode)) {
       await _updateWatchedEpisode(watchedEpisode);
     } else {
       await _addWatchedEpisode(watchedEpisode);
     }
     watchedEpisodeController
-        .add(await getWatchedEpisodesByTitle(watchedEpisode.releaseId));
+        .add(await getWatchedEpisodesByReleaseId(watchedEpisode.releaseId));
 
     watchedEpisodeHistoryController.add(await getUnderseenEpisodes());
   }
@@ -48,11 +49,10 @@ class WatchedEpisodesDAO extends BaseDAO {
     final db = await getDB();
     db.delete(
       WatchedEpisode.tableName,
-      where:
-          '${WatchedEpisode.fieldReleaseId} = ${watchedEpisode.releaseId}',
+      where: '${WatchedEpisode.fieldReleaseId} = ${watchedEpisode.releaseId}',
     );
     watchedEpisodeController
-        .add((await getWatchedEpisodesByTitle(watchedEpisode.releaseId)));
+        .add((await getWatchedEpisodesByReleaseId(watchedEpisode.releaseId)));
   }
 
   Future<void> deleteWatchedEpisodes() async {

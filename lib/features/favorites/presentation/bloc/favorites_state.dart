@@ -11,22 +11,22 @@ enum Status {
 
 class FavoritesState extends Equatable {
   final Status status;
-  final List<AnimeTitle> favoriteTitles;
+  final List<Release> favoriteReleases;
   const FavoritesState({
     required this.status,
-    this.favoriteTitles = const <AnimeTitle>[],
+    this.favoriteReleases = const <Release>[],
   });
 
   @override
-  List<Object> get props => [status, favoriteTitles];
+  List<Object> get props => [status, favoriteReleases];
 
   FavoritesState copyWith({
     Status? status,
-    List<AnimeTitle>? favoriteTitles,
+    List<Release>? favoriteTitles,
   }) {
     return FavoritesState(
       status: status ?? this.status,
-      favoriteTitles: favoriteTitles ?? this.favoriteTitles,
+      favoriteReleases: favoriteTitles ?? this.favoriteReleases,
     );
   }
 }

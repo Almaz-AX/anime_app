@@ -1,6 +1,6 @@
+import 'package:anime_app/ui/components/loader_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 
 import '../../../../core/data/models/release.dart';
 import '../../../../core/host.dart';
@@ -28,9 +28,27 @@ class ReleaseCardWidget extends StatelessWidget {
                 child: SizedBox(
                   height: heigth,
                   width: double.maxFinite,
-                  child: Image(
-                    image: NetworkImage(
-                        '${Host.host}${release.poster.src}'),
+                  child: Image.network(
+                    '${Host.host}${release.poster.src}',
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if(loadingProgress != null){
+                        return const LoaderContainer(
+                          height: double.infinity, width: double.infinity);
+                      }
+                      return child;
+                    },
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded) {
+                        return child;
+                      }
+                      return AnimatedOpacity(
+                        opacity: frame == null ? 0 : 1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                        child: child,
+                      );
+                    },
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -47,7 +65,7 @@ class ReleaseCardWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: Text(
-                  release.genres?.map((genre) => genre.name).join(',')?? '',
+                  release.genres?.map((genre) => genre.name).join(',') ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelMedium,

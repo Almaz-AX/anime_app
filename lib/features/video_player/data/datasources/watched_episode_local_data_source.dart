@@ -23,7 +23,7 @@ class WatchedEpisodeLocalDataSourceImpl extends WatchedEpisodeLocalDataSource {
 
   @override
   Future<List<WatchedEpisode>> getEpisodes(int titleId) async {
-    return await watchedEpisodesDAO.getWatchedEpisodesByTitle(titleId);
+    return await watchedEpisodesDAO.getWatchedEpisodesByReleaseId(titleId);
   }
 
   @override

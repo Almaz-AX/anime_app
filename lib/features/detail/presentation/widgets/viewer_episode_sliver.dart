@@ -20,16 +20,26 @@ class ViewerEpisodeSliver extends StatelessWidget {
     final release = state.release;
     final episodes = release?.episodes;
     final watchedEpisodes = state.watchedEpisodes;
-    if (episodes == null || release == null) {
+    if (release == null) {
       return const SliverToBoxAdapter();
+    }
+    if (episodes == null || episodes.isEmpty) {
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 200,
+          child: Image(
+            image: NetworkImage('${Host.host}${release.poster.src}'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
     }
     Episode currentEpisode = episodes.first;
     for (WatchedEpisode watchedEpisode in watchedEpisodes) {
       if (watchedEpisode.episodeNumber > currentEpisode.ordinal &&
           watchedEpisode.watchCompleted == false) {
-        currentEpisode = episodes
-            .where((episode) => episode.ordinal == watchedEpisode.episodeNumber)
-            .first;
+        currentEpisode = episodes.firstWhere(
+            (episode) => episode.ordinal == watchedEpisode.episodeNumber);
       }
     }
     final String preview = currentEpisode.preview?.src ?? release.poster.src;

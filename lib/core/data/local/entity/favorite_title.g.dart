@@ -8,10 +8,10 @@ part of 'favorite_title.dart';
 
 FavoriteTitle _$FavoriteTitleFromJson(Map<String, dynamic> json) =>
     FavoriteTitle(
-      animeTitleId: json['title_id'] as int,
+      releaseId: json['title_id'] as int,
     );
 
 Map<String, dynamic> _$FavoriteTitleToJson(FavoriteTitle instance) =>
     <String, dynamic>{
-      'title_id': instance.animeTitleId,
+      'title_id': instance.releaseId,
     };

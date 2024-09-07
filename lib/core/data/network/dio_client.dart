@@ -29,12 +29,15 @@ class DioClient extends Client {
   Future<T?> get<T>(String path) async {
     try {
       final Response<T> response = await dio.get(path);
- 
+
       if (response.statusCode == 200) {
         return response.data;
       }
       if (response.statusCode == 401) {
         throw NetworkException(type: NetworkExceptionType.unauthorized);
+      }
+      if (response.statusCode == 404) {
+        throw NetworkException(type: NetworkExceptionType.notFound);
       }
       // Не ловится ошибка!!!!!!!!!!!
     } on DioException catch (e) {

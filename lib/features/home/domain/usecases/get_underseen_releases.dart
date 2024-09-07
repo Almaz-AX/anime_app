@@ -1,15 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:anime_app/core/error/failure.dart';
-import 'package:anime_app/core/helpers/getResponseOrFailure.dart';
-import 'package:anime_app/features/detail/data/datasources/get_release_remote_data_source.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/data/models/release.dart';
+import '../../../../core/data/repositories/anime_releases_repository.dart';
 import '../../../../core/domain/usecases/usecase.dart';
+import '../../../../core/error/failure.dart';
+import '../../../../core/helpers/getResponseOrFailure.dart';
 
 class GetUnderseenReleases extends UseCaseFuture<List<Release>, Params> {
-  final GetReleaseRemoteDataSource repository;
+  final AnimeReleasesRepository repository;
   GetUnderseenReleases({
     required this.repository,
   });

@@ -24,7 +24,7 @@ class UnderseenEpisodesBloc
       required this.getUnderseenTitles,
       required this.completeWatching})
       : super(const UnderseenEpisodesState(
-            status: UnderseenEpisodesStatus.initial)) {
+            status: UnderseenEpisodesStatus.loading)) {
     on<UnderseenEpisodesGetEvent>(_onGetUnderseenEpisodes);
     on<UnderSeenTitlesGetEvent>(_onGetUnderseenTitles);
     on<UnderSeenTitlesCompleteEvent>(_onCompleteWatching);
@@ -60,7 +60,7 @@ class UnderseenEpisodesBloc
         (titles) {
       if (titles.isEmpty) {
         emit(state.copyWith(
-            status: UnderseenEpisodesStatus.initial,
+            status: UnderseenEpisodesStatus.loading,
             underseenEpisodes: event.underseenEpisodes,
             underseenReleases: titles));
       } else {

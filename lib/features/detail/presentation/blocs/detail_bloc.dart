@@ -40,7 +40,7 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
     final failureOrTitle = await getTitle(Params(id: event.id));
     final failureOrFavorite = await getFavoriteTitle(Params(id: event.id));
     bool isFavorite = failureOrFavorite.fold((l) => false, (favoriteTitle) {
-      if (favoriteTitle?.animeTitleId == event.id) {
+      if (favoriteTitle?.releaseId == event.id) {
         return true;
       }
       return false;

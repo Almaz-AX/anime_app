@@ -10,7 +10,7 @@ class RandomReleasesBloc
     extends Bloc<RandomReleasesEvent, RandomReleasesState> {
   final GetRandomReleases getRandomTitle;
   RandomReleasesBloc({required this.getRandomTitle})
-      : super(RandomTitlesInitial()) {
+      : super(RandomReleasesInitial()) {
     on<RandomTitlesGetEvent>(_onGetRandomTitles);
   }
 
@@ -19,8 +19,8 @@ class RandomReleasesBloc
         await getRandomTitle(const RandomParams(limit: 8));
     randomReleasesOrFailure.fold(
         (failure) => null,
-        (randomReleases) =>
-            emit(RandomTitlesLoaded(randomReleases: randomReleases)));
+        (randomReleases) => emit(RandomReleasesLoaded(
+            randomReleases: randomReleases)));
 
     ;
   }

@@ -25,9 +25,9 @@ class LatestReleasesBloc
     final latestReleasesOrFailure =
         await getLatestReleases(const Params(limit: 20));
     latestReleasesOrFailure.fold(
-        (failure) => emit(LastUpdatesFailureState(failure: failure)),
-        (latestReleases) => emit(LastUpdatesSuccessState(
-            releases: latestReleases,
-           )));
+        (failure) => emit(LastUpdatesFailure(failure: failure)),
+        (latestReleases) => emit(LastUpdatesSuccess(
+              releases: latestReleases,
+            )));
   }
 }

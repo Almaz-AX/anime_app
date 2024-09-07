@@ -3,8 +3,8 @@ import 'package:dartz/dartz.dart';
 
 import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 
-import '../../error/failure.dart';
-import '../local/entity/favorite_title.dart';
+import '../../../../core/error/failure.dart';
+import '../../../../core/data/local/entity/favorite_title.dart';
 
 abstract class FavoriteReleaseRepository {
   Future<Either<Failure, FavoriteTitle?>> getRelease(int titleId);

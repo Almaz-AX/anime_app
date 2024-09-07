@@ -38,7 +38,7 @@ class FavoriteTitlesDAO extends BaseDAO {
   Future<int> addTitle(int titleId) async {
     final db = await getDB();
     final id = await db.insert(
-        FavoriteTitle.tableName, FavoriteTitle(animeTitleId: titleId).toJson());
+        FavoriteTitle.tableName, FavoriteTitle(releaseId: titleId).toJson());
     favoriteTitleController.sink.add(await _getTitles());
     return id;
   }

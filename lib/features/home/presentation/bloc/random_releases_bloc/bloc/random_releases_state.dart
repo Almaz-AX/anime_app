@@ -7,10 +7,10 @@ sealed class RandomReleasesState extends Equatable {
   List<Object> get props => [];
 }
 
-final class RandomTitlesInitial extends RandomReleasesState {}
+final class RandomReleasesInitial extends RandomReleasesState {}
 
-final class RandomTitlesLoaded extends RandomReleasesState {
+final class RandomReleasesLoaded extends RandomReleasesState {
   final List<Release> randomReleases;
 
-  const RandomTitlesLoaded({required this.randomReleases});
+  const RandomReleasesLoaded({required this.randomReleases});
 }

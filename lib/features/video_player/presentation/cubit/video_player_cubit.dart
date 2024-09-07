@@ -36,18 +36,16 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
         await getWatchedEpisodes(Params(state.episode.releaseId));
     WatchedEpisode? watchedEpisode;
     episodesOrFailure.fold((l) => null, (watchedEpisodes) {
-      for (WatchedEpisode episode in watchedEpisodes) {
-        if (episode.episodeNumber == episodeNumber) {
-          watchedEpisode = episode;
-        }
-      }
+      watchedEpisode = watchedEpisodes
+          .where((element) => element.episodeNumber == episodeNumber)
+          .firstOrNull;
     });
     return watchedEpisode;
   }
 
   Future<void> _initVideoPlayer() async {
     final WatchedEpisode? watchedEpisode =
-        await getWatchedEpisode(state.episode.releaseId);
+        await getWatchedEpisode(state.episode.episode.ordinal);
 
     await state.videoPlayerController.initialize();
     await state.videoPlayerController.play();
