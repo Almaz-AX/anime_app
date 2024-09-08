@@ -4,6 +4,7 @@ import '../../../../injection_container.dart';
 import '../blocs/detail_bloc.dart';
 import '../widgets/about_title_sliver.dart';
 import '../widgets/description_sliver.dart';
+import '../widgets/detail_loader_widget.dart';
 import '../widgets/episodes_sliver.dart';
 import '../widgets/viewer_episode_sliver.dart';
 
@@ -35,7 +36,7 @@ class Body extends StatelessWidget {
           case Status.initial:
             return const Center();
           case Status.loading:
-            return const Center(child: CircularProgressIndicator());
+            return const DetailLoaderWidget();
           case Status.failure:
             return Center(
               child: Text(state.message),

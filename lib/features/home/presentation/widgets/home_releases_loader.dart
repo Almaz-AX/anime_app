@@ -13,10 +13,10 @@ class HomeReleasesLoader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-            padding: EdgeInsets.only(left: 8.0),
+            padding: EdgeInsets.only(left: 16, top:10),
             child: LoaderContainer(
-              height: 24,
-              width: 150,
+              height: 26,
+              width: 255,
             )),
         const SizedBox(height: 16),
         SizedBox(
@@ -50,7 +50,7 @@ class ReleaseLoaderCard extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
-          const LoaderContainer(height: 16, width: 100),
+          const LoaderContainer(height: 32, width: 200),
           const SizedBox(height: 5),
           const LoaderContainer(height: 16, width: 150),
         ],

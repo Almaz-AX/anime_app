@@ -25,18 +25,12 @@ class ReleaseCardWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
+                child: Container(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
                   height: heigth,
                   width: double.maxFinite,
                   child: Image.network(
                     '${Host.host}${release.poster.src}',
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if(loadingProgress != null){
-                        return const LoaderContainer(
-                          height: double.infinity, width: double.infinity);
-                      }
-                      return child;
-                    },
                     frameBuilder:
                         (context, child, frame, wasSynchronouslyLoaded) {
                       if (wasSynchronouslyLoaded) {

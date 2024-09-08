@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../injection_container.dart';
+import '../widgets/favorite_loader_widget.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -38,7 +39,7 @@ class FavoritesWidget extends StatelessWidget {
         case Status.initial:
           return Container();
         case Status.loading:
-          return const Center(child: CircularProgressIndicator());
+          return const FavoriteLoaderWidget();
         case Status.failure:
           return const Center(child: Text('Что-то пошло не так'));
         case Status.loaded:
@@ -53,11 +54,11 @@ class FavoritesWidget extends StatelessWidget {
                 index,
               ) {
                 return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: ReleaseCardWidget(
-                      release: state.favoriteReleases[index],
-                    ),
-                    );
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ReleaseCardWidget(
+                    release: state.favoriteReleases[index],
+                  ),
+                );
               });
       }
     });

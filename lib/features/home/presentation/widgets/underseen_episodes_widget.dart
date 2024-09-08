@@ -6,7 +6,6 @@ import 'package:anime_app/core/host.dart';
 import '../../../../assets.dart';
 import '../../../../constants/constants.dart';
 import '../../../../core/data/models/release.dart';
-import '../../../../ui/components/loader_widget.dart';
 import '../../../video_player/presentation/pages/video_player_page.dart';
 import '../bloc/underseen_episodes_bloc/underseen_episodes_bloc.dart';
 import 'underseen_loader_widget.dart';
@@ -90,33 +89,27 @@ class _UnderseenEpisodesWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Image.network(
-                                  '${Host.host}${episode.preview?.src ?? underseenRelease.poster.src}',
-                                  width: 260,
+                                Container(
                                   height: 160,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress != null) {
-                                      return const LoaderContainer(
-                                          height: 160,
-                                          width: 260);
-                                    }
-                                    return child;
-                                  },
-                                  frameBuilder: (context, child, frame,
-                                      wasSynchronouslyLoaded) {
-                                    if (wasSynchronouslyLoaded) {
-                                      return child;
-                                    }
-                                    return AnimatedOpacity(
-                                      opacity: frame == null ? 0 : 1,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
-                                      child: child,
-                                    );
-                                  },
+                                  width: 260,
+                                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                                  child: Image.network(
+                                    '${Host.host}${episode.preview?.src ?? underseenRelease.poster.src}',
+                                    fit: BoxFit.cover,
+                                    frameBuilder: (context, child, frame,
+                                        wasSynchronouslyLoaded) {
+                                      if (wasSynchronouslyLoaded) {
+                                        return child;
+                                      }
+                                      return AnimatedOpacity(
+                                        opacity: frame == null ? 0 : 1,
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                        child: child,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),

@@ -14,10 +14,10 @@ class UnerseenLoaderWiget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         const Padding(
-            padding: EdgeInsets.only(left: 16, bottom: 16),
+            padding: EdgeInsets.only(left: 16, bottom: 16, top: 10),
             child: LoaderContainer(
               height: 26,
-              width: 200,
+              width: 255,
             )),
         SizedBox(
           height: 232,
@@ -32,10 +32,20 @@ class UnerseenLoaderWiget extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LoaderContainer(height: 160, width: 260, borderRadius: 10,),
-                    SizedBox(height: 8,width: 40,),
-                    LoaderContainer(height: 36, width: 150),
-                    SizedBox(height: 8,width: 20,),
+                    LoaderContainer(
+                      height: 160,
+                      width: 260,
+                      borderRadius: 10,
+                    ),
+                    SizedBox(
+                      height: 5,
+                      width: 40,
+                    ),
+                    LoaderContainer(height: 32, width: 240),
+                    SizedBox(
+                      height: 10,
+                      width: 20,
+                    ),
                     LoaderContainer(height: 16, width: 100),
                   ],
                 ),

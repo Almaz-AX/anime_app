@@ -6,10 +6,6 @@ import 'ui/navigation/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // ByteData data =
-  //     await PlatformAssetBundle().load('lib/assets/ca/lets-encrypt-r3.pem');
-  // SecurityContext.defaultContext
-  //     .setTrustedCertificatesBytes(data.buffer.asUint8List());
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
   await init();
@@ -24,14 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: goRouter,
-      // debugShowCheckedModeBanner: false,
       theme: ThemeClass.darkTheme,
     );
   }
 }
-
-// DevicePreview(
-//   enabled: !kReleaseMode,
-//   builder: (context) => const MyApp()
-// ),
-

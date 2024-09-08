@@ -112,11 +112,9 @@ class EpisodeCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                width: 15,
+                width: 10,
               ),
-              Container(
-                constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width - 240),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -24,13 +24,12 @@ class ViewerEpisodeSliver extends StatelessWidget {
       return const SliverToBoxAdapter();
     }
     if (episodes == null || episodes.isEmpty) {
-      return SliverToBoxAdapter(
-        child: SizedBox(
-          height: 200,
-          child: Image(
-            image: NetworkImage('${Host.host}${release.poster.src}'),
-            fit: BoxFit.cover,
-          ),
+      return Container(
+        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        height: 200,
+        child: Image(
+          image: NetworkImage('${Host.host}${release.poster.src}'),
+          fit: BoxFit.cover,
         ),
       );
     }
@@ -45,8 +44,9 @@ class ViewerEpisodeSliver extends StatelessWidget {
     final String preview = currentEpisode.preview?.src ?? release.poster.src;
 
     return SliverToBoxAdapter(
-      child: SizedBox(
+      child: Container(
         height: 200,
+        color: Theme.of(context).primaryColor.withOpacity(0.1),
         child: Stack(
           children: [
             Image(
