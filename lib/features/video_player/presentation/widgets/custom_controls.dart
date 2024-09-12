@@ -1,19 +1,23 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
+import 'package:anime_app/core/data/models/release.dart';
+import 'package:anime_app/features/video_player/presentation/widgets/video_slider_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../assets.dart';
 import '../cubit/video_player_cubit.dart';
+import 'previous_next_pause_widget.dart';
+import 'skip_or_continue_opening_widget.dart';
 
 class CustomControls extends StatefulWidget {
   const CustomControls({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CustomControls> createState() => _CustomControlsState();
@@ -21,18 +25,38 @@ class CustomControls extends StatefulWidget {
 
 class _CustomControlsState extends State<CustomControls> {
   late final VideoPlayerController videoPlayerController;
+  late final Ing? opening;
   bool visibleControls = true;
-  late Duration currentPosition;
   bool isBuffering = true;
-  bool isPlaying = false;
+  bool showSkipOpeningButtons = false;
+  Timer? skipOpeningTimer;
+
   Timer? timer;
   @override
   void initState() {
     super.initState();
-    videoPlayerController =
-        context.read<VideoPlayerCubit>().state.videoPlayerController;
-    currentPosition = videoPlayerController.value.position;
+    final state = context.read<VideoPlayerCubit>().state;
+    videoPlayerController = state.videoPlayerController;
+    opening = state.episode.episode.opening;
     videoPlayerController.addListener(_listenBuffering);
+    videoPlayerController.addListener(_skipOpening);
+  }
+
+  void _skipOpening() {
+    if (opening?.start == null || opening?.stop == null) {
+      videoPlayerController.removeListener(_skipOpening);
+      return;
+    }
+    int position = videoPlayerController.value.position.inSeconds;
+    if (position > opening!.start! && position < opening!.stop! - 2) {
+      changeVisibilityControls();
+      showSkipOpeningButtons = true;
+      skipOpeningTimer = Timer(const Duration(seconds: 3), () {
+        showSkipOpeningButtons = false;
+        videoPlayerController.removeListener(_skipOpening);
+        videoPlayerController.seekTo(Duration(seconds: opening!.stop!));
+      });
+    }
   }
 
   void changeVisibilityControls() {
@@ -46,9 +70,8 @@ class _CustomControlsState extends State<CustomControls> {
     }
   }
 
-  void _listenBuffering() async {
+  void _listenBuffering() {
     isBuffering = videoPlayerController.value.isBuffering;
-    isPlaying = videoPlayerController.value.isPlaying;
     if (isBuffering) {
       changeVisibilityControls();
     }
@@ -57,6 +80,7 @@ class _CustomControlsState extends State<CustomControls> {
 
   @override
   void dispose() {
+    videoPlayerController.removeListener(_skipOpening);
     videoPlayerController.removeListener(_listenBuffering);
     super.dispose();
   }
@@ -69,144 +93,55 @@ class _CustomControlsState extends State<CustomControls> {
       onTap: changeVisibilityControls,
       child: Visibility(
         replacement: Center(
-            child: Container(
-          color: Colors.transparent,
+            child: Container( height: double.minPositive, width: double.minPositive,
+          color: Colors.amber,
         )),
         visible: visibleControls,
-        child: Stack(
-          children: [
-            Center(
-              child: isBuffering
-                  ? const CircularProgressIndicator()
-                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      IconButton(
-                        iconSize: 45,
-                        onPressed: cubit.state.episode.previous != null
-                            ? () {
-                                cubit.prevEpisode();
-                              }
+        child: Container(
+          color: Colors.black.withOpacity(0.2),
+          child: Stack(
+            children: [
+              Center(
+                child: isBuffering
+                    ? const CircularProgressIndicator()
+                    : PreviosPauseNextWidget(
+                        isPlaying: videoPlayerController.value.isPlaying,
+                        onTapPrev: cubit.state.episode.previous != null
+                            ? () => cubit.changeEpisode(
+                                cubit.state.episode.previous!.episode)
                             : null,
-                        icon: const Icon(Icons.chevron_left_rounded),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      IconButton(
-                        iconSize: 45,
-                        onPressed: () {
-                          isPlaying = !isPlaying;
-                          cubit.pause();
-                          setState(() {});
-                        },
-                        icon: isPlaying
-                            ? const Icon(Icons.pause_outlined)
-                            : const Icon(Icons.play_arrow_rounded),
-                        splashRadius: 20,
-                        splashColor: Colors.green,
-                        highlightColor: Colors.amberAccent,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      IconButton(
-                          iconSize: 45,
-                          onPressed: cubit.state.episode.next != null
-                              ? () {
-                                  cubit.nextEpisode();
-                                }
-                              : null,
-                          icon: const Icon(Icons.chevron_right_rounded),
-                          splashRadius: 50),
-                    ]),
-            ),
-            IconButton(
-                onPressed: () async {
-                  await Future.microtask(() => context.pop());
-                },
-                icon: const ImageIcon(AssetImage(IconAseet.cancel)),
-                splashRadius: 20),
-            const VideoSliderWidget(),
-          ],
+                        onTapPause: () => videoPlayerController.value.isPlaying
+                            ? videoPlayerController.pause()
+                            : videoPlayerController.play(),
+                        onTapNext: cubit.state.episode.next != null
+                            ? () => cubit.changeEpisode(
+                                cubit.state.episode.next!.episode)
+                            : null),
+              ),
+              IconButton(
+                  onPressed: () async {
+                    await Future.microtask(() => context.pop());
+                  },
+                  icon: const ImageIcon(AssetImage(IconAseet.cancel)),
+                  splashRadius: 20),
+              const VideoSliderWidget(),
+              if (showSkipOpeningButtons)
+                SkipOrContinueOpening(
+                  onTapContinue: () {
+                    skipOpeningTimer?.cancel();
+                    videoPlayerController.removeListener(_skipOpening);
+                    setState(() => showSkipOpeningButtons = false);
+                  },
+                  onTapSkip: () {
+                    videoPlayerController.removeListener(_skipOpening);
+                    videoPlayerController
+                        .seekTo(Duration(seconds: opening!.stop!));
+                  },
+                )
+            ],
+          ),
         ),
       ),
     );
-  }
-}
-
-class VideoSliderWidget extends StatefulWidget {
-  const VideoSliderWidget({
-    super.key,
-  });
-
-  @override
-  State<VideoSliderWidget> createState() => _VideoSliderWidgetState();
-}
-
-class _VideoSliderWidgetState extends State<VideoSliderWidget> {
-  late final VideoPlayerController videoPlayerController;
-  late int positionInSeconds;
-  late final int durationInSeconds;
-  @override
-  void initState() {
-    super.initState();
-    videoPlayerController =
-        context.read<VideoPlayerCubit>().state.videoPlayerController;
-    videoPlayerController.addListener(currentPosotion);
-    positionInSeconds = videoPlayerController.value.position.inSeconds;
-    durationInSeconds = videoPlayerController.value.duration.inSeconds;
-  }
-
-  void currentPosotion() {
-    if (mounted) {
-      setState(() {
-        positionInSeconds = videoPlayerController.value.position.inSeconds;
-      });
-    }
-  }
-
-  String _timeFormat(int value) {
-    if (value < 10) {
-      return '0$value';
-    }
-    return value.toString();
-  }
-
-  String showTime(int value) {
-    final seconds = value % 60;
-    final minutes = value ~/ 60;
-    if (minutes > 59) {
-      return '${_timeFormat(minutes % 60)} :${_timeFormat(minutes ~/ 60)}: ${_timeFormat(seconds)}';
-    }
-    return '${_timeFormat(minutes)} : ${_timeFormat(seconds)}';
-  }
-
-  @override
-  void dispose() {
-    videoPlayerController.removeListener(currentPosotion);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Expanded(child: SizedBox()),
-      Row(children: [
-        Expanded(
-          child: Slider(
-            thumbColor: Theme.of(context).primaryColor,
-            activeColor: Theme.of(context).primaryColor,
-            value: positionInSeconds.toDouble(),
-            max: durationInSeconds.toDouble(),
-            onChanged: (value) {
-              videoPlayerController.seekTo(Duration(seconds: value.toInt()));
-            },
-          ),
-        ),
-        Text('${showTime(positionInSeconds)} / ${showTime(durationInSeconds)}'),
-        const SizedBox(
-          width: 5,
-        )
-      ]),
-    ]);
   }
 }

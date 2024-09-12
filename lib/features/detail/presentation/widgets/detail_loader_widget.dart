@@ -1,5 +1,6 @@
 import 'package:anime_app/ui/components/loader_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class DetailLoaderWidget extends StatelessWidget {
   const DetailLoaderWidget({super.key});
@@ -8,7 +9,7 @@ class DetailLoaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: const [
-        LoaderContainer(height: 200, width: double.infinity),
+        SafeArea(child: LoaderContainer(height: 200, width: double.infinity)),
         SizedBox(
           height: 15,
         ),

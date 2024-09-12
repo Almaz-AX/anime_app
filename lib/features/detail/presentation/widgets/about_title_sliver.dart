@@ -30,7 +30,7 @@ class AboutTitleSliver extends StatelessWidget {
     final isFavorite =
         context.select((DetailBloc bloc) => bloc.state.isFavorite);
     if (release == null) {
-      return Container();
+      return const SliverToBoxAdapter();
     }
 
     return SliverToBoxAdapter(

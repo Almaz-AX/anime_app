@@ -66,32 +66,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     final controller = VideoPlayerController.networkUrl(url);
     return controller;
   }
-
-  Future<void> nextEpisode() async {
-    final episode = state.episode.next?.episode;
-    if (episode == null) {
-      return;
-    }
-    await _changeEpisode(episode);
-  }
-
-  Future<void> prevEpisode() async {
-    final episode = state.episode.previous?.episode;
-    if (episode == null) {
-      return;
-    }
-    await _changeEpisode(episode);
-  }
-
-  void pause() {
-    final controller = state.videoPlayerController;
-    if (controller.value.isPlaying) {
-      controller.pause();
-      return;
-    }
-    controller.play();
-  }
-
+  
   Future<void> disposeController() async {
     state.videoPlayerController.pause();
     bool watchedCompleted = false;
@@ -99,8 +74,16 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
         state.videoPlayerController.value.position.inSeconds;
     final durationInSeconds =
         state.videoPlayerController.value.duration.inSeconds;
-    if (currentPositionInSeconds / durationInSeconds > 0.9) {
+    if (currentPositionInSeconds / durationInSeconds > 0.93) {
       watchedCompleted = true;
+      if (state.episode.next != null){
+        await saveWatchedEpisode(EpisodeParams(WatchedEpisode(
+        updatedTime: DateTime.timestamp().millisecondsSinceEpoch,
+        episodeNumber: state.episode.next!.episode.ordinal,
+        releaseId: state.episode.releaseId,
+      )));
+      }
+      
     }
     await saveWatchedEpisode(EpisodeParams(WatchedEpisode(
         updatedTime: DateTime.timestamp().millisecondsSinceEpoch,
@@ -111,7 +94,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     state.videoPlayerController.dispose();
   }
 
-  Future<void> _changeEpisode(Episode episode) async {
+  Future<void> changeEpisode(Episode episode) async {
     emit(state.copyWith(
       status: VideoPlayerStatus.loading,
     ));

@@ -21,7 +21,7 @@ class EpisodesSliver extends StatelessWidget {
     final release = BlocProvider.of<DetailBloc>(context).state.release;
     final episodes = release?.episodes;
     if (episodes == null) {
-      return Container();
+      return const SliverToBoxAdapter();
     }
     return SliverList.builder(
       itemBuilder: (context, index) {
@@ -71,7 +71,7 @@ class EpisodeCard extends StatelessWidget {
     if (release == null || episodes == null) {
       return const SliverToBoxAdapter();
     }
-    
+
     final episode = episodes[index];
     final previewRelativeUrl = episode.preview?.src;
 
@@ -82,8 +82,9 @@ class EpisodeCard extends StatelessWidget {
     final watchedEpisodes =
         context.select((DetailBloc bloc) => state.watchedEpisodes);
     final watchedEpisode = getEpisode(watchedEpisodes, episode);
-    final icon =
-        watchedEpisode != null ? Icons.check : Icons.play_arrow_rounded;
+    final icon = watchedEpisode != null && watchedEpisode.watchCompleted
+        ? Icons.check
+        : Icons.play_arrow_rounded;
 
     return Container(
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
