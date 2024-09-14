@@ -4,6 +4,7 @@ import 'package:anime_app/core/data/models/release.dart';
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/presentation/blocs/detail_bloc.dart';
 import 'package:anime_app/features/video_player/presentation/pages/video_player_page.dart';
+import 'package:anime_app/ui/components/continue_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,11 +37,14 @@ class ViewerEpisodeSliver extends StatelessWidget {
       );
     }
     Episode currentEpisode = episodes.first;
+    int continueTimestamp = 0;
     for (WatchedEpisode watchedEpisode in watchedEpisodes) {
-      if (watchedEpisode.episodeNumber > currentEpisode.ordinal &&
-          watchedEpisode.watchCompleted == false) {
+      if (watchedEpisode.watchCompleted == false) {
         currentEpisode = episodes.firstWhere(
             (episode) => episode.ordinal == watchedEpisode.episodeNumber);
+        if (currentEpisode.ordinal == watchedEpisode.episodeNumber) {
+          continueTimestamp = watchedEpisode.continueTimestamp;
+        }
       }
     }
     final String preview = currentEpisode.preview?.src ?? release.poster.src;
@@ -54,7 +58,6 @@ class ViewerEpisodeSliver extends StatelessWidget {
             Image(
               image: NetworkImage('${Host.host}$preview'),
               fit: BoxFit.cover,
-              // height: 200,
               width: MediaQuery.sizeOf(context).width,
             ),
             Center(
@@ -83,6 +86,13 @@ class ViewerEpisodeSliver extends StatelessWidget {
                 },
               ),
             ),
+            if (continueTimestamp != 0 && currentEpisode.duration != null)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ContinueSlider(
+                  width: MediaQuery.sizeOf(context).width  * continueTimestamp/currentEpisode.duration!,
+                ),
+              )
           ],
         ),
       ),

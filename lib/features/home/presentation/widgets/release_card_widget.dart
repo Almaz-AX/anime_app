@@ -1,4 +1,3 @@
-import 'package:anime_app/ui/components/loader_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
