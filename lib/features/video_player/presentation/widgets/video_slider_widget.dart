@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,7 +17,8 @@ class VideoSliderWidget extends StatefulWidget {
 
 class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   late final VideoPlayerController videoPlayerController;
-  late int positionInSeconds;
+  int positionInSeconds = 0;
+  bool showPreview = false;
   late final int durationInSeconds;
   @override
   void initState() {
@@ -60,7 +63,10 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Expanded(child: SizedBox()),
+      const Expanded(
+          child: SizedBox(
+        width: 15,
+      )),
       Row(children: [
         Expanded(
           child: Slider(
@@ -69,7 +75,18 @@ class _VideoSliderWidgetState extends State<VideoSliderWidget> {
             value: positionInSeconds.toDouble(),
             max: durationInSeconds.toDouble(),
             onChanged: (value) {
+              showPreview = true;
+              videoPlayerController.removeListener(currentPosotion);
+              if (mounted) {
+                setState(() {
+                  positionInSeconds = value.toInt();
+                });
+              }
+            },
+            onChangeEnd: (value) {
               videoPlayerController.seekTo(Duration(seconds: value.toInt()));
+              videoPlayerController.addListener(currentPosotion);
+              showPreview = false;
             },
           ),
         ),

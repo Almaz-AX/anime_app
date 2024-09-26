@@ -8,8 +8,7 @@ import '../../../constants/constants.dart';
 import '../../../core/platform/network_info.dart';
 import '../../../injection_container.dart';
 
-// Stateful navigation based on:
-// https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
+
 class MainPage extends StatelessWidget {
   const MainPage({
     Key? key,
@@ -21,10 +20,6 @@ class MainPage extends StatelessWidget {
   void _goBranch(int index) {
     navigationShell.goBranch(
       index,
-      // A common pattern when using bottom navigation bars is to support
-      // navigating to the initial location when tapping the item that is
-      // already active. This example demonstrates how to support this behavior,
-      // using the initialLocation parameter of goBranch.
       initialLocation: index == navigationShell.currentIndex,
     );
   }

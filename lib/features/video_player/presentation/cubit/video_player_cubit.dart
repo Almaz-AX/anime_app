@@ -49,6 +49,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
     await state.videoPlayerController.initialize();
     await state.videoPlayerController.play();
+    
     if (watchedEpisode != null) {
       state.videoPlayerController
           .seekTo(Duration(seconds: watchedEpisode.continueTimestamp));

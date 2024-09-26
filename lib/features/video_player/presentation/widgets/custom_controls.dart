@@ -65,9 +65,7 @@ class _CustomControlsState extends State<CustomControls> {
     timer = Timer(const Duration(seconds: 3), () {
       visibleControls = false;
     });
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
   }
 
   void _listenBuffering() {
@@ -90,12 +88,10 @@ class _CustomControlsState extends State<CustomControls> {
     final cubit = context.read<VideoPlayerCubit>();
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
+      onLongPressDown: (details) => timer?.cancel(),
       onTap: changeVisibilityControls,
       child: Visibility(
-        replacement: Center(
-            child: Container( height: double.minPositive, width: double.minPositive,
-          color: Colors.amber,
-        )),
+        replacement: Center(child: Container()),
         visible: visibleControls,
         child: Container(
           color: Colors.black.withOpacity(0.2),
