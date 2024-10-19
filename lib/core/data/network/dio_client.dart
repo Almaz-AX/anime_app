@@ -8,6 +8,7 @@ import '../../host.dart';
 
 abstract class Client {
   Future<T?> get<T>(String path);
+  Future<T?> post<T>(String path, {Object data});
 }
 
 class DioClient extends Client {
@@ -20,9 +21,11 @@ class DioClient extends Client {
     dio.options = BaseOptions(
         baseUrl: Host.apiHost,
         connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30));
+        receiveTimeout: const Duration(seconds: 30),
+        );
 
     dio.interceptors.add(connectivityChangeInterceptor);
+    
   }
 
   @override
@@ -39,14 +42,12 @@ class DioClient extends Client {
       if (response.statusCode == 404) {
         throw NetworkException(type: NetworkExceptionType.notFound);
       }
-      // Не ловится ошибка!!!!!!!!!!!
     } on DioException catch (e) {
       if (e.response != null) {
         print(e.response?.data);
         print(e.response?.headers);
         print(e.response?.requestOptions);
       } else {
-        // Something happened in setting up or sending the request that triggered an Error
         print(e.requestOptions);
         print(e.message);
       }
@@ -55,5 +56,11 @@ class DioClient extends Client {
       rethrow;
     }
     return null;
+  }
+
+  @override
+  Future<T?> post<T>(String path, {Object? data}) async {
+    Response<T> response = await dio.post(path, data: data);
+    return response.data;
   }
 }

@@ -55,11 +55,43 @@ class Body extends StatelessWidget {
                   height: 15,
                 )),
                 DescriptionSliver(),
+                // SliverToBoxAdapter(
+                //   child: DetailTabView(),
+                // ),
                 EpisodesSliver(),
               ],
             );
         }
       },
     );
+  }
+}
+
+class DetailTabView extends StatelessWidget {
+  const DetailTabView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const DefaultTabController(
+        length: 3,
+        child: Column(
+          children: [
+            TabBar(tabs: [
+              Tab(child: Text('Эпизоды')),
+              Tab(child: Text('Описание')),
+              Tab(child: Text('Связанное')),
+            ]),
+            SizedBox(
+              height: 30,
+              child: TabBarView(children: [
+                    Text('Эпизоды'),
+                    DescriptionSliver(),
+                    Text('Связанное')
+                  ]),
+            ),
+          ],
+        ));
   }
 }

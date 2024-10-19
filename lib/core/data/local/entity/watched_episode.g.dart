@@ -8,13 +8,13 @@ part of 'watched_episode.dart';
 
 WatchedEpisode _$WatchedEpisodeFromJson(Map<String, dynamic> json) =>
     WatchedEpisode(
-      episodeNumber: json['episode_number'] as int,
+      episodeNumber: (json['episode_number'] as num).toInt(),
       watchCompleted: json['watch_completed'] == null
           ? false
           : WatchedEpisode._parseToBool(json['watch_completed']),
-      continueTimestamp: json['continue_timestamp'] as int? ?? 0,
-      releaseId: json['release_id'] as int,
-      updatedTime: json['updated_time'] as int,
+      continueTimestamp: (json['continue_timestamp'] as num?)?.toInt() ?? 0,
+      releaseId: (json['release_id'] as num).toInt(),
+      updatedTime: (json['updated_time'] as num).toInt(),
     );
 
 Map<String, dynamic> _$WatchedEpisodeToJson(WatchedEpisode instance) =>

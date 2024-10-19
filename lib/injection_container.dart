@@ -1,10 +1,12 @@
+import 'package:anime_app/core/data/repositories/shikimori_repository.dart';
+import 'package:anime_app/core/domain/usecases/get_shikimori_score.dart';
 import 'package:anime_app/features/profile/domain/repositories/auth_repository.dart';
 import 'package:anime_app/core/data/local/DAO/favorite_title_dao.dart';
 import 'package:anime_app/core/data/network/dio_client.dart';
 import 'package:anime_app/core/data/network/interceptors/dio_connectivity_request_retrier.dart';
 import 'package:anime_app/core/data/network/interceptors/retry_on_connectivity_change_interceptor.dart';
 import 'package:anime_app/features/favorites/domain/repositories/favorite_release_repository.dart';
-import 'package:anime_app/core/data/repositories/anime_releases_repository.dart';
+import 'package:anime_app/core/data/repositories/anilibria_releases_repository.dart';
 import 'package:anime_app/core/host.dart';
 import 'package:anime_app/features/detail/data/datasources/get_watched_episodes_local_data_source.dart';
 import 'package:anime_app/features/detail/data/repositories/get_watched_episodes_repository_impl.dart';
@@ -40,7 +42,6 @@ import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'core/data/datasourses/get_random_release_remote_data_source.dart';
 import 'core/data/local/DAO/watched_episode_dao.dart';
 import 'core/domain/usecases/get_random_title.dart';
 import 'core/platform/network_info.dart';
@@ -68,9 +69,12 @@ Future<void> init() async {
       getUnderseenTitles: sl(),
       completeWatching: sl()));
 
-  sl.registerFactory(() => LatestReleasesBloc(getLatestReleases: sl()));
+  sl.registerFactory(() => LatestReleasesBloc(
+        getLatestReleases: sl(),
+        getShikimoriScore: sl()
+      ));
 
-  sl.registerFactory(() => RandomReleasesBloc(getRandomTitle: sl()));
+  sl.registerFactory(() => RandomReleasesBloc(getRandomTitle: sl(), getShikimoriScore: sl()));
   //Use cases
   sl.registerLazySingleton<GetUnderseenEpisodes>(
       () => GetUnderseenEpisodes(repository: sl()));
@@ -78,11 +82,11 @@ Future<void> init() async {
       () => GetUnderseenReleases(repository: sl()));
   sl.registerLazySingleton<CompleteWatching>(
       () => CompleteWatching(repository: sl()));
-  sl.registerLazySingleton<LatesetReleases>(
-      () => LatesetReleases(repository: sl()));
+  sl.registerLazySingleton<LatestReleases>(
+      () => LatestReleases(repository: sl()));
   //Repsitory
-  sl.registerLazySingleton<HomeRepository>(
-      () => HomeRepositoryImpl(localDatasource: sl(), remoteDataSource: sl()));
+  sl.registerLazySingleton<LocalRepository>(
+      () => LocalRepositoryImpl(localDatasource: sl()));
   //DataSource
   sl.registerLazySingleton<UnderseenEpisodesLocalDataSource>(
       () => UnderseenEpisodesLocalDataSourceImpl(local: sl()));
@@ -168,18 +172,24 @@ Future<void> init() async {
   sl.registerLazySingleton<Client>(
       () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
 
-  // Use case
+  // Usecase
   sl.registerLazySingleton<GetRandomReleases>(
       () => GetRandomReleases(repository: sl()));
 
+  sl.registerLazySingleton<GetShikimoriScore>(
+      () => GetShikimoriScore(repository: sl()));
+
   // Repository
-  sl.registerLazySingleton<AnimeReleasesRepository>(
-      () => AnimeReleasesRepositoryImpl(client: sl()));
+  sl.registerLazySingleton<AnilibriaReleasesRepository>(
+      () => AnilibriaReleasesRepositoryImpl(client: sl()));
+
+  sl.registerLazySingleton<ShikimoriAnimeRepository>(
+      () => ShikimoriAnimeRepositoryImpl(client: sl()));
+
   sl.registerLazySingleton<FavoriteReleaseRepository>(
       () => FavoriteReleaseRepositoryImpl(favioriteTitlesDAO: sl()));
-  // DataSource
-  sl.registerLazySingleton<GetRandomReleaseRemoteDataSource>(
-      () => GetRandomReleaseRemoteDataSourceImpl(client: sl()));
+
+  //client
   sl.registerLazySingleton(
       () => DioClient(dio: sl(), connectivityChangeInterceptor: sl()));
   sl.registerLazySingleton(
@@ -187,6 +197,7 @@ Future<void> init() async {
   sl.registerLazySingleton(
     () => DioConnectivityRequestRetrier(dio: sl(), networkInfo: sl()),
   );
+
   // local
   //DAO
   sl.registerLazySingleton<WatchedEpisodesDAO>(() => WatchedEpisodesDAO());

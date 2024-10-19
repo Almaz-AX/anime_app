@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:anime_app/core/data/repositories/anime_releases_repository.dart';
+import 'package:anime_app/core/data/repositories/anilibria_releases_repository.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:anime_app/core/domain/usecases/usecase.dart';
@@ -9,7 +9,7 @@ import '../../../../core/data/models/release.dart';
 import '../../../../core/helpers/getResponseOrFailure.dart';
 
 class GetFavoriteTitles extends UseCaseFuture<List<Release>, Params> {
-  final AnimeReleasesRepository repository;
+  final AnilibriaReleasesRepository repository;
   GetFavoriteTitles({
     required this.repository,
   });

@@ -8,7 +8,7 @@ part of 'favorite_title.dart';
 
 FavoriteTitle _$FavoriteTitleFromJson(Map<String, dynamic> json) =>
     FavoriteTitle(
-      releaseId: json['title_id'] as int,
+      releaseId: (json['title_id'] as num).toInt(),
     );
 
 Map<String, dynamic> _$FavoriteTitleToJson(FavoriteTitle instance) =>

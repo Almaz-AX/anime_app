@@ -45,4 +45,5 @@ app.*.map.json
 
 *.env
 
-android1/
+# graphql-code-generator related
+node_modules/

@@ -3,13 +3,13 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/data/models/release.dart';
-import '../../../../core/data/repositories/anime_releases_repository.dart';
+import '../../../../core/data/repositories/anilibria_releases_repository.dart';
 import '../../../../core/domain/usecases/usecase.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/helpers/getResponseOrFailure.dart';
 
 class GetUnderseenReleases extends UseCaseFuture<List<Release>, Params> {
-  final AnimeReleasesRepository repository;
+  final AnilibriaReleasesRepository repository;
   GetUnderseenReleases({
     required this.repository,
   });

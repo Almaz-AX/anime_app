@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                sl<RandomReleasesBloc>()..add(RandomTitlesGetEvent()),
+                sl<RandomReleasesBloc>()..add(RandomReleasesGetEvent()),
           ),
         ],
         child: const _Body(),

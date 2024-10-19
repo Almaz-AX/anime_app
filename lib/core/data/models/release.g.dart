@@ -7,9 +7,9 @@ part of 'release.dart';
 // **************************************************************************
 
 Release _$ReleaseFromJson(Map<String, dynamic> json) => Release(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       type: ReleaseType.fromJson(json['type'] as Map<String, dynamic>),
-      year: json['year'] as int,
+      year: (json['year'] as num).toInt(),
       name: Name.fromJson(json['name'] as Map<String, dynamic>),
       alias: json['alias'] as String,
       season: Season.fromJson(json['season'] as Map<String, dynamic>),
@@ -29,14 +29,15 @@ Release _$ReleaseFromJson(Map<String, dynamic> json) => Release(
           PublishDay.fromJson(json['publish_day'] as Map<String, dynamic>),
       description: json['description'] as String?,
       notification: json['notification'] as String?,
-      episodesTotal: json['episodes_total'] as int?,
+      episodesTotal: (json['episodes_total'] as num?)?.toInt(),
       externalPlayer: json['external_player'] as String?,
       isInProduction: json['is_in_production'] as bool,
       isBlockedByGeo: json['is_blocked_by_geo'] as bool,
       episodesAreUnknown: json['episodes_are_unknown'] as bool,
       isBlockedByCopyrights: json['is_blocked_by_copyrights'] as bool,
-      addedInUsersFavorites: json['added_in_users_favorites'] as int,
-      averageDurationOfEpisode: json['average_duration_of_episode'] as int?,
+      addedInUsersFavorites: (json['added_in_users_favorites'] as num).toInt(),
+      averageDurationOfEpisode:
+          (json['average_duration_of_episode'] as num?)?.toInt(),
       genres: Release._parseListGenre(json['genres'] as List?),
       members: Release._parseListMember(json['members'] as List?),
       sponsor: json['sponsor'],
@@ -147,7 +148,7 @@ Map<String, dynamic> _$AgeRatingToJson(AgeRating instance) => <String, dynamic>{
     };
 
 PublishDay _$PublishDayFromJson(Map<String, dynamic> json) => PublishDay(
-      value: json['value'] as int,
+      value: (json['value'] as num).toInt(),
       description: json['description'] as String,
     );
 
@@ -158,10 +159,10 @@ Map<String, dynamic> _$PublishDayToJson(PublishDay instance) =>
     };
 
 Genre _$GenreFromJson(Map<String, dynamic> json) => Genre(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       image: GenreImage.fromJson(json['image'] as Map<String, dynamic>),
-      totalReleases: json['total_releases'] as int,
+      totalReleases: (json['total_releases'] as num).toInt(),
     );
 
 Map<String, dynamic> _$GenreToJson(Genre instance) => <String, dynamic>{
@@ -188,7 +189,7 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
 Episode _$EpisodeFromJson(Map<String, dynamic> json) => Episode(
       id: json['id'] as String,
       name: json['name'] as String?,
-      ordinal: json['ordinal'] as int,
+      ordinal: (json['ordinal'] as num).toInt(),
       opening: json['opening'] == null
           ? null
           : Ing.fromJson(json['opening'] as Map<String, dynamic>),
@@ -201,13 +202,13 @@ Episode _$EpisodeFromJson(Map<String, dynamic> json) => Episode(
       hls480: json['hls_480'] as String,
       hls720: json['hls_720'] as String?,
       hls1080: json['hls_1080'] as String?,
-      duration: json['duration'] as int?,
+      duration: (json['duration'] as num?)?.toInt(),
       rutubeId: json['rutube_id'] as String?,
       youtubeId: json['youtube_id'] as String?,
       updatedAt: json['updated_at'] == null
           ? null
           : DateTime.parse(json['updated_at'] as String),
-      sortOrder: json['sort_order'] as int?,
+      sortOrder: (json['sort_order'] as num?)?.toInt(),
       nameEnglish: json['name_english'] as String?,
     );
 
@@ -230,8 +231,8 @@ Map<String, dynamic> _$EpisodeToJson(Episode instance) => <String, dynamic>{
     };
 
 Ing _$IngFromJson(Map<String, dynamic> json) => Ing(
-      stop: json['stop'] as int?,
-      start: json['start'] as int?,
+      stop: (json['stop'] as num?)?.toInt(),
+      start: (json['start'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$IngToJson(Ing instance) => <String, dynamic>{
@@ -269,9 +270,9 @@ Map<String, dynamic> _$GenreImageToJson(GenreImage instance) =>
     };
 
 Torrent _$TorrentFromJson(Map<String, dynamic> json) => Torrent(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       hash: json['hash'] as String,
-      size: json['size'] as int,
+      size: (json['size'] as num).toInt(),
       type: Season.fromJson(json['type'] as Map<String, dynamic>),
       label: json['label'] as String,
       codec: Season.fromJson(json['codec'] as Map<String, dynamic>),
@@ -279,16 +280,16 @@ Torrent _$TorrentFromJson(Map<String, dynamic> json) => Torrent(
           ? null
           : Season.fromJson(json['color'] as Map<String, dynamic>),
       magnet: json['magnet'] as String,
-      seeders: json['seeders'] as int,
+      seeders: (json['seeders'] as num).toInt(),
       quality: Season.fromJson(json['quality'] as Map<String, dynamic>),
-      bitrate: json['bitrate'] as int?,
+      bitrate: (json['bitrate'] as num?)?.toInt(),
       filename: json['filename'] as String?,
-      leechers: json['leechers'] as int,
-      sortOrder: json['sort_order'] as int,
+      leechers: (json['leechers'] as num).toInt(),
+      sortOrder: (json['sort_order'] as num).toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       description: json['description'] as String,
-      completedTimes: json['completed_times'] as int,
+      completedTimes: (json['completed_times'] as num).toInt(),
     );
 
 Map<String, dynamic> _$TorrentToJson(Torrent instance) => <String, dynamic>{

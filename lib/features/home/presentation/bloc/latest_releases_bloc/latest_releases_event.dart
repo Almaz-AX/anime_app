@@ -9,8 +9,15 @@ sealed class LatestReleasesEvent extends Equatable {
 }
 
 final class LatestReleasesGetEvent extends LatestReleasesEvent {
- 
   const LatestReleasesGetEvent();
   @override
   List<Object> get props => [];
 }
+
+final class LatestReleasesScoreGetEvent extends LatestReleasesEvent {
+  final List<Release> releases;
+  const LatestReleasesScoreGetEvent(this.releases);
+  @override
+  List<Object> get props => [];
+}
+

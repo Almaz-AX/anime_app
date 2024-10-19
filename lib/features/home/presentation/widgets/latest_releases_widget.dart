@@ -11,14 +11,14 @@ class LatesetReleases extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LatestReleasesBloc, LatestReleasesState>(
+    return BlocBuilder<LatestReleasesBloc, LastReleasesState>(
       builder: (context, state) {
         switch (state) {
-          case LastUpdatesInitial _:
+          case LastReleasesInitial _:
             return const HomeReleasesLoader();
-          case LastUpdatesFailure _:
+          case LastReleasesFailure _:
             return FailureWidget(failure: state.failure);
-          case LastUpdatesSuccess _:
+          case LastReleasesSuccess _:
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -36,10 +36,12 @@ class LatesetReleases extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: state.releases.length,
                     itemBuilder: (context, index) {
-                      final release = state.releases[index];
                       return Stack(
                         children: [
-                          ReleaseCardWidget(release: release),
+                          ReleaseCardWidget(
+                            release: state.releases[index],
+                            score: state.releasesScore.isNotEmpty? state.releasesScore[index]:null,
+                          ),
                         ],
                       );
                     },

@@ -7,4 +7,10 @@ sealed class RandomReleasesEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class RandomTitlesGetEvent extends RandomReleasesEvent {}
+final class RandomReleasesGetEvent extends RandomReleasesEvent {}
+
+final class RandomReleasesScoreGetEvent extends RandomReleasesEvent {
+  final List<Release> releases;
+
+  const RandomReleasesScoreGetEvent({required this.releases});
+}

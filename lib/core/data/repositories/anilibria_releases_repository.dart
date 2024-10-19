@@ -1,15 +1,15 @@
-import '../network/dio_client.dart';
 import '../models/release.dart';
+import '../network/dio_client.dart';
 
-abstract class AnimeReleasesRepository {
+abstract class AnilibriaReleasesRepository {
   Future<List<Release>> getRandomReleases(int? limit);
   Future<Release> getRelease(int id);
   Future<List<Release>> latestReleases(int? limit);
 }
 
-class AnimeReleasesRepositoryImpl implements AnimeReleasesRepository {
+class AnilibriaReleasesRepositoryImpl implements AnilibriaReleasesRepository {
   final Client client;
-  AnimeReleasesRepositoryImpl({required this.client});
+  AnilibriaReleasesRepositoryImpl({required this.client});
 
   @override
   Future<List<Release>> getRandomReleases(int? limit) async {

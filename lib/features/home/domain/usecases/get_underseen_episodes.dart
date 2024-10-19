@@ -4,7 +4,7 @@ import 'package:anime_app/features/home/domain/repositories/home_repository.dart
 import '../../../../core/data/local/entity/watched_episode.dart';
 
 class GetUnderseenEpisodes extends UseCaseStream {
-  final HomeRepository repository;
+  final LocalRepository repository;
   GetUnderseenEpisodes({
     required this.repository,
   });

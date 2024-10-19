@@ -1,20 +1,22 @@
 import 'package:anime_app/core/data/models/release.dart';
+import 'package:anime_app/core/data/repositories/anilibria_releases_repository.dart';
 import 'package:anime_app/core/error/failure.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/domain/usecases/usecase.dart';
-import '../repositories/home_repository.dart';
+import '../../../../core/helpers/getResponseOrFailure.dart';
 
-class LatesetReleases extends UseCaseFuture {
-  final HomeRepository repository;
-  LatesetReleases({
+class LatestReleases extends UseCaseFuture<List<Release>, Params> {
+  final AnilibriaReleasesRepository repository;
+  LatestReleases({
     required this.repository,
   });
 
   @override
-  Future<Either<Failure, List<Release>>> call(params) {
-    return repository.latestReleases(params.limit);
+  Future<Either<Failure, List<Release>>> call(params) async {
+    return await getResponseOrFailure(
+        () async => await repository.latestReleases(params.limit));
   }
 }
 

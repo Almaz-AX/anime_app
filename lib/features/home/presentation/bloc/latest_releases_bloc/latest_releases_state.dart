@@ -1,37 +1,32 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'latest_releases_bloc.dart';
 
-sealed class LatestReleasesState extends Equatable {
-  const LatestReleasesState();
+sealed class LastReleasesState extends Equatable {
+  const LastReleasesState();
 
   @override
   List<Object> get props => [];
 }
 
-final class LastUpdatesInitial extends LatestReleasesState {}
+final class LastReleasesInitial extends LastReleasesState {}
 
-final class LastUpdatesSuccess extends LatestReleasesState {
+final class LastReleasesSuccess extends LastReleasesState {
   final List<Release> releases;
-  const LastUpdatesSuccess({
+  final List<ShikimoriAnime?> releasesScore;
+  const LastReleasesSuccess({
     required this.releases,
+    this.releasesScore = const <ShikimoriAnime>[],
   });
   @override
   List<Object> get props => [
         releases,
+        releasesScore
       ];
-
-  LastUpdatesSuccess copyWith({
-    List<Release>? releases,
-  }) {
-    return LastUpdatesSuccess(
-      releases: releases ?? this.releases,
-    );
-  }
 }
 
-final class LastUpdatesFailure extends LatestReleasesState {
+final class LastReleasesFailure extends LastReleasesState {
   final Failure failure;
-  const LastUpdatesFailure({
+  const LastReleasesFailure({
     required this.failure,
   });
 }

@@ -34,6 +34,7 @@ class RandomReleases extends StatelessWidget {
                       itemCount: state.randomReleases.length,
                       itemBuilder: (context, index) => ReleaseCardWidget(
                             release: state.randomReleases[index],
+                            score: state.releasesScore.isNotEmpty? state.releasesScore[index]: null,
                           )),
                 ),
               ],

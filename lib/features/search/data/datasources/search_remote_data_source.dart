@@ -13,7 +13,8 @@ class SearchTitlesRemoteDataSourceImpl implements SearchTitlesRemoteDataSource {
   Future<List<Release>> searchReleases(String query) async {
     final path = '/app/search/releases?query=$query';
     final responseData = await client.get(path) as List;
-    final searchTitles = responseData.map((data) => Release.fromJson(data)).toList();
+    final searchTitles =
+        responseData.map((data) => Release.fromJson(data)).toList();
     return searchTitles;
   }
 }
