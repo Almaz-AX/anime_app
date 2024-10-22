@@ -20,8 +20,8 @@ class DioClient extends Client {
   }) {
     dio.options = BaseOptions(
         baseUrl: Host.apiHost,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
+        connectTimeout: const Duration(seconds: 80),
+        receiveTimeout: const Duration(seconds: 80),
         );
 
     dio.interceptors.add(connectivityChangeInterceptor);

@@ -40,7 +40,7 @@ class RandomReleasesBloc
       final releaseScoreOrFailure = await getShikimoriScore(
           ShikimoriParams(releaseName: release.name.english));
       releaseScoreOrFailure.fold((failure) => releasesScore.add(null),
-          (score) => releasesScore.add(score));
+          (scoreList) => releasesScore.add(scoreList.first));
     }
     emit(
       RandomReleasesLoaded(

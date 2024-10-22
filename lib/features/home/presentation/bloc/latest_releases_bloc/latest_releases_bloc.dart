@@ -34,20 +34,49 @@ class LatestReleasesBloc extends Bloc<LatestReleasesEvent, LastReleasesState> {
     latestReleasesOrFailure.fold(
         (failure) => emit(LastReleasesFailure(failure: failure)),
         (latestReleases) => releases.addAll(latestReleases));
-    emit(LastReleasesSuccess(releases: releases));
+    emit(LastReleasesSuccess(
+        releaseContainers:
+            releases.map((e) => ReleaseContainer(release: e)).toList()));
     add(LatestReleasesScoreGetEvent(releases));
   }
 
   Future<void> _onLatestReleasesScoreGet(LatestReleasesScoreGetEvent event,
       Emitter<LastReleasesState> emit) async {
-    final releasesScore = <ShikimoriAnime?>[];
-    for (Release release in event.releases) {
-      final releaseScoreOrFailure = await getShikimoriScore(
-          ShikimoriParams(releaseName: release.name.english));
-      releaseScoreOrFailure.fold((failure) => releasesScore.add(null),
-          (score) => releasesScore.add(score));
+        // Необходимо сделать несколько запросов для получения рейтинга с Shikimori
+        // 1 Запрос по онгоингам текущего сезона
+        // 2 запрос по оставшимя тайтлам, которые не нашлись в 1 запросе
+        // Так ошибок по 426 коду меньше.
+    final releasesScore = <ShikimoriAnime>[];
+
+    final releaseScoreOrFailure = await getShikimoriScore(
+        ShikimoriParams(limit: 50, season: 'fall_2024'));
+    releaseScoreOrFailure.fold(
+        (failure) => null, (scoreList) => releasesScore.addAll(scoreList));
+    final releaseContainers = <ReleaseContainer>[];
+
+    if (releasesScore.isNotEmpty) {
+      for (Release release in event.releases) {
+        final ShikimoriAnime? releaseScore = releasesScore
+            .where((element) => element.name == release.name.english)
+            .firstOrNull;
+        releaseContainers
+            .add(ReleaseContainer(release: release, score: releaseScore));
+
+        await Future.delayed(const Duration(milliseconds: 100));
+        
+        for (int i = 0; i < releaseContainers.length; i ++) {
+          if (releaseContainers[i].score == null) {
+            final scoreOrFailure = await getShikimoriScore(
+                ShikimoriParams(releaseName: releaseContainers[i].release.name.english));
+            scoreOrFailure.fold(
+                (failure) => null,
+                (scoreList) =>
+                    releaseContainers[i] = releaseContainers[i].copyWith(score: scoreList.firstOrNull));
+          }
+        }
+      }
+
+      emit(LastReleasesSuccess(releaseContainers: releaseContainers));
     }
-    emit(LastReleasesSuccess(
-        releases: event.releases, releasesScore: releasesScore));
   }
 }

@@ -34,13 +34,13 @@ class LatesetReleases extends StatelessWidget {
                   height: 290,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: state.releases.length,
+                    itemCount: state.releaseContainers.length,
                     itemBuilder: (context, index) {
                       return Stack(
                         children: [
                           ReleaseCardWidget(
-                            release: state.releases[index],
-                            score: state.releasesScore.isNotEmpty? state.releasesScore[index]:null,
+                            release: state.releaseContainers[index].release,
+                            score: state.releaseContainers[index].score
                           ),
                         ],
                       );

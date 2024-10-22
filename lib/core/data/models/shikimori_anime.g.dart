@@ -11,6 +11,7 @@ ShikimoriAnime _$ShikimoriAnimeFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       score: (json['score'] as num?)?.toDouble(),
+      status: $enumDecodeNullable(_$AnimeStatusEnumMap, json['status']),
     );
 
 Map<String, dynamic> _$ShikimoriAnimeToJson(ShikimoriAnime instance) =>
@@ -18,4 +19,11 @@ Map<String, dynamic> _$ShikimoriAnimeToJson(ShikimoriAnime instance) =>
       'id': instance.id,
       'name': instance.name,
       'score': instance.score,
+      'status': _$AnimeStatusEnumMap[instance.status],
     };
+
+const _$AnimeStatusEnumMap = {
+  AnimeStatus.anons: 'anons',
+  AnimeStatus.ongoing: 'ongoing',
+  AnimeStatus.released: 'released',
+};

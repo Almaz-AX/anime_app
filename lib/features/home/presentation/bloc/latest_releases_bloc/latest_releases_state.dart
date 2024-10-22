@@ -11,17 +11,14 @@ sealed class LastReleasesState extends Equatable {
 final class LastReleasesInitial extends LastReleasesState {}
 
 final class LastReleasesSuccess extends LastReleasesState {
-  final List<Release> releases;
-  final List<ShikimoriAnime?> releasesScore;
+  final List<ReleaseContainer> releaseContainers;
+
   const LastReleasesSuccess({
-    required this.releases,
-    this.releasesScore = const <ShikimoriAnime>[],
+    required this.releaseContainers,
+    
   });
   @override
-  List<Object> get props => [
-        releases,
-        releasesScore
-      ];
+  List<Object> get props => [releaseContainers,];
 }
 
 final class LastReleasesFailure extends LastReleasesState {
@@ -29,4 +26,27 @@ final class LastReleasesFailure extends LastReleasesState {
   const LastReleasesFailure({
     required this.failure,
   });
+}
+
+
+class ReleaseContainer extends Equatable {
+  final Release release;
+  final ShikimoriAnime? score;
+  const ReleaseContainer({
+    required this.release,
+    this.score,
+  });
+  
+  @override
+  List<Object?> get props => [release, score];
+
+  ReleaseContainer copyWith({
+    Release? release,
+    ShikimoriAnime? score,
+  }) {
+    return ReleaseContainer(
+      release: release ?? this.release,
+      score: score ?? this.score,
+    );
+  }
 }
