@@ -115,6 +115,7 @@ Future<void> init() async {
       getWatchedEpisodes: sl(),
       getFavoriteTitle: sl(),
       addFavoriteTitle: sl(),
+      getScore: sl(),
       removeFavoriteTitle: sl()));
 
   // Use cases

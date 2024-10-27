@@ -48,13 +48,6 @@ class AboutTitleLoader extends StatelessWidget {
               ),
               Expanded(
                   flex: 10, child: LoaderContainer(height: 77, width: 100)),
-              Expanded(
-                  child: SizedBox(
-                height: 5,
-              )),
-              Icon(
-                Icons.favorite,
-              )
             ],
           ),
           SizedBox(

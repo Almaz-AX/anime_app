@@ -40,6 +40,11 @@ class VideoPlayerState extends Equatable {
 
 final class EntryItem extends LinkedListEntry<EntryItem> {
   final int releaseId;
+  final String releaseName;
   final Episode episode;
-  EntryItem({required this.releaseId, required this.episode});
+  EntryItem({
+    required this.releaseId,
+    required this.releaseName,
+    required this.episode,
+  });
 }

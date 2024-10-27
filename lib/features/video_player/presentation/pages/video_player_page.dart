@@ -21,12 +21,14 @@ class VideoPlayerPage extends StatelessWidget {
   static createVideoPlayer({
     required BuildContext context,
     required int releaseId,
+    required String releaseName,
     required List<Episode> episodes,
     required int ordinal,
   }) {
     final linkedepisodes = LinkedList<EntryItem>();
     for (var episode in episodes) {
-      linkedepisodes.add(EntryItem(releaseId: releaseId, episode: episode));
+      linkedepisodes.add(EntryItem(
+          releaseId: releaseId, releaseName: releaseName, episode: episode));
     }
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
@@ -114,4 +116,3 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     });
   }
 }
-

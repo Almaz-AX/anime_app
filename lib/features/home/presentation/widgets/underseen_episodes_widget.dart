@@ -149,6 +149,7 @@ class EpisodeCard extends StatelessWidget {
                         VideoPlayerPage.createVideoPlayer(
                             context: context,
                             releaseId: underseenRelease.id,
+                            releaseName: underseenRelease.name.main,
                             episodes: episodes,
                             ordinal: episode.ordinal);
                       },

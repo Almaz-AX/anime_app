@@ -27,6 +27,7 @@ class AboutTitleSliver extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<DetailBloc>(context);
     final release = bloc.state.release;
+    final score = context.select((DetailBloc bloc) => bloc.state.score)?.score;
     final isFavorite =
         context.select((DetailBloc bloc) => bloc.state.isFavorite);
     if (release == null) {
@@ -35,46 +36,61 @@ class AboutTitleSliver extends StatelessWidget {
 
     return SliverToBoxAdapter(
         child: Padding(
-      padding: const EdgeInsets.only(left: 16),
+      padding: const EdgeInsets.only(left: 16,),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    release.name.main,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-              ),
-              IconButton(
-                  iconSize: 25,
-                  onPressed: () =>
-                      bloc.add(DetailChangeFavoriteTitleEvent(release.id)),
-                  isSelected: isFavorite,
-                  selectedIcon: const Icon(Icons.favorite),
-                  icon: const Icon(Icons.favorite_border))
-            ],
-          ),
           Text(
-            release.genres?.map((genre) => genre.name).join(', ')?? '',
-            style: Theme.of(context).textTheme.labelMedium,
+            release.name.main,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          if (release.freshAt != null )Text('Обновлено ${dateFormat(release.freshAt!)}'),
-          RichText(
-              text: TextSpan(
-            text: 'Статус: ',
-            style: Theme.of(context).textTheme.labelMedium,
+          Stack(
             children: [
-              TextSpan(
-                  text: release.isOngoing ? 'Онгоинг' : 'Вышел',
-                  style: Theme.of(context).textTheme.bodyMedium)
+              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    release.genres?.map((genre) => genre.name).join(', ')?? '',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  if (release.freshAt != null )Text('Обновлено ${dateFormat(release.freshAt!)}'),
+              RichText(
+                  text: TextSpan(
+                text: 'Статус: ',
+                style: Theme.of(context).textTheme.labelMedium,
+                children: [
+                  TextSpan(
+                      text: release.isOngoing ? 'Онгоинг' : 'Вышел',
+                      style: Theme.of(context).textTheme.bodyMedium)
+                ],
+              ))
+                ],
+              ),
+                Align( alignment: Alignment.topRight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                          iconSize: 25,
+                          onPressed: () =>
+                              bloc.add(DetailChangeFavoriteTitleEvent(release.id)),
+                          isSelected: isFavorite,
+                          selectedIcon: const Icon(Icons.favorite),
+                          icon: const Icon(Icons.favorite_border)),
+                 if (score!=null)Padding(
+                   padding: const EdgeInsets.symmetric(horizontal:10.0),
+                   child: Row( mainAxisSize: MainAxisSize.min,
+                     children: [
+                       const Icon(Icons.star,),
+                       const SizedBox(width: 5,),
+                       Text(score.toString())
+                     ],
+                   ),
+                 )
+              ],
+            ))
             ],
-          ))
+          ),
+          
         ],
       ),
     ));

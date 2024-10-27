@@ -1,5 +1,8 @@
 import 'dart:async';
 // ignore: depend_on_referenced_packages
+import 'package:anime_app/core/data/models/shikimori_anime.dart';
+import 'package:anime_app/core/domain/usecases/get_shikimori_score.dart';
+
 import '../../../../core/data/models/release.dart';
 import '../../domain/usecases/add_favorite_title.dart';
 import '../../domain/usecases/get_favorite_title.dart';
@@ -20,18 +23,21 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
   final GetFavoriteTitle getFavoriteTitle;
   final RemoveFavoriteTitle removeFavoriteTitle;
   final AddFavoriteTitle addFavoriteTitle;
+  final GetShikimoriScore getScore;
   StreamSubscription<List<WatchedEpisode>>? subcription;
 
-  DetailBloc({
-    required this.getTitle,
-    required this.getWatchedEpisodes,
-    required this.getFavoriteTitle,
-    required this.addFavoriteTitle,
-    required this.removeFavoriteTitle,
-  }) : super(const DetailState(status: Status.initial)) {
+  DetailBloc(
+      {required this.getTitle,
+      required this.getWatchedEpisodes,
+      required this.getFavoriteTitle,
+      required this.addFavoriteTitle,
+      required this.removeFavoriteTitle,
+      required this.getScore})
+      : super(const DetailState(status: Status.initial)) {
     on<DetailGetTitleEvent>(_onGetTitle);
     on<DetailGetWatchedEpisodesEvent>(_onGetWachedEpisodes);
     on<DetailChangeFavoriteTitleEvent>(_onChangeFavoriteTitleEvent);
+    on<DetailGetScoreEvent>(_onGetScoreEvent);
   }
 
   Future<void> _onGetTitle(
@@ -48,10 +54,10 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
     failureOrTitle.fold(
         (failure) => emit(state.copyWith(
             status: Status.failure,
-            message: 'Что то пошло не так')), (title) async {
+            message: 'Что то пошло не так')), (release) async {
       emit(state.copyWith(
         status: Status.loaded,
-        title: title,
+        release: release,
         isFavorite: isFavorite,
       ));
 
@@ -60,6 +66,7 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
       subcription = stream.listen((event) {
         add(DetailGetWatchedEpisodesEvent(watchedEpisodes: event));
       });
+      add(DetailGetScoreEvent(release: release));
     });
   }
 
@@ -77,6 +84,14 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
       await addFavoriteTitle(Params(id: event.id));
       emit(state.copyWith(isFavorite: true));
     }
+  }
+
+  Future<void> _onGetScoreEvent(
+      DetailGetScoreEvent event, Emitter<DetailState> emit) async {
+    final scoreOrFailure = await getScore(
+        ShikimoriParams(releaseName: event.release.name.english));
+    scoreOrFailure.fold((failure) => null,
+        (scoreList) => emit(state.copyWith(score: scoreList.firstOrNull)));
   }
 
   @override

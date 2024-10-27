@@ -139,6 +139,7 @@ class EpisodeCard extends StatelessWidget {
                   context: context,
                   episodes: episodes,
                   releaseId: release.id,
+                  releaseName: release.name.main,
                   ordinal: episodes[index].ordinal,
                 );
               },

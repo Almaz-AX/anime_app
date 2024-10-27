@@ -120,6 +120,35 @@ class _CustomControlsState extends State<CustomControls> {
                   },
                   icon: const ImageIcon(AssetImage(IconAseet.cancel)),
                   splashRadius: 20),
+              Align(
+                alignment: Alignment.topCenter,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width - 160,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        cubit.state.episode.releaseName,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontSize: 22, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                          'Серия ${cubit.state.episode.episode.ordinal} ${cubit.state.episode.episode.name ?? ''}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: Colors.white.withOpacity(0.7))),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
               const VideoSliderWidget(),
               if (showSkipOpeningButtons)
                 SkipOrContinueOpening(

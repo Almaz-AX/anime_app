@@ -29,6 +29,16 @@ class DetailGetWatchedEpisodesEvent extends DetailEvent {
   List<Object> get props => [watchedEpisodes];
 }
 
+class DetailGetScoreEvent extends DetailEvent {
+  final Release release;
+  const DetailGetScoreEvent({
+    required this.release,
+  });
+  @override
+  List<Object> get props => [release];
+
+}
+
 class DetailChangeFavoriteTitleEvent extends DetailEvent {
   final int id;
   const DetailChangeFavoriteTitleEvent(

@@ -42,14 +42,14 @@ class LatestReleasesBloc extends Bloc<LatestReleasesEvent, LastReleasesState> {
 
   Future<void> _onLatestReleasesScoreGet(LatestReleasesScoreGetEvent event,
       Emitter<LastReleasesState> emit) async {
-        // Необходимо сделать несколько запросов для получения рейтинга с Shikimori
-        // 1 Запрос по онгоингам текущего сезона
-        // 2 запрос по оставшимя тайтлам, которые не нашлись в 1 запросе
-        // Так ошибок по 426 коду меньше.
+    // Необходимо сделать несколько запросов для получения рейтинга с Shikimori
+    // 1 Запрос по онгоингам текущего сезона
+    // 2 запрос по оставшимя тайтлам, которые не нашлись в 1 запросе
+    // Так ошибок по 426 коду меньше.
     final releasesScore = <ShikimoriAnime>[];
 
     final releaseScoreOrFailure = await getShikimoriScore(
-        ShikimoriParams(limit: 50, season: 'fall_2024'));
+        ShikimoriParams(limit: 50, season: _getCurrentSeason()));
     releaseScoreOrFailure.fold(
         (failure) => null, (scoreList) => releasesScore.addAll(scoreList));
     final releaseContainers = <ReleaseContainer>[];
@@ -63,15 +63,15 @@ class LatestReleasesBloc extends Bloc<LatestReleasesEvent, LastReleasesState> {
             .add(ReleaseContainer(release: release, score: releaseScore));
 
         await Future.delayed(const Duration(milliseconds: 100));
-        
-        for (int i = 0; i < releaseContainers.length; i ++) {
+
+        for (int i = 0; i < releaseContainers.length; i++) {
           if (releaseContainers[i].score == null) {
-            final scoreOrFailure = await getShikimoriScore(
-                ShikimoriParams(releaseName: releaseContainers[i].release.name.english));
+            final scoreOrFailure = await getShikimoriScore(ShikimoriParams(
+                releaseName: releaseContainers[i].release.name.english));
             scoreOrFailure.fold(
                 (failure) => null,
-                (scoreList) =>
-                    releaseContainers[i] = releaseContainers[i].copyWith(score: scoreList.firstOrNull));
+                (scoreList) => releaseContainers[i] = releaseContainers[i]
+                    .copyWith(score: scoreList.firstOrNull));
           }
         }
       }
@@ -79,4 +79,22 @@ class LatestReleasesBloc extends Bloc<LatestReleasesEvent, LastReleasesState> {
       emit(LastReleasesSuccess(releaseContainers: releaseContainers));
     }
   }
+
+  String _getCurrentSeason() {
+    final date = DateTime.now();
+    final year = date.year;
+    final month = date.month;
+    if (month == DateTime.december || month == DateTime.january || month == DateTime.february){
+      return "${Season.winter.name}_$year";
+    } else if (month == DateTime.march || month == DateTime.april || month == DateTime.may){
+      return "${Season.spring.name}_$year";
+    } else if (month == DateTime.june || month == DateTime.july || month == DateTime.august){
+      return "${Season.summer.name}_$year";
+    } else if (month == DateTime.september || month == DateTime.october || month == DateTime.november){
+      return "${Season.fall.name}_$year";
+    } 
+    return "";
+  }
 }
+
+enum Season { winter, spring, summer, fall }
